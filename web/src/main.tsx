@@ -1,18 +1,23 @@
 import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  Activity, BarChart3, BookOpenText, Database, FlaskConical, LayoutDashboard, Menu,
+  Activity, BarChart3, BookOpenText, ClipboardList, Database, FlaskConical, LayoutDashboard, Menu,
   ShieldCheck, SlidersHorizontal, Terminal, WalletCards, X,
 } from "lucide-react";
 import { Empty, PageHeading } from "./components";
 import { studyData } from "./contracts";
 import type { Study } from "./contracts";
 import { Explorer, Finance, Methods, Models, Overview, Planner, Replay, Validation } from "./pages";
+import { ResearchExtensions } from "./research";
+import { ReviewPreview } from "./review-preview";
 import "./styles.css";
 
 const localMode = import.meta.env.DEV;
 const LocalWorkflows = import.meta.env.DEV
   ? lazy(() => import("./local").then(({ LocalWorkflows: Component }) => ({ default: Component })))
+  : null;
+const Operations = import.meta.env.DEV
+  ? lazy(() => import("./operations").then(({ Operations: Component }) => ({ default: Component })))
   : null;
 
 const navigation = [
@@ -23,6 +28,8 @@ const navigation = [
   { key: "replay", text: "Policy replay", Icon: FlaskConical, Page: Replay },
   { key: "finance", text: "Financial analysis", Icon: WalletCards, Page: Finance },
   { key: "validation", text: "Validation", Icon: ShieldCheck, Page: Validation },
+  { key: "evidence", text: "Policy and lifecycle lab", Icon: Activity, Page: ResearchExtensions },
+  { key: "review", text: "Review simulation", Icon: ClipboardList, Page: ReviewPreview },
   { key: "methods", text: "Methodology", Icon: BookOpenText, Page: Methods },
 ];
 
@@ -56,6 +63,7 @@ function Workspace() {
   }, []);
   const current = navigation.find((item) => item.key === route);
   const showLocal = route === "local" && localMode;
+  const showOperations = route === "operations" && localMode;
   const Page = current?.Page;
   return <div className="workspace">
     <a className="skip" href="#main" onClick={(event) => {
@@ -78,15 +86,19 @@ function Workspace() {
         </a>)}
         {localMode && <a href="#/local" onClick={() => setOpen(false)}
           aria-current={showLocal ? "page" : undefined}><Terminal size={18} aria-hidden="true" /><span>Local workflows</span></a>}
+        {localMode && <a href="#/operations" onClick={() => setOpen(false)}
+          aria-current={showOperations ? "page" : undefined}><ClipboardList size={18} aria-hidden="true" /><span>Operations</span></a>}
       </nav>
       <div className="side-note"><span className="mode-light" />{localMode ? "Local mode" : "Static study"}<span>CMS CERT · Research use</span></div>
     </aside>
     <div className="surface">
-      <header className="topbar"><span>{current?.text ?? (showLocal ? "Local workflows" : "Workspace")}</span>
+      <header className="topbar"><span>{current?.text ?? (showLocal ? "Local workflows" : showOperations ? "Operations" : "Workspace")}</span>
         <span className="source-label"><span className="mode-light" />{localMode ? "Local research" : "Precomputed results"}</span>
       </header>
       <main id="main" tabIndex={-1}>
-        {showLocal && LocalWorkflows ? <Suspense fallback={<p role="status">Loading local workflows…</p>}>
+        {showOperations && Operations ? <Suspense fallback={<p role="status">Loading operations…</p>}>
+          <Operations />
+        </Suspense> : showLocal && LocalWorkflows ? <Suspense fallback={<p role="status">Loading local workflows…</p>}>
           <LocalWorkflows />
         </Suspense> : !study
           ? <div className="loading" role="status"><p>{status}</p>
@@ -95,7 +107,7 @@ function Workspace() {
             }}>Retry load</button>}</div>
           : Page ? <Page study={study} />
             : <><PageHeading eyebrow="Workspace" title="Page unavailable" description="Choose a page from the workspace navigation." />
-              <Empty text={route === "local" ? "Live inference is available in the project’s local mode." : "This view does not exist."} /></>}
+              <Empty text={["local", "operations"].includes(route) ? "This workspace is available in local mode." : "This view does not exist."} /></>}
       </main>
       <footer className="footer"><span>Healthcare Payment Integrity</span><a href="#/methods">Study methods and sources</a></footer>
     </div>

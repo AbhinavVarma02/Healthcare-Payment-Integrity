@@ -57,3 +57,5 @@ npm --prefix web run build
 ```
 
 For browser verification, run the loopback API, Vite dev server and static server on ports 8000, 5173 and 4173, then use `npm --prefix web run test:browser`. The configuration uses installed Microsoft Edge. If your Windows sandbox blocks loopback socket creation, run those commands in an approved local shell. Screenshot outputs live in ignored browser test results.
+
+An offline clean archive can run the fixture and build gates with a populated uv and npm cache. The tracked historical and extension aggregates are sufficient for the static build. Reproducing H4–H6 uses the audited data or local reference registry as described in the experiment report. The receipt verifier can check a SQLite backup against a separate anchor and the retained model versions. [Extended experiments](EXPERIMENT_REPORT.md) · [Operations runbook](OPERATIONS_RUNBOOK.md)

@@ -46,3 +46,20 @@ Requests use JSON. Illustrative scoring payload:
 Model output includes calibrated risk, feature schema, model version, evidence provenance, support and a deterministic explanation. Unseen or rare categories use documented fallback and flag the input. Individual intervals are unavailable. Errors have an `error.code` and `error.message`. The server binds to loopback by default, limits request bodies to 256,000 bytes and uses one bounded replay worker. Worker ownership is held by an OS-backed local lock. After an interrupted process, the next worker marks incomplete jobs interrupted and can resume them from validated seed evidence.
 
 The static workspace reads only the published JSON and its own bundled assets. Hash routing supports local tabs without server-side routing. It can calculate bounded financial sensitivity in the browser. Local workflows use the API and display a research-only readiness status.
+
+## Synthetic review operations
+
+SQLite keeps simulated intake, review and finding history in a separate local database. Each command carries a schema version, synthetic source marker, event ID, idempotency key, run ID and simulation tick. The accepted envelope records the canonical payload digest and the tick at which the command was recorded. A submitted finding adds its own availability tick. The event, receipt and affected projections commit together. Equivalent retries return the prior acknowledgement. Conflicts and rejected actions retain redacted quarantine metadata.
+
+| Method and route | Scope |
+| --- | --- |
+| POST `/v1/operations/events/{kind}` | `intake`, `assign`, `submit`, `correct`, `close`, `override` or `advance`. The `role` query parameter selects the demo permission. |
+| GET `/v1/operations/overview` | Simulated clock, queue counts, recent runs, feature support, paired shadow feedback and request timings. |
+| GET `/v1/operations/runs/{run_id}/cases` | Review state and revealed finding at `as_of`, defaulting to the current clock. |
+| GET `/v1/operations/runs/{run_id}/estimate`, `/trace` | Design-aware outcome summary and redacted accepted event trace. |
+| GET `/v1/operations/receipts/{case_id}`, `/integrity` | Decision receipt and verified event chain. Receipt history observes the requested availability cutoff. |
+| GET `/v1/operations/lifecycle` | Reference, synthetic active and shadow versions with candidate reports. |
+| POST `/v1/operations/lifecycle/train`, `/shadow`, `/promote`, `/rollback` | Bounded synthetic training and evidence-bound lifecycle actions. |
+| POST `/v1/analyst/tool`, `/question` | Validated read-only analyst tools over reviewed aggregates and synthetic receipts. |
+
+A receipt contains the synthetic case and run IDs, schema, payload and feature snapshot digests, verified model and calibration artifact reference, policy configuration digest, risk explanation, decision position and exact inclusion probability as integer numerator and denominator. The selection manifest reconstructs certainty and randomized strata. Every manual swap records a separate intervention and suspends the workspace estimate. The original receipt remains accessible alongside the intervention history and eligible finding versions. Receipt and event digests provide local integrity checks against a retained anchor. [Operations runbook](OPERATIONS_RUNBOOK.md)

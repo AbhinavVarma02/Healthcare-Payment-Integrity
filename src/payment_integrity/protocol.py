@@ -67,7 +67,7 @@ class Evaluator:
         self.freeze = load_freeze(workspace, freeze_id)
 
     def outcomes(self, year: int, keys, purpose: str) -> np.ndarray:
-        if purpose not in {"H1-H2", "H3", "governance"}:
+        if purpose not in {"H1-H2", "H3", "H4", "governance"}:
             raise ValueError("Purpose is outside the frozen evaluator contract.")
         root = self.workspace / "data" / "curated"
         features, manifest = feature_snapshot(root, year)

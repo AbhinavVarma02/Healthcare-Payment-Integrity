@@ -50,11 +50,19 @@ def select(scores, keys, budget: int, strategy: str, rng, *, order=None) -> Samp
         ))
         return Sample(picked, ((top_size, top_count), (rest_size, rest_count)))
     reserve = 0 if strategy == "greedy" else max(1, capacity(budget, int(strategy.split("-")[-1])))
+    return targeted_sample(order, budget, reserve, rng)
+
+
+def targeted_sample(order, budget, reserve, rng) -> Sample:
+    """Combine a deterministic prefix and an SRS without replacement from its complement."""
+    size = len(order)
+    if not 0 <= reserve <= budget <= size or not size:
+        raise ValueError("Invalid targeted allocation.")
     targeted = budget - reserve
     tail = rng.choice(order[targeted:], size=reserve, replace=False)
     picked = np.concatenate((order[:targeted], tail))
     strata = ((targeted, targeted),) if targeted else ()
-    return Sample(picked, strata + ((size - targeted, reserve),))
+    return Sample(picked, strata + (((size - targeted, reserve),) if size > targeted else ()))
 
 
 def effective_size(weights) -> float | None:

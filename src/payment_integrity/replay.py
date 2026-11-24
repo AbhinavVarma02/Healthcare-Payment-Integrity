@@ -160,7 +160,7 @@ def ballot(wave, learner, history, budget, strategy, rng):
     return cell_risk, select(scores, wave.keys, budget, strategy, rng, order=order)
 
 
-def prepare(workspace, freeze):
+def prepare(workspace, freeze, *, purpose="H3"):
     curated = workspace / "data" / "curated"
     config = freeze.config
     evaluator = Evaluator(workspace, freeze.commit)
@@ -184,7 +184,7 @@ def prepare(workspace, freeze):
         available = date.fromisoformat(source["version"])
         if available <= wave.decision_date:
             raise ValueError("Replay label vintage must follow the simulated review decision.")
-        labels = evaluator.outcomes(year, list(wave.keys), "H3")
+        labels = evaluator.outcomes(year, list(wave.keys), purpose)
         hidden = HiddenWave(wave, labels, available)
         provenance.append({"year": year, "decision": wave.decision_date.isoformat(),
                            "label_available": available.isoformat(), "claims": len(labels),

@@ -21,6 +21,7 @@ LOCK = PROJECT / "writer.lock"
 HEARTBEAT = PROJECT / "heartbeat.json"
 SNAPSHOTS = PROJECT / "checkpoints"
 MASTER = PROJECT / "MASTER_PROMPT.md"
+UPGRADE = PROJECT / "V2_MASTER_PROMPT.md"
 LEDGERS = ("TASKS", "DECISIONS", "SESSION_LOG", "ERRORS", "VALIDATION", "BLOCKERS")
 
 
@@ -110,6 +111,11 @@ def validate(state):
         actual = hashlib.file_digest(handle, "sha256").hexdigest()
     if actual != state["spec_sha256"]:
         raise SystemExit("Master specification checksum has changed.")
+    if "upgrade_sha256" in state:
+        with UPGRADE.open("rb") as handle:
+            actual = hashlib.file_digest(handle, "sha256").hexdigest()
+        if actual != state["upgrade_sha256"]:
+            raise SystemExit("Active upgrade specification checksum has changed.")
 
 
 def commit_checkpoint(args):
@@ -138,13 +144,19 @@ def commit_checkpoint(args):
                    "action": args.action, "next": args.next, "checks": args.check,
                    "research": args.research, "blockers": args.blockers, "jobs": args.jobs,
                    "dirty_tree": git("status", "--short"), "task_state": args.task_state}
+    upgrade_line = ""
+    if UPGRADE.is_file():
+        with UPGRADE.open("rb") as handle:
+            current["upgrade_sha256"] = hashlib.file_digest(handle, "sha256").hexdigest()
+        upgrade_line = (f"\n- Active specification `.project/{UPGRADE.name}`, SHA-256 "
+                        f"`{current['upgrade_sha256']}`. First public release target `v1.0.0`.")
     validate(current)
     statuses = Counter(re.findall(r"\| (pending|in progress|implemented|verified|blocked|deferred) \|",
                                  (PROJECT / "TASKS.md").read_text(encoding="utf-8")))
     summary = ", ".join(f"{key} {count}" for key, count in sorted(statuses.items()))
     progress = f"""# Current checkpoint
 
-- Specification `.project/MASTER_PROMPT.md` v2.0, SHA-256 `{spec_hash}`
+- Baseline specification `.project/MASTER_PROMPT.md`, SHA-256 `{spec_hash}`{upgrade_line}
 - Workspace `{ROOT}`, Windows PowerShell. Updated {current['timestamp_utc']}. Revision {revision}.
 - Phase {args.phase}, task {args.task}, {args.task_state}. Branch {current['branch']}, latest commit `{current['commit'] or 'none'}`.
 - Tracked status\n\n```text\n{current['dirty_tree'] or 'clean'}\n```
@@ -161,9 +173,9 @@ def commit_checkpoint(args):
 
 """ + "".join(f"- {key.capitalize()}: {value}\n" for key, value in status.items())
     atomic(PROJECT / "PROGRESS.md", progress)
-    atomic(STATE, dump(current))
     atomic(SNAPSHOTS / f"{revision:06d}.md", progress)
     atomic(SNAPSHOTS / f"{revision:06d}.json", dump(current))
+    atomic(STATE, dump(current))
     for path in sorted(SNAPSHOTS.glob("[0-9]*"))[:-12]:
         path.unlink()
     print(f"Checkpoint {revision} ({args.phase}/{args.task})")

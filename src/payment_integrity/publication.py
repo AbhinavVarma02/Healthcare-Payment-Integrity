@@ -202,6 +202,13 @@ def main():
     else:
         audit = export(Path("web/dist"), Path("release/static"))
         write_json(Path("artifacts/release-audit.json"), audit)
+        extensions = Path("web/src/research-evidence.json")
+        if extensions.is_file():
+            write_json(Path("release/v1.0.0-manifest.json"), {
+                "schema_version": 1, "release": "v1.0.0", "files": audit,
+                "frozen_study_sha256": audit["study.json"],
+                "research_extensions_sha256": sha256(extensions),
+            })
         print(audit)
 
 

@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import time
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Literal, Self
@@ -12,19 +13,26 @@ import pandas as pd
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import Field, model_validator
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from xgboost.core import XGBoostError
 
+from .assistant import Assistant, Question, ToolCall
 from .cohorts import FEATURES, SCHEMA
+from .contracts import Claim, Input
 from .jobs import JobConflict, Jobs
+from .lifecycle import Lifecycle
 from .models import Lookup, feature_frame, line_band
 from .planning import Scenario, choose_count, choose_minutes, plan_summary, review_minutes
 from .protocol import load_freeze
 from .registry import Registry
 from .replay import run as run_replay
 from .storage import read_json
+from .telemetry import Telemetry
+from .workflow import Workflow
+from .workflow_api import workflow_router
+from .workflow_contracts import Role
 
 LOG = logging.getLogger("uvicorn.error").getChild("payment_integrity")
 MAX_BODY = 256_000
@@ -90,24 +98,6 @@ class RequestLimits:
             await self.app(scope, bounded_receive, send)
 
 
-class Input(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=True,
-                             allow_inf_nan=False)
-
-
-class Claim(Input):
-    part: Literal["Part B", "DME"]
-    provider_type: Annotated[str, Field(min_length=1, max_length=160)]
-    visible_lines: Annotated[int, Field(ge=1, le=250)]
-    provider_types: Annotated[int, Field(ge=1, le=50)]
-
-    @model_validator(mode="after")
-    def line_structure(self) -> Self:
-        if self.provider_types > self.visible_lines:
-            raise ValueError("Provider category count cannot exceed the visible line count.")
-        return self
-
-
 class Batch(Input):
     claims: Annotated[list[Claim], Field(min_length=1, max_length=MAX_BATCH)]
 
@@ -142,8 +132,8 @@ class ReplayRequest(Input):
     seeds: Annotated[int, Field(ge=1, le=10)] = 1
 
 
-def predictions(registry, claims):
-    model, curve, meta = registry.active()
+def predictions(registry, claims, *, version=None):
+    model, curve, meta = registry.load(version) if version else registry.active()
     frame = feature_frame(pd.DataFrame([claim.model_dump() for claim in claims], columns=FEATURES))
     raw = model.predict(frame)
     scored = curve.predict(raw)
@@ -169,13 +159,15 @@ def predictions(registry, claims):
         estimates.append({
             "calibrated_risk": float(scored[i]), "feature_schema": SCHEMA, "model": meta["version"],
             "status": meta["status"], "provenance": meta["provenance"], "explanation": explanation,
+            "scorecard_sha256": meta["scorecard_sha256"], "validation_sha256": meta["validation_sha256"],
             "input_support": "fitted category" if known else "rare or unseen category; fallback applies",
             "individual_interval": None,
         })
     return estimates
 
 
-def create_app(workspace: Path | None = None, registry_root: Path | None = None, jobs_root: Path | None = None):
+def create_app(workspace: Path | None = None, registry_root: Path | None = None, jobs_root: Path | None = None,
+               workflow_path: Path | None = None):
     workspace = workspace or Path.cwd()
     registry = Registry(registry_root or workspace / "artifacts" / "registry")
 
@@ -196,7 +188,8 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
         finally:
             jobs.close()
 
-    app = FastAPI(title="Healthcare Payment Integrity", version="1.0", lifespan=lifespan)
+    telemetry = Telemetry()
+    app = FastAPI(title="Healthcare Payment Integrity", version="1.0.0", lifespan=lifespan)
     app.add_middleware(RequestLimits)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
     app.add_middleware(CORSMiddleware, allow_origins=LOCAL_ORIGINS,
@@ -205,12 +198,18 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
     @app.middleware("http")
     async def request_log(request, call_next):
         started = time.perf_counter()
+        trace = uuid.uuid4().hex
         response = await call_next(request)
         route = request.scope.get("route")
-        LOG.info("request method=%s route=%s status=%d ms=%.1f", request.method,
-                 route.path if route else "unmatched", response.status_code,
-                 1000 * (time.perf_counter() - started))
+        path = route.path if route else "unmatched"
+        elapsed = 1000 * (time.perf_counter() - started)
+        size = request.headers.get("content-length", "0")
+        telemetry.observe(path, response.status_code, elapsed, int(size) if len(size) <= 9 and size.isascii()
+                          and size.isdecimal() else 0)
+        LOG.info("request trace=%s method=%s route=%s status=%d ms=%.1f", trace, request.method,
+                 path, response.status_code, elapsed)
         response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Request-ID"] = trace
         return response
 
     @app.exception_handler(RequestValidationError)
@@ -253,6 +252,20 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
             return predictions(registry, claims)
         except ARTIFACT_ERRORS:
             return None
+
+    database = workflow_path or workspace / "artifacts" / "operations" / "review.sqlite3"
+    lifecycle = Lifecycle(database.parent, registry, predictions, ARTIFACT_ERRORS)
+    workflow = Workflow(database, lifecycle.scores)
+    app.include_router(workflow_router(workflow, lifecycle, telemetry, problem))
+    assistant = Assistant(workspace, workflow)
+
+    @app.post("/v1/analyst/tool")
+    def analyst_tool(call: ToolCall, role: Annotated[Role, Query()]):
+        return assistant.evaluate(call, role)
+
+    @app.post("/v1/analyst/question")
+    def analyst_question(question: Question, role: Annotated[Role, Query()]):
+        return assistant.ask(question, role)
 
     @app.post("/v1/score")
     def score(claim: Claim):

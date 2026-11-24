@@ -148,3 +148,13 @@ tbody tr:nth-child(even) { background: #fbfdfd; }
   .card-heading { flex-wrap: wrap; }
   .plot text { font-size: 15px; }
 }
+
+.timeline { list-style: none; padding: 0; margin: 0 0 18px; }
+.timeline li { display: flex; justify-content: space-between; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.timeline li[aria-current="step"] { background: #e5f2ef; color: var(--ink); font-weight: 650; }
+.provenance, .case-actions { margin-top: 14px; }
+.provenance summary { cursor: pointer; font-weight: 650; }
+.provenance p, .quiet { font-size: .86rem; margin: 8px 0; color: var(--muted); }
+.digest { overflow-wrap: anywhere; font-family: ui-monospace, Consolas, monospace; font-size: .82rem; }
+.case-actions h3 { margin: 0 0 8px; }
+.finding .actions { justify-content: flex-start; margin-top: 7px; }

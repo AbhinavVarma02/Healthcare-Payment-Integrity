@@ -1,6 +1,6 @@
 [project]
 name = "healthcare-payment-integrity"
-version = "0.1.0"
+version = "1.0.0"
 description = "Local CERT audit policy research and analyst tooling"
 requires-python = ">=3.13,<3.14"
 dependencies = [

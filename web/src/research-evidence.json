@@ -1,0 +1,4175 @@
+{
+  "adaptive": {
+    "cohorts": [
+      {
+        "claims": 23468,
+        "year": 2022
+      },
+      {
+        "claims": 20247,
+        "year": 2023
+      },
+      {
+        "claims": 27996,
+        "year": 2024
+      },
+      {
+        "claims": 20180,
+        "year": 2025
+      }
+    ],
+    "evidence": {
+      "config_sha256": "826d1c31f7372aad1be18910856c4f2249c6add9574b2f211210a78ec5a67031",
+      "run": "H4",
+      "sha256": "25bc3be3ba10a22b6686b8b486e0675191cda917e360eab61342969492124e66"
+    },
+    "policy_results": [
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0008945751650098606,
+          "value": 0.02149464348762782
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 469.0
+        },
+        "findings": {
+          "mcse": 0.7116443553083317,
+          "mean": 117.17
+        },
+        "minutes": {
+          "mcse": 5.846728931289691,
+          "mean": 10530.58
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "uniform",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.0008945751650098606,
+          "value": 0.02149464348762782
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.001517365363130771,
+          "mean": 0.24982942430703622
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 195.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 10762.0
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "greedy",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 2.2496314020605686e-18,
+          "value": 0.163988580557729
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 7.870162355242804e-18,
+          "mean": 0.4157782515991472
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.00397607343212601,
+          "value": 0.0888455788300343
+        },
+        "coverage": {
+          "mcse": 0.008616625276509296,
+          "mean": 0.985
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 23.0
+        },
+        "findings": {
+          "mcse": 0.14747284904696917,
+          "mean": 193.61
+        },
+        "minutes": {
+          "mcse": 1.6089891954751525,
+          "mean": 10678.86
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-5",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.000315806917895114,
+          "value": 0.1610859117319298
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0003144410427440704,
+          "mean": 0.412814498933902
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0031841269101667317,
+          "value": 0.06654540504367215
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 47.0
+        },
+        "findings": {
+          "mcse": 0.2231692689710331,
+          "mean": 190.17
+        },
+        "minutes": {
+          "mcse": 2.1883013535777818,
+          "mean": 10679.81
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-10",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.0004765734334069907,
+          "value": 0.15383659190887544
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0004758406587868506,
+          "mean": 0.4054797441364606
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0023127506731465378,
+          "value": 0.04543108205079924
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 94.0
+        },
+        "findings": {
+          "mcse": 0.3073766451929135,
+          "mean": 183.22
+        },
+        "minutes": {
+          "mcse": 2.932537190192018,
+          "mean": 10657.07
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-20",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.0006599795898780043,
+          "value": 0.13917872555755118
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.000655387303183184,
+          "mean": 0.39066098081023454
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0031841269101667317,
+          "value": 0.06654540504367215
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 47.0
+        },
+        "findings": {
+          "mcse": 0.2231692689710331,
+          "mean": 190.17
+        },
+        "minutes": {
+          "mcse": 2.1883013535777818,
+          "mean": 10679.81
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "adaptive",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.0004765734334069907,
+          "value": 0.15383659190887544
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0004758406587868506,
+          "mean": 0.4054797441364606
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0031841269101667317,
+          "value": 0.06654540504367215
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 47.0
+        },
+        "findings": {
+          "mcse": 0.2231692689710331,
+          "mean": 190.17
+        },
+        "minutes": {
+          "mcse": 2.1883013535777818,
+          "mean": 10679.81
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "matched",
+        "reviews": 469,
+        "selected_only_rmse": {
+          "mcse": 0.0004765734334069907,
+          "value": 0.15383659190887544
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0004758406587868506,
+          "mean": 0.4054797441364606
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.000625827269148055,
+          "value": 0.011631579133689215
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 1173.0
+        },
+        "findings": {
+          "mcse": 0.9624351443267104,
+          "mean": 296.7
+        },
+        "minutes": {
+          "mcse": 11.116911739919761,
+          "mean": 26373.02
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "uniform",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.0006258272691480551,
+          "value": 0.011631579133689217
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0008204903191191053,
+          "mean": 0.2529411764705882
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 446.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 30368.0
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "greedy",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 9.574818054178599e-19,
+          "value": 0.12843198283752477
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 7.870162355242804e-18,
+          "mean": 0.38022165387894274
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0032180475775439913,
+          "value": 0.05485815423751544
+        },
+        "coverage": {
+          "mcse": 0.017475754920753817,
+          "mean": 0.935
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 59.0
+        },
+        "findings": {
+          "mcse": 0.2402885095862804,
+          "mean": 426.745
+        },
+        "minutes": {
+          "mcse": 1.9342133819812062,
+          "mean": 30062.07
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-5",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.00020548713308369228,
+          "value": 0.1120540762045157
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00020484953928924168,
+          "mean": 0.36380647911338443
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0018045856541815616,
+          "value": 0.03800057631866676
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 117.0
+        },
+        "findings": {
+          "mcse": 0.3299000533890994,
+          "mean": 414.705
+        },
+        "minutes": {
+          "mcse": 2.949319315047211,
+          "mean": 29790.04
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-10",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.00028054860324631053,
+          "value": 0.10182984663144128
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00028124471729675974,
+          "mean": 0.3535421994884911
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0012350766133661345,
+          "value": 0.026536363919568096
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 235.0
+        },
+        "findings": {
+          "mcse": 0.4602359019319719,
+          "mean": 405.22
+        },
+        "minutes": {
+          "mcse": 4.071980430099779,
+          "mean": 29630.69
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-20",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.0003910301829261407,
+          "value": 0.09382981444287897
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0003923579726615276,
+          "mean": 0.34545609548167094
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0018045856541815616,
+          "value": 0.03800057631866676
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 117.0
+        },
+        "findings": {
+          "mcse": 0.3299000533890994,
+          "mean": 414.705
+        },
+        "minutes": {
+          "mcse": 2.949319315047211,
+          "mean": 29790.04
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "adaptive",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.00028054860324631053,
+          "value": 0.10182984663144128
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00028124471729675974,
+          "mean": 0.3535421994884911
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0018045856541815616,
+          "value": 0.03800057631866676
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 117.0
+        },
+        "findings": {
+          "mcse": 0.3299000533890994,
+          "mean": 414.705
+        },
+        "minutes": {
+          "mcse": 2.949319315047211,
+          "mean": 29790.04
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "matched",
+        "reviews": 1173,
+        "selected_only_rmse": {
+          "mcse": 0.00028054860324631053,
+          "value": 0.10182984663144128
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00028124471729675974,
+          "mean": 0.3535421994884911
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0004451922027729611,
+          "value": 0.008519341012296367
+        },
+        "coverage": {
+          "mcse": 0.016161092305986408,
+          "mean": 0.945
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 2347.0
+        },
+        "findings": {
+          "mcse": 1.4172018843144836,
+          "mean": 591.285
+        },
+        "minutes": {
+          "mcse": 14.445870199788786,
+          "mean": 52774.1
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "uniform",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.00044519220277296093,
+          "value": 0.008519341012296367
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0006038354854343773,
+          "mean": 0.2519322539412015
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 926.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 60480.0
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "greedy",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 8.614055169308205e-19,
+          "value": 0.14275655818738464
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.3945462292288028
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001996150031419842,
+          "value": 0.03661894338444177
+        },
+        "coverage": {
+          "mcse": 0.015449707678033374,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 117.0
+        },
+        "findings": {
+          "mcse": 0.33457371813147785,
+          "mean": 905.345
+        },
+        "minutes": {
+          "mcse": 2.752085002193152,
+          "mean": 60430.14
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-5",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.00014243674022121553,
+          "value": 0.13397105532281905
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00014255377849658161,
+          "mean": 0.3857456327226247
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001256540345753375,
+          "value": 0.025076647663627317
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 235.0
+        },
+        "findings": {
+          "mcse": 0.4590524433315253,
+          "mean": 884.93
+        },
+        "minutes": {
+          "mcse": 4.284787628940975,
+          "mean": 60373.28
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-10",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.00019587670324901807,
+          "value": 0.1252880087566997
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001955911560850128,
+          "mean": 0.3770472944184064
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0013031575328994276,
+          "value": 0.019910094620650284
+        },
+        "coverage": {
+          "mcse": 0.017475754920753817,
+          "mean": 0.935
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 469.0
+        },
+        "findings": {
+          "mcse": 0.716719214309763,
+          "mean": 842.42
+        },
+        "minutes": {
+          "mcse": 5.771905444678694,
+          "mean": 59909.42
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-20",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.0003046445923111461,
+          "value": 0.10723170530848652
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0003053767423560985,
+          "mean": 0.3589348103962506
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001256540345753375,
+          "value": 0.025076647663627317
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 235.0
+        },
+        "findings": {
+          "mcse": 0.4590524433315253,
+          "mean": 884.93
+        },
+        "minutes": {
+          "mcse": 4.284787628940975,
+          "mean": 60373.28
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "adaptive",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.00019587670324901807,
+          "value": 0.1252880087566997
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001955911560850128,
+          "mean": 0.3770472944184064
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001256540345753375,
+          "value": 0.025076647663627317
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 235.0
+        },
+        "findings": {
+          "mcse": 0.4590524433315253,
+          "mean": 884.93
+        },
+        "minutes": {
+          "mcse": 4.284787628940975,
+          "mean": 60373.28
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "matched",
+        "reviews": 2347,
+        "selected_only_rmse": {
+          "mcse": 0.00019587670324901807,
+          "value": 0.1252880087566997
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001955911560850128,
+          "mean": 0.3770472944184064
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0002894939050694422,
+          "value": 0.0058322492869452335
+        },
+        "coverage": {
+          "mcse": 0.01747575492075382,
+          "mean": 0.935
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 4694.0
+        },
+        "findings": {
+          "mcse": 1.940001554161943,
+          "mean": 1181.18
+        },
+        "minutes": {
+          "mcse": 19.328248964668294,
+          "mean": 105522.86
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "uniform",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 0.00028949390506944174,
+          "value": 0.005832249286945234
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0004132938973502222,
+          "mean": 0.2516361312313592
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 1667.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 111126.0
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "greedy",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 1.1899156299017877e-18,
+          "value": 0.10334454284865434
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.3551342138900725
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0009676784727215935,
+          "value": 0.02074372345008704
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 235.0
+        },
+        "findings": {
+          "mcse": 0.4266116353748288,
+          "mean": 1651.25
+        },
+        "minutes": {
+          "mcse": 4.108962565762089,
+          "mean": 111366.33
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-5",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 9.0790305629177e-05,
+          "value": 0.09999741483148242
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 9.088445576796607e-05,
+          "mean": 0.3517788666382616
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.000935237881497845,
+          "value": 0.01622923521109914
+        },
+        "coverage": {
+          "mcse": 0.018671317319682114,
+          "mean": 0.925
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 469.0
+        },
+        "findings": {
+          "mcse": 0.6567760454442189,
+          "mean": 1628.52
+        },
+        "minutes": {
+          "mcse": 5.732336163332296,
+          "mean": 111860.79
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-10",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 0.00014005978149376154,
+          "value": 0.0951673142508863
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001399182031197736,
+          "mean": 0.3469365146996165
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0005388590334687248,
+          "value": 0.010914205421801323
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 939.0
+        },
+        "findings": {
+          "mcse": 0.864677518532358,
+          "mean": 1613.565
+        },
+        "minutes": {
+          "mcse": 8.334607845585687,
+          "mean": 112832.59
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "fixed-20",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 0.00018356994996019898,
+          "value": 0.09199756911571949
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.00018420910066731103,
+          "mean": 0.34375053259480187
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.000935237881497845,
+          "value": 0.01622923521109914
+        },
+        "coverage": {
+          "mcse": 0.018671317319682114,
+          "mean": 0.925
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 469.0
+        },
+        "findings": {
+          "mcse": 0.6567760454442189,
+          "mean": 1628.52
+        },
+        "minutes": {
+          "mcse": 5.732336163332296,
+          "mean": 111860.79
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "adaptive",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 0.00014005978149376154,
+          "value": 0.0951673142508863
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001399182031197736,
+          "mean": 0.3469365146996165
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.000935237881497845,
+          "value": 0.01622923521109914
+        },
+        "coverage": {
+          "mcse": 0.018671317319682114,
+          "mean": 0.925
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 469.0
+        },
+        "findings": {
+          "mcse": 0.6567760454442189,
+          "mean": 1628.52
+        },
+        "minutes": {
+          "mcse": 5.732336163332296,
+          "mean": 111860.79
+        },
+        "oracle_rate": 0.2517896710414181,
+        "policy": "matched",
+        "reviews": 4694,
+        "selected_only_rmse": {
+          "mcse": 0.00014005978149376154,
+          "value": 0.0951673142508863
+        },
+        "year": 2022,
+        "yield": {
+          "mcse": 0.0001399182031197736,
+          "mean": 0.3469365146996165
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.001023449929128394,
+          "value": 0.023038240477821506
+        },
+        "coverage": {
+          "mcse": 0.017475754920753817,
+          "mean": 0.935
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 405.0
+        },
+        "findings": {
+          "mcse": 0.6609966587771626,
+          "mean": 94.56
+        },
+        "minutes": {
+          "mcse": 6.165844646194472,
+          "mean": 9043.36
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "uniform",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.001023449929128394,
+          "value": 0.0230382404778215
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0016320905154991671,
+          "mean": 0.23348148148148148
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 143.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 9486.0
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "greedy",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 5.176426183138018e-19,
+          "value": 0.11878010276785402
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.3530864197530864
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.004088187877616842,
+          "value": 0.08700599134232437
+        },
+        "coverage": {
+          "mcse": 0.005,
+          "mean": 0.995
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 20.0
+        },
+        "findings": {
+          "mcse": 0.12541188421962884,
+          "mean": 141.51
+        },
+        "minutes": {
+          "mcse": 1.3737898283443184,
+          "mean": 9387.74
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-5",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.00031036052229291376,
+          "value": 0.11518395228352381
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0003096589733817998,
+          "mean": 0.3494074074074074
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.002876904573244342,
+          "value": 0.060550515225511886
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 41.0
+        },
+        "findings": {
+          "mcse": 0.17915911908063384,
+          "mean": 142.45
+        },
+        "minutes": {
+          "mcse": 1.9877654685070225,
+          "mean": 9272.67
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-10",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.00044403982623307043,
+          "value": 0.11758778275917192
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0004423681952608245,
+          "mean": 0.35172839506172837
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0021879512402546895,
+          "value": 0.04498321058962506
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 81.0
+        },
+        "findings": {
+          "mcse": 0.2613933961248609,
+          "mean": 142.445
+        },
+        "minutes": {
+          "mcse": 2.781087510074695,
+          "mean": 9076.93
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-20",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.0006500114460733146,
+          "value": 0.1177622223348735
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.000645415792900891,
+          "mean": 0.351716049382716
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.002876904573244342,
+          "value": 0.060550515225511886
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 41.0
+        },
+        "findings": {
+          "mcse": 0.17915911908063384,
+          "mean": 142.45
+        },
+        "minutes": {
+          "mcse": 1.9877654685070225,
+          "mean": 9272.67
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "adaptive",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.00044403982623307043,
+          "value": 0.11758778275917192
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0004423681952608245,
+          "mean": 0.35172839506172837
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.002876904573244342,
+          "value": 0.060550515225511886
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 41.0
+        },
+        "findings": {
+          "mcse": 0.17915911908063384,
+          "mean": 142.45
+        },
+        "minutes": {
+          "mcse": 1.9877654685070225,
+          "mean": 9272.67
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "matched",
+        "reviews": 405,
+        "selected_only_rmse": {
+          "mcse": 0.00044403982623307043,
+          "value": 0.11758778275917192
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0004423681952608245,
+          "mean": 0.35172839506172837
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0006381126127844661,
+          "value": 0.013109186806566583
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 1012.0
+        },
+        "findings": {
+          "mcse": 0.935320330476685,
+          "mean": 238.5
+        },
+        "minutes": {
+          "mcse": 8.340055914879503,
+          "mean": 22562.5
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "uniform",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.0006381126127844662,
+          "value": 0.013109186806566586
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0009242295755698468,
+          "mean": 0.23567193675889328
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 333.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 26302.0
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "greedy",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": null,
+          "value": 0.09474506641397709
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.3290513833992095
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.002188540191213631,
+          "value": 0.05440265436782224
+        },
+        "coverage": {
+          "mcse": 0.005000000000000002,
+          "mean": 0.995
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 51.0
+        },
+        "findings": {
+          "mcse": 0.20606385310817843,
+          "mean": 325.9
+        },
+        "minutes": {
+          "mcse": 1.9284121361457383,
+          "mean": 26023.29
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-5",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.00020375002842323733,
+          "value": 0.0877762677223221
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00020362040820966294,
+          "mean": 0.3220355731225296
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0023220427115648763,
+          "value": 0.04298462670625846
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.3217756561089133,
+          "mean": 320.975
+        },
+        "minutes": {
+          "mcse": 2.6696356064745586,
+          "mean": 25754.19
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-10",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.00031839381719946596,
+          "value": 0.08298396400448885
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0003179601344949737,
+          "mean": 0.3171689723320158
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.001401402800102797,
+          "value": 0.027781738286463426
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.4143645616480115,
+          "mean": 312.61
+        },
+        "minutes": {
+          "mcse": 3.598074303494486,
+          "mean": 25612.28
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-20",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.000409159770307017,
+          "value": 0.07482012892711114
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00040945114787352914,
+          "mean": 0.30890316205533597
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0023220427115648763,
+          "value": 0.04298462670625846
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.3217756561089133,
+          "mean": 320.975
+        },
+        "minutes": {
+          "mcse": 2.6696356064745586,
+          "mean": 25754.19
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "adaptive",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.00031839381719946596,
+          "value": 0.08298396400448885
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0003179601344949737,
+          "mean": 0.3171689723320158
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0023220427115648763,
+          "value": 0.04298462670625846
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.3217756561089133,
+          "mean": 320.975
+        },
+        "minutes": {
+          "mcse": 2.6696356064745586,
+          "mean": 25754.19
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "matched",
+        "reviews": 1012,
+        "selected_only_rmse": {
+          "mcse": 0.00031839381719946596,
+          "value": 0.08298396400448885
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0003179601344949737,
+          "mean": 0.3171689723320158
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.00047373793682729565,
+          "value": 0.009528879027962086
+        },
+        "coverage": {
+          "mcse": 0.018086892447072265,
+          "mean": 0.93
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 2025.0
+        },
+        "findings": {
+          "mcse": 1.3677270419592251,
+          "mean": 474.735
+        },
+        "minutes": {
+          "mcse": 11.996289543607654,
+          "mean": 45163.72
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "uniform",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.0004737379368272961,
+          "value": 0.009528879027962085
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0006754207614613458,
+          "mean": 0.234437037037037
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 652.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 52198.0
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "greedy",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 3.5066927449715523e-19,
+          "value": 0.08766899165674294
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.32197530864197527
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0019213444856135394,
+          "value": 0.039321637314559156
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.3109943123459942,
+          "mean": 638.865
+        },
+        "minutes": {
+          "mcse": 2.703861374341941,
+          "mean": 52154.24
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-5",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.00015376415030226778,
+          "value": 0.08121147456343455
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00015357743819555263,
+          "mean": 0.3154888888888889
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001162742748541894,
+          "value": 0.025454608921090933
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 203.0
+        },
+        "findings": {
+          "mcse": 0.40238235273051515,
+          "mean": 633.64
+        },
+        "minutes": {
+          "mcse": 3.6777313714028925,
+          "mean": 52084.29
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-10",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.000199551723068722,
+          "value": 0.07865229132207131
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00019870733468173603,
+          "mean": 0.31290864197530865
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0008609204611000706,
+          "value": 0.01845631153850763
+        },
+        "coverage": {
+          "mcse": 0.016161092305986408,
+          "mean": 0.945
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 405.0
+        },
+        "findings": {
+          "mcse": 0.5756489673997008,
+          "mean": 618.955
+        },
+        "minutes": {
+          "mcse": 5.388525124287292,
+          "mean": 51773.66
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-20",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.0002845146778455736,
+          "value": 0.07146307590696688
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0002842710950121977,
+          "mean": 0.3056567901234568
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001162742748541894,
+          "value": 0.025454608921090933
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 203.0
+        },
+        "findings": {
+          "mcse": 0.40238235273051515,
+          "mean": 633.64
+        },
+        "minutes": {
+          "mcse": 3.6777313714028925,
+          "mean": 52084.29
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "adaptive",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.000199551723068722,
+          "value": 0.07865229132207131
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00019870733468173603,
+          "mean": 0.31290864197530865
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001162742748541894,
+          "value": 0.025454608921090933
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 203.0
+        },
+        "findings": {
+          "mcse": 0.40238235273051515,
+          "mean": 633.64
+        },
+        "minutes": {
+          "mcse": 3.6777313714028925,
+          "mean": 52084.29
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "matched",
+        "reviews": 2025,
+        "selected_only_rmse": {
+          "mcse": 0.000199551723068722,
+          "value": 0.07865229132207131
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00019870733468173603,
+          "mean": 0.31290864197530865
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0002696132920513432,
+          "value": 0.006134134672811174
+        },
+        "coverage": {
+          "mcse": 0.015449707678033374,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 4049.0
+        },
+        "findings": {
+          "mcse": 1.7318909046263966,
+          "mean": 944.235
+        },
+        "minutes": {
+          "mcse": 16.918179912679403,
+          "mean": 90313.95
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "uniform",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.0002696132920513432,
+          "value": 0.006134134672811174
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0004277329969440346,
+          "mean": 0.2332020251914053
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 1251.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 95424.0
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "greedy",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": null,
+          "value": 0.07465885960157917
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.30896517658681155
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0013134388862533915,
+          "value": 0.024886907610053403
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.43732498294005295,
+          "mean": 1250.875
+        },
+        "minutes": {
+          "mcse": 3.404527800993655,
+          "mean": 95671.17
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-5",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.00010801573871106502,
+          "value": 0.07464353988427867
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00010800814594716021,
+          "mean": 0.30893430476660905
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007806095432587256,
+          "value": 0.016137629128656406
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 405.0
+        },
+        "findings": {
+          "mcse": 0.5622598873337156,
+          "mean": 1243.33
+        },
+        "minutes": {
+          "mcse": 5.265093164432208,
+          "mean": 96062.4
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-10",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.00013858007700499826,
+          "value": 0.0727909282175706
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00013886388919084105,
+          "mean": 0.307070881699185
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0005609087579506669,
+          "value": 0.011071110899743284
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 810.0
+        },
+        "findings": {
+          "mcse": 0.7564110412444961,
+          "mean": 1216.725
+        },
+        "minutes": {
+          "mcse": 7.649189532395739,
+          "mean": 96822.7
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "fixed-20",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.0001859619260396184,
+          "value": 0.06624624544148186
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00018681428531600294,
+          "mean": 0.30050012348728083
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007806095432587256,
+          "value": 0.016137629128656406
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 405.0
+        },
+        "findings": {
+          "mcse": 0.5622598873337156,
+          "mean": 1243.33
+        },
+        "minutes": {
+          "mcse": 5.265093164432208,
+          "mean": 96062.4
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "adaptive",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.00013858007700499826,
+          "value": 0.0727909282175706
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00013886388919084105,
+          "mean": 0.307070881699185
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007806095432587256,
+          "value": 0.016137629128656406
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 405.0
+        },
+        "findings": {
+          "mcse": 0.5622598873337156,
+          "mean": 1243.33
+        },
+        "minutes": {
+          "mcse": 5.265093164432208,
+          "mean": 96062.4
+        },
+        "oracle_rate": 0.23430631698523238,
+        "policy": "matched",
+        "reviews": 4049,
+        "selected_only_rmse": {
+          "mcse": 0.00013858007700499826,
+          "value": 0.0727909282175706
+        },
+        "year": 2023,
+        "yield": {
+          "mcse": 0.00013886388919084105,
+          "mean": 0.307070881699185
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0008731826759257768,
+          "value": 0.018348185718434797
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 560.0
+        },
+        "findings": {
+          "mcse": 0.7269233714358744,
+          "mean": 126.93
+        },
+        "minutes": {
+          "mcse": 7.360049568327731,
+          "mean": 12525.62
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "uniform",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0008731826759257766,
+          "value": 0.018348185718434797
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0012980774489926331,
+          "mean": 0.22666071428571427
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 194.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 12944.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "greedy",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 1.5551508767891915e-18,
+          "value": 0.11861031167717835
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.3464285714285715
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.004102293618614884,
+          "value": 0.07289742954587138
+        },
+        "coverage": {
+          "mcse": 0.008616625276509296,
+          "mean": 0.985
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 28.0
+        },
+        "findings": {
+          "mcse": 0.14742300605254205,
+          "mean": 195.245
+        },
+        "minutes": {
+          "mcse": 1.4719895605375937,
+          "mean": 12796.69
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-5",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0002643636967752459,
+          "value": 0.12089058015820463
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0002632553679509682,
+          "mean": 0.34865178571428573
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029019817783055434,
+          "value": 0.05729854220489079
+        },
+        "coverage": {
+          "mcse": 0.015449707678033378,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 56.0
+        },
+        "findings": {
+          "mcse": 0.2311689216823031,
+          "mean": 195.825
+        },
+        "minutes": {
+          "mcse": 2.1410877571738154,
+          "mean": 12659.23
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-10",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0004129147529256784,
+          "value": 0.1220082880518328
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0004128016458612559,
+          "mean": 0.3496875
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.001989307334096643,
+          "value": 0.036616841976452534
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 112.0
+        },
+        "findings": {
+          "mcse": 0.2931270926787757,
+          "mean": 189.785
+        },
+        "minutes": {
+          "mcse": 3.0401388489846193,
+          "mean": 12590.56
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-20",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0005280779202737471,
+          "value": 0.11132867508114491
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0005234412369263854,
+          "mean": 0.33890178571428575
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029019817783055434,
+          "value": 0.05729854220489079
+        },
+        "coverage": {
+          "mcse": 0.015449707678033378,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 56.0
+        },
+        "findings": {
+          "mcse": 0.2311689216823031,
+          "mean": 195.825
+        },
+        "minutes": {
+          "mcse": 2.1410877571738154,
+          "mean": 12659.23
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "adaptive",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0004129147529256784,
+          "value": 0.1220082880518328
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0004128016458612559,
+          "mean": 0.3496875
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029019817783055434,
+          "value": 0.05729854220489079
+        },
+        "coverage": {
+          "mcse": 0.015449707678033378,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 56.0
+        },
+        "findings": {
+          "mcse": 0.2311689216823031,
+          "mean": 195.825
+        },
+        "minutes": {
+          "mcse": 2.1410877571738154,
+          "mean": 12659.23
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "matched",
+        "reviews": 560,
+        "selected_only_rmse": {
+          "mcse": 0.0004129147529256784,
+          "value": 0.1220082880518328
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0004128016458612559,
+          "mean": 0.3496875
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.000552304709709213,
+          "value": 0.011116067864107406
+        },
+        "coverage": {
+          "mcse": 0.015449707678033378,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 1400.0
+        },
+        "findings": {
+          "mcse": 1.1016656530251256,
+          "mean": 319.765
+        },
+        "minutes": {
+          "mcse": 11.0815686533584,
+          "mean": 31262.22
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "uniform",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.0005523047097092132,
+          "value": 0.011116067864107406
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0007869040378750897,
+          "mean": 0.22840357142857143
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 478.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 39302.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "greedy",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 5.411977354225094e-19,
+          "value": 0.11361031167717836
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 7.870162355242804e-18,
+          "mean": 0.3414285714285715
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0024259281878325984,
+          "value": 0.04585080461769808
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 70.0
+        },
+        "findings": {
+          "mcse": 0.23860329558351995,
+          "mean": 463.725
+        },
+        "minutes": {
+          "mcse": 1.9519575279587345,
+          "mean": 38727.15
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-5",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.00017072629640234045,
+          "value": 0.10344182670649736
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00017043092541679992,
+          "mean": 0.3312321428571428
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.001436994952517788,
+          "value": 0.03248437625804022
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 140.0
+        },
+        "findings": {
+          "mcse": 0.3373522382663505,
+          "mean": 446.05
+        },
+        "minutes": {
+          "mcse": 3.3482625810347946,
+          "mean": 37515.28
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-10",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.0002414154335724616,
+          "value": 0.09085249662242792
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00024096588447596474,
+          "mean": 0.31860714285714287
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0010930164462507016,
+          "value": 0.024734136373688688
+        },
+        "coverage": {
+          "mcse": 0.013891177924157587,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 280.0
+        },
+        "findings": {
+          "mcse": 0.5107112736420899,
+          "mean": 417.375
+        },
+        "minutes": {
+          "mcse": 4.583343231297368,
+          "mean": 34859.6
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-20",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.00036467407561134075,
+          "value": 0.07049481930159605
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.000364793766887207,
+          "mean": 0.298125
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.001436994952517788,
+          "value": 0.03248437625804022
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 140.0
+        },
+        "findings": {
+          "mcse": 0.3373522382663505,
+          "mean": 446.05
+        },
+        "minutes": {
+          "mcse": 3.3482625810347946,
+          "mean": 37515.28
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "adaptive",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.0002414154335724616,
+          "value": 0.09085249662242792
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00024096588447596474,
+          "mean": 0.31860714285714287
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.001436994952517788,
+          "value": 0.03248437625804022
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 140.0
+        },
+        "findings": {
+          "mcse": 0.3373522382663505,
+          "mean": 446.05
+        },
+        "minutes": {
+          "mcse": 3.3482625810347946,
+          "mean": 37515.28
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "matched",
+        "reviews": 1400,
+        "selected_only_rmse": {
+          "mcse": 0.0002414154335724616,
+          "value": 0.09085249662242792
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00024096588447596474,
+          "mean": 0.31860714285714287
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.00042406729946841554,
+          "value": 0.007714562441261967
+        },
+        "coverage": {
+          "mcse": 0.014695399751940971,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 2800.0
+        },
+        "findings": {
+          "mcse": 1.5230648814695416,
+          "mean": 640.12
+        },
+        "minutes": {
+          "mcse": 15.008008850218646,
+          "mean": 62559.12
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "uniform",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.00042406729946841554,
+          "value": 0.007714562441261967
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0005439517433819792,
+          "mean": 0.2286142857142857
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 1002.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 76170.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "greedy",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 9.45650130666429e-19,
+          "value": 0.13003888310574982
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.35785714285714293
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001273740427622437,
+          "value": 0.030728459336944312
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 140.0
+        },
+        "findings": {
+          "mcse": 0.33564589350853935,
+          "mean": 991.355
+        },
+        "minutes": {
+          "mcse": 2.8615854620793555,
+          "mean": 76065.88
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-5",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.00011991117029491483,
+          "value": 0.12624842304345724
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00011987353339590689,
+          "mean": 0.35405535714285713
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0010254863495875659,
+          "value": 0.021790804826723992
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 280.0
+        },
+        "findings": {
+          "mcse": 0.47386137001231676,
+          "mean": 974.575
+        },
+        "minutes": {
+          "mcse": 4.211910307949476,
+          "mean": 75570.75
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-10",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.0001698312547432202,
+          "value": 0.12026793774981034
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0001692362035758275,
+          "mean": 0.3480625
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0007525733147516994,
+          "value": 0.015831338819649043
+        },
+        "coverage": {
+          "mcse": 0.013891177924157587,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 560.0
+        },
+        "findings": {
+          "mcse": 0.6829819335883199,
+          "mean": 940.06
+        },
+        "minutes": {
+          "mcse": 5.842934787816253,
+          "mean": 74355.85
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-20",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.00024365064864970327,
+          "value": 0.10797229781387496
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00024392211913868567,
+          "mean": 0.33573571428571425
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0010254863495875659,
+          "value": 0.021790804826723992
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 280.0
+        },
+        "findings": {
+          "mcse": 0.47386137001231676,
+          "mean": 974.575
+        },
+        "minutes": {
+          "mcse": 4.211910307949476,
+          "mean": 75570.75
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "adaptive",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.0001698312547432202,
+          "value": 0.12026793774981034
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0001692362035758275,
+          "mean": 0.3480625
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0010254863495875659,
+          "value": 0.021790804826723992
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 280.0
+        },
+        "findings": {
+          "mcse": 0.47386137001231676,
+          "mean": 974.575
+        },
+        "minutes": {
+          "mcse": 4.211910307949476,
+          "mean": 75570.75
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "matched",
+        "reviews": 2800,
+        "selected_only_rmse": {
+          "mcse": 0.0001698312547432202,
+          "value": 0.12026793774981034
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.0001692362035758275,
+          "mean": 0.3480625
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.00023130419671797505,
+          "value": 0.005156913519479143
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 5599.0
+        },
+        "findings": {
+          "mcse": 2.046215283132404,
+          "mean": 1276.24
+        },
+        "minutes": {
+          "mcse": 20.10018080370693,
+          "mean": 125055.94
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "uniform",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 0.00023130419671797502,
+          "value": 0.005156913519479144
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.000365460847139204,
+          "mean": 0.22794070369708877
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 1729.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 136818.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "greedy",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": null,
+          "value": 0.0809868840242812
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.3088051437756743
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0009451594741356283,
+          "value": 0.020479537012362912
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 280.0
+        },
+        "findings": {
+          "mcse": 0.5012201193489754,
+          "mean": 1716.63
+        },
+        "minutes": {
+          "mcse": 3.6556502009847436,
+          "mean": 137236.59
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-5",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 8.955996884941952e-05,
+          "value": 0.07878768205401744
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 8.951957837988474e-05,
+          "mean": 0.3065958206822647
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007437113671796949,
+          "value": 0.01393569586920372
+        },
+        "coverage": {
+          "mcse": 0.016161092305986408,
+          "mean": 0.945
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 560.0
+        },
+        "findings": {
+          "mcse": 0.67376827876306,
+          "mean": 1710.215
+        },
+        "minutes": {
+          "mcse": 5.92634862627917,
+          "mean": 137728.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-10",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 0.0001202927149454162,
+          "value": 0.07765037863798492
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00012033725285998559,
+          "mean": 0.30545008037149496
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0006056419562131549,
+          "value": 0.010494746074656865
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 1120.0
+        },
+        "findings": {
+          "mcse": 0.9916353048825195,
+          "mean": 1686.265
+        },
+        "minutes": {
+          "mcse": 7.116020428137368,
+          "mean": 138674.22
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "fixed-20",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 0.0001782752728029832,
+          "value": 0.07339680687697514
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00017710935968610813,
+          "mean": 0.301172530809073
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007437113671796949,
+          "value": 0.01393569586920372
+        },
+        "coverage": {
+          "mcse": 0.016161092305986408,
+          "mean": 0.945
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 560.0
+        },
+        "findings": {
+          "mcse": 0.67376827876306,
+          "mean": 1710.215
+        },
+        "minutes": {
+          "mcse": 5.92634862627917,
+          "mean": 137728.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "adaptive",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 0.0001202927149454162,
+          "value": 0.07765037863798492
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00012033725285998559,
+          "mean": 0.30545008037149496
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0007437113671796949,
+          "value": 0.01393569586920372
+        },
+        "coverage": {
+          "mcse": 0.016161092305986408,
+          "mean": 0.945
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 560.0
+        },
+        "findings": {
+          "mcse": 0.67376827876306,
+          "mean": 1710.215
+        },
+        "minutes": {
+          "mcse": 5.92634862627917,
+          "mean": 137728.0
+        },
+        "oracle_rate": 0.22781825975139305,
+        "policy": "matched",
+        "reviews": 5599,
+        "selected_only_rmse": {
+          "mcse": 0.0001202927149454162,
+          "value": 0.07765037863798492
+        },
+        "year": 2024,
+        "yield": {
+          "mcse": 0.00012033725285998559,
+          "mean": 0.30545008037149496
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0009897087699268674,
+          "value": 0.019141654248437712
+        },
+        "coverage": {
+          "mcse": 0.013027801736688053,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 404.0
+        },
+        "findings": {
+          "mcse": 0.5437251698252596,
+          "mean": 81.365
+        },
+        "minutes": {
+          "mcse": 6.390387882314512,
+          "mean": 9039.84
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "uniform",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.0009897087699268674,
+          "value": 0.01914165424843771
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0013458543807555933,
+          "mean": 0.20139851485148516
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 137.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 9436.0
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "greedy",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": null,
+          "value": 0.14014954518246672
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.33910891089108913
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.004458416100290436,
+          "value": 0.0866998164438822
+        },
+        "coverage": {
+          "mcse": 0.0099243368701167,
+          "mean": 0.98
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 20.0
+        },
+        "findings": {
+          "mcse": 0.12521137906450908,
+          "mean": 136.99
+        },
+        "minutes": {
+          "mcse": 1.3265552169881936,
+          "mean": 9437.7
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-5",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.00031150283872861826,
+          "value": 0.1401929837456909
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0003099291561002692,
+          "mean": 0.3390841584158416
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029322283370841642,
+          "value": 0.06345767235160994
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 40.0
+        },
+        "findings": {
+          "mcse": 0.1819599464457845,
+          "mean": 138.535
+        },
+        "minutes": {
+          "mcse": 1.679357229274816,
+          "mean": 9335.11
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-10",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.0004495981697597393,
+          "value": 0.1440891997074217
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00045039590704401984,
+          "mean": 0.34290841584158416
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0018116179972308627,
+          "value": 0.038765692674599075
+        },
+        "coverage": {
+          "mcse": 0.007053278933842965,
+          "mean": 0.99
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 81.0
+        },
+        "findings": {
+          "mcse": 0.22621086796155393,
+          "mean": 140.87
+        },
+        "minutes": {
+          "mcse": 2.7601893460649856,
+          "mean": 9131.36
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-20",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.0005620017881630981,
+          "value": 0.14993695286765066
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0005599278909939446,
+          "mean": 0.34868811881188116
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029322283370841642,
+          "value": 0.06345767235160994
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 40.0
+        },
+        "findings": {
+          "mcse": 0.1819599464457845,
+          "mean": 138.535
+        },
+        "minutes": {
+          "mcse": 1.679357229274816,
+          "mean": 9335.11
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "adaptive",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.0004495981697597393,
+          "value": 0.1440891997074217
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00045039590704401984,
+          "mean": 0.34290841584158416
+        }
+      },
+      {
+        "capacity_percent": 2,
+        "cohort_rmse": {
+          "mcse": 0.0029322283370841642,
+          "value": 0.06345767235160994
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 40.0
+        },
+        "findings": {
+          "mcse": 0.1819599464457845,
+          "mean": 138.535
+        },
+        "minutes": {
+          "mcse": 1.679357229274816,
+          "mean": 9335.11
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "matched",
+        "reviews": 404,
+        "selected_only_rmse": {
+          "mcse": 0.0004495981697597393,
+          "value": 0.1440891997074217
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00045039590704401984,
+          "mean": 0.34290841584158416
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0005610794759880125,
+          "value": 0.012135878157820391
+        },
+        "coverage": {
+          "mcse": 0.015449707678033374,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 1009.0
+        },
+        "findings": {
+          "mcse": 0.868024963168351,
+          "mean": 200.8
+        },
+        "minutes": {
+          "mcse": 9.787214611381843,
+          "mean": 22574.34
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "uniform",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.0005610794759880125,
+          "value": 0.012135878157820391
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0008602824213759672,
+          "mean": 0.19900891972249748
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 341.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 27330.0
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "greedy",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 8.846918244696959e-19,
+          "value": 0.13899900891972247
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 3.935081177621402e-18,
+          "mean": 0.3379583746283448
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0024605089430329253,
+          "value": 0.049439505331631925
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 50.0
+        },
+        "findings": {
+          "mcse": 0.18351536569790602,
+          "mean": 336.41
+        },
+        "minutes": {
+          "mcse": 1.7345440945909683,
+          "mean": 27082.4
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-5",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.00018244527531356108,
+          "value": 0.13447442898173834
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00018187845956184958,
+          "mean": 0.33340931615460856
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0014558983048161736,
+          "value": 0.034371804689924595
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.2574495608501004,
+          "mean": 334.235
+        },
+        "minutes": {
+          "mcse": 2.602174486905424,
+          "mean": 26821.17
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-10",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.00025521084633934075,
+          "value": 0.13234330655892215
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0002551531822102086,
+          "mean": 0.33125371655104063
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0014133511478334755,
+          "value": 0.02794116531023904
+        },
+        "coverage": {
+          "mcse": 0.016834995854681276,
+          "mean": 0.94
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.4166929807436226,
+          "mean": 320.045
+        },
+        "minutes": {
+          "mcse": 3.376000428683675,
+          "mean": 26748.04
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-20",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.00041602064161683157,
+          "value": 0.11837436447694591
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00041297619498872396,
+          "mean": 0.3171902874132805
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0014558983048161736,
+          "value": 0.034371804689924595
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.2574495608501004,
+          "mean": 334.235
+        },
+        "minutes": {
+          "mcse": 2.602174486905424,
+          "mean": 26821.17
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "adaptive",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.00025521084633934075,
+          "value": 0.13234330655892215
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0002551531822102086,
+          "mean": 0.33125371655104063
+        }
+      },
+      {
+        "capacity_percent": 5,
+        "cohort_rmse": {
+          "mcse": 0.0014558983048161736,
+          "value": 0.034371804689924595
+        },
+        "coverage": {
+          "mcse": 0.011067404265948254,
+          "mean": 0.975
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.2574495608501004,
+          "mean": 334.235
+        },
+        "minutes": {
+          "mcse": 2.602174486905424,
+          "mean": 26821.17
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "matched",
+        "reviews": 1009,
+        "selected_only_rmse": {
+          "mcse": 0.00025521084633934075,
+          "value": 0.13234330655892215
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0002551531822102086,
+          "mean": 0.33125371655104063
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0004744760936838049,
+          "value": 0.008695282224521326
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 2018.0
+        },
+        "findings": {
+          "mcse": 1.2430125809427313,
+          "mean": 400.845
+        },
+        "minutes": {
+          "mcse": 12.556583069926301,
+          "mean": 45127.39
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "uniform",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.0004744760936838049,
+          "value": 0.008695282224521326
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0006159626268298964,
+          "mean": 0.19863478691774034
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 635.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 53208.0
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "greedy",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 1.0627668383886496e-18,
+          "value": 0.11570862239841427
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.31466798810703667
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0017805662233501634,
+          "value": 0.03681061065015646
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 101.0
+        },
+        "findings": {
+          "mcse": 0.2905442389273436,
+          "mean": 631.535
+        },
+        "minutes": {
+          "mcse": 2.453818273752768,
+          "mean": 53119.42
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-5",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.0001437300861490889,
+          "value": 0.11400966829645247
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00014397633247142876,
+          "mean": 0.3129509415262636
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001234133068227061,
+          "value": 0.025447416242130334
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.4000990769256835,
+          "mean": 628.435
+        },
+        "minutes": {
+          "mcse": 3.324584532172071,
+          "mean": 53050.02
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-10",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.00019790175630500165,
+          "value": 0.11249017648782919
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0001982651520939958,
+          "mean": 0.3114147670961348
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.0009212817620298029,
+          "value": 0.016921720961048308
+        },
+        "coverage": {
+          "mcse": 0.015449707678033378,
+          "mean": 0.95
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 404.0
+        },
+        "findings": {
+          "mcse": 0.5266074935483795,
+          "mean": 604.685
+        },
+        "minutes": {
+          "mcse": 4.973597375569454,
+          "mean": 52631.05
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-20",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.0002611752944126808,
+          "value": 0.10075359585809626
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0002609551504204061,
+          "mean": 0.2996456888007929
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001234133068227061,
+          "value": 0.025447416242130334
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.4000990769256835,
+          "mean": 628.435
+        },
+        "minutes": {
+          "mcse": 3.324584532172071,
+          "mean": 53050.02
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "adaptive",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.00019790175630500165,
+          "value": 0.11249017648782919
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0001982651520939958,
+          "mean": 0.3114147670961348
+        }
+      },
+      {
+        "capacity_percent": 10,
+        "cohort_rmse": {
+          "mcse": 0.001234133068227061,
+          "value": 0.025447416242130334
+        },
+        "coverage": {
+          "mcse": 0.014695399751940973,
+          "mean": 0.955
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.4000990769256835,
+          "mean": 628.435
+        },
+        "minutes": {
+          "mcse": 3.324584532172071,
+          "mean": 53050.02
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "matched",
+        "reviews": 2018,
+        "selected_only_rmse": {
+          "mcse": 0.00019790175630500165,
+          "value": 0.11249017648782919
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0001982651520939958,
+          "mean": 0.3114147670961348
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0002887477268092715,
+          "value": 0.005490637287623351
+        },
+        "coverage": {
+          "mcse": 0.013891177924157585,
+          "mean": 0.96
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 4036.0
+        },
+        "findings": {
+          "mcse": 1.5677801337364539,
+          "mean": 804.395
+        },
+        "minutes": {
+          "mcse": 16.33449966778857,
+          "mean": 90289.6
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "uniform",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 0.0002887477268092715,
+          "value": 0.005490637287623351
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0003884489925015991,
+          "mean": 0.19930500495540138
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": null,
+          "value": null
+        },
+        "coverage": {
+          "mcse": null,
+          "mean": null
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "findings": {
+          "mcse": 0.0,
+          "mean": 1034.0
+        },
+        "minutes": {
+          "mcse": 0.0,
+          "mean": 96956.0
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "greedy",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 5.371343219994583e-19,
+          "value": 0.057234886025768074
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.2561942517343905
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.001199140756160606,
+          "value": 0.0211987730468092
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 202.0
+        },
+        "findings": {
+          "mcse": 0.37290773105340275,
+          "mean": 1036.795
+        },
+        "minutes": {
+          "mcse": 3.541770771945161,
+          "mean": 97350.31
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-5",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 9.291204032300877e-05,
+          "value": 0.05794206507615568
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 9.23953743938063e-05,
+          "mean": 0.25688676907829533
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0006960904972605898,
+          "value": 0.015373448502870318
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 404.0
+        },
+        "findings": {
+          "mcse": 0.5367844658837198,
+          "mean": 1037.675
+        },
+        "minutes": {
+          "mcse": 4.843051490402871,
+          "mean": 97726.84
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-10",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 0.00013308658408372725,
+          "value": 0.058175702636976634
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00013299912435176388,
+          "mean": 0.2571048067393459
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0005517847300364668,
+          "value": 0.010263484974704093
+        },
+        "coverage": {
+          "mcse": 0.012092607484694706,
+          "mean": 0.97
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 807.0
+        },
+        "findings": {
+          "mcse": 0.6979545672101066,
+          "mean": 1057.405
+        },
+        "minutes": {
+          "mcse": 6.982247086136332,
+          "mean": 98455.63
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "fixed-20",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 0.00017383366681946624,
+          "value": 0.06308113320421117
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00017293225153867858,
+          "mean": 0.2619933102081269
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0006960904972605898,
+          "value": 0.015373448502870318
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 404.0
+        },
+        "findings": {
+          "mcse": 0.5367844658837198,
+          "mean": 1037.675
+        },
+        "minutes": {
+          "mcse": 4.843051490402871,
+          "mean": 97726.84
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "adaptive",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 0.00013308658408372725,
+          "value": 0.058175702636976634
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00013299912435176388,
+          "mean": 0.2571048067393459
+        }
+      },
+      {
+        "capacity_percent": 20,
+        "cohort_rmse": {
+          "mcse": 0.0006960904972605898,
+          "value": 0.015373448502870318
+        },
+        "coverage": {
+          "mcse": 0.013027801736688055,
+          "mean": 0.965
+        },
+        "exploration": {
+          "mcse": 0.0,
+          "mean": 404.0
+        },
+        "findings": {
+          "mcse": 0.5367844658837198,
+          "mean": 1037.675
+        },
+        "minutes": {
+          "mcse": 4.843051490402871,
+          "mean": 97726.84
+        },
+        "oracle_rate": 0.1989593657086224,
+        "policy": "matched",
+        "reviews": 4036,
+        "selected_only_rmse": {
+          "mcse": 0.00013308658408372725,
+          "value": 0.058175702636976634
+        },
+        "year": 2025,
+        "yield": {
+          "mcse": 0.00013299912435176388,
+          "mean": 0.2571048067393459
+        }
+      }
+    ],
+    "primary": {
+      "greedy_yield_retained": 0.9801612903225808,
+      "matched_resource_percent": 10,
+      "matched_rmse_difference": 0.0,
+      "status": "unsupported"
+    },
+    "rows": 22400,
+    "seeds": 200
+  },
+  "assistant": {
+    "critical_failures": 0,
+    "deterministic_passes": 10,
+    "evidence": {
+      "protocol_sha256": "cdf3d686e4b77650c7921bba937c0c74681ef6792816b8ecfa443ca24ff2940d",
+      "run": "H6",
+      "sha256": "517a5f41aef12fdc650e0b650ba45de0298b3f3505d0c4ce02a8aa9187482ea0"
+    },
+    "local_model": "qwen2.5:1.5b",
+    "model_attempts": 7,
+    "model_gate": "failed",
+    "model_matches": 0
+  },
+  "lifecycle": {
+    "cases_per_wave": 500,
+    "evidence": {
+      "config_sha256": "ab66f9b0288db4748c56076f60571853cfa7b76824d1964aaa133f08d60ed76b",
+      "run": "H5",
+      "sha256": "c106886e74249fbf773b4d20347c963a698ab9a96784241770b4287d04c62beb"
+    },
+    "scenarios": 120,
+    "updates": [
+      {
+        "brier": {
+          "mcse": 0.00016101435067245121,
+          "mean": 0.00020671750858534572
+        },
+        "delay": 1,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 3,
+        "rejected": 97,
+        "scenario": "stationary",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "delay": 1,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 0,
+        "rejected": 100,
+        "scenario": "stationary",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 7.770856955320375e-05,
+          "mean": 7.209501437524455e-05
+        },
+        "delay": 2,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 2,
+        "rejected": 78,
+        "scenario": "stationary",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "delay": 2,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 0,
+        "rejected": 80,
+        "scenario": "stationary",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.001753047831650476,
+          "mean": -0.011010679683642811
+        },
+        "delay": 1,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 19,
+        "rejected": 81,
+        "scenario": "prevalence",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.00012231036253322684,
+          "mean": -0.00012231036253322684
+        },
+        "delay": 1,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 1,
+        "rejected": 99,
+        "scenario": "prevalence",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0011973694509800484,
+          "mean": -0.003926843482612409
+        },
+        "delay": 2,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 10,
+        "rejected": 70,
+        "scenario": "prevalence",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0,
+          "mean": 0.0
+        },
+        "delay": 2,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 0,
+        "rejected": 80,
+        "scenario": "prevalence",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0012187969028791005,
+          "mean": -0.0038066372053255047
+        },
+        "delay": 1,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 10,
+        "rejected": 90,
+        "scenario": "subgroup",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.001796315297473617,
+          "mean": -0.004998528356490993
+        },
+        "delay": 1,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 7,
+        "rejected": 93,
+        "scenario": "subgroup",
+        "yield": {
+          "mcse": 0.003332456024900364,
+          "mean": 0.002999999999999997
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0007308467997697522,
+          "mean": -0.001563773834217047
+        },
+        "delay": 2,
+        "mode": "recalibrate",
+        "paired_seeds": 20,
+        "promoted": 5,
+        "rejected": 75,
+        "scenario": "subgroup",
+        "yield": {
+          "mcse": 0.0,
+          "mean": 0.0
+        }
+      },
+      {
+        "brier": {
+          "mcse": 0.0007796911314914097,
+          "mean": -0.0013968012597274583
+        },
+        "delay": 2,
+        "mode": "retrain",
+        "paired_seeds": 20,
+        "promoted": 3,
+        "rejected": 77,
+        "scenario": "subgroup",
+        "yield": {
+          "mcse": 0.0012617865362880888,
+          "mean": 0.0014999999999999985
+        }
+      }
+    ],
+    "waves": 8
+  },
+  "schema_version": 1
+}

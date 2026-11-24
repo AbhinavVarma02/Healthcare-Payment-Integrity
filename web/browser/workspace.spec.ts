@@ -75,7 +75,9 @@ test("local workspace scores, plans, and completes one real replay seed", async 
   await page.getByRole("button", { name: "Start replay" }).click();
   await expect(page.getByText("1/1 seeds completed")).toBeVisible({ timeout: 20_000 });
   await expect(page.getByRole("status").filter({ hasText: "1/1 seeds completed" })).toBeVisible();
-  await expect(page.getByRole("row", { name: /completed.*1\/1.*View run/ })).toBeVisible();
+  const replayId = await page.evaluate(() => sessionStorage.getItem("last-local-replay"));
+  expect(replayId).toMatch(/^[a-f0-9]{32}$/);
+  await expect(page.getByRole("row", { name: new RegExp(`${replayId}.*completed.*1/1.*View run`) })).toBeVisible();
   await page.reload();
   await expect(page.getByText("1/1 seeds completed")).toBeVisible();
   await page.screenshot({ path: "test-results/local-desktop.png", fullPage: true });

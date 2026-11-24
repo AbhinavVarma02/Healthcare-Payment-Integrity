@@ -50,7 +50,9 @@ def audit(require_exact=True):
     if git("ls-files", "--", ".project", "AGENTS.md", "CLAUDE.md", "data", "artifacts", "release"):
         raise ValueError("Local-only project files are tracked.")
     private_checks = {".project/STATE.json", "AGENTS.md", "CLAUDE.md", "data/raw/sample.csv",
-                      "artifacts/registry/sample.json", "release/static/study.json"}
+                      ".project/V2_MASTER_PROMPT.md", ".project/baseline-manifest.json",
+                      "artifacts/registry/sample.json", "artifacts/operations/review.sqlite3",
+                      "release/static/study.json", "release/audited-baseline/index.html"}
     correctly_ignored = set(git("check-ignore", "--", *sorted(private_checks)).decode().splitlines())
     if correctly_ignored != private_checks:
         raise ValueError("A required local-only path lacks an ignore rule.")

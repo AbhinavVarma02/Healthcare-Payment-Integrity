@@ -2,7 +2,7 @@
 
 **Claim review optimization, financial risk and model validation**
 
-A local research platform for prioritizing Medicare Fee-for-Service reviews under an audit budget. It uses 199,052 claim groups from eight CMS CERT public releases, covering Part B and durable medical equipment (DME). Its central experiment replays selective review and delayed feedback using historical outcomes. Analysts can inspect precomputed results in a static workspace or score fictional inputs through a local research API.
+A local research platform for prioritizing Medicare Fee-for-Service reviews under an audit budget. It uses 199,052 claim groups from eight CMS CERT public releases, covering Part B and durable medical equipment (DME). Its central experiment replays selective review and delayed feedback using historical outcomes. The local workspace adds a persisted synthetic review queue, decision receipts, shadow scoring and controlled candidate updates. The static workspace presents reviewed research and a browser-based fictional review exercise.
 
 | Frozen 2025 comparison | Result |
 | --- | --- |
@@ -42,7 +42,7 @@ $env:PYTHONPATH = 'src'
 npm --prefix web run dev
 ```
 
-Open [Local workflows](http://127.0.0.1:5173/#/local). The API is documented on [loopback](http://127.0.0.1:8000/docs). Analyst examples are fictional.
+Open the operations workspace to intake a fictional batch, assign a review, advance the simulated clock and verify the finding history. The scoring and historical replay controls remain available under Local workflows. [Operations](http://127.0.0.1:5173/#/operations) · [Local workflows](http://127.0.0.1:5173/#/local) · [API reference](http://127.0.0.1:8000/docs)
 
 ## How it works
 
@@ -52,8 +52,9 @@ CMS CSVs are acquired with SHA-256 sidecars. DuckDB builds Parquet feature snaps
 | --- | --- |
 | Data and rights | [Feasibility](docs/DATA_FEASIBILITY.md), [Data card](docs/DATA_CARD.md), [Licensing](docs/LICENSING.md) |
 | Research | [Protocol](docs/research_protocol.md), [Development EDA](docs/DEVELOPMENT_EDA.md), [Report](docs/REPORT.md), [Repository audit](docs/AUDIT_REPORT.md), [Sources](docs/REFERENCES.md) |
+| Extended experiments | [Registered protocol](docs/RESEARCH_PROTOCOL_EXTENSIONS.md), [Experiment report](docs/EXPERIMENT_REPORT.md) |
 | Model risk | [Validation and model card](docs/MODEL_VALIDATION.md), [Limitations](docs/LIMITATIONS.md) |
-| Operations | [Architecture and API](docs/ARCHITECTURE.md), [Runbook](docs/REPRODUCIBILITY.md), [Threat model](docs/THREAT_MODEL.md), [Performance](docs/PERFORMANCE.md) |
-| Release | [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md), [Demo](docs/DEMO.md) |
+| Operations | [Architecture and API](docs/ARCHITECTURE.md), [Operations runbook](docs/OPERATIONS_RUNBOOK.md), [Model lifecycle](docs/MODEL_LIFECYCLE.md), [Threat model](docs/THREAT_MODEL.md), [Performance](docs/PERFORMANCE.md) |
+| Release | [v1.0.0 release notes](docs/RELEASE_NOTES.md), [Release audit](docs/RELEASE_AUDIT.md), [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md), [Demo](docs/DEMO.md) |
 
 The original implementation is MIT-licensed. CMS material and third-party components retain their own rights. The local export is in `release/static` after building. External hosting requires separate authorization.

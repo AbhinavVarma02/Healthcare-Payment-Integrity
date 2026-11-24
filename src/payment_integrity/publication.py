@@ -3,12 +3,14 @@
 import argparse
 import re
 import shutil
+from html.parser import HTMLParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from .storage import read_json, sha256, write_json
 
 ASSET = re.compile(r"assets/[A-Za-z0-9_-]+\.(?:js|css)")
+APPROVED_STUDY = "eaf69560201573458508a359471a70d5720226e8e37d75d77b500d10db222b32"
 PRIVATE_PATH = re.compile(r"(^|/)(\.project|\.agents|\.codex|\.venv|data|artifacts|logs|node_modules)(/|$)")
 PRIVATE_TOKENS = (b"BEGIN PRIVATE KEY", b"BEGIN RSA PRIVATE KEY", b"claim_key",
                   b"holdout-exposure/", b"data/raw/", b"development-outcomes.parquet")
@@ -23,6 +25,20 @@ NOT_FOUND = """<!doctype html><html lang="en"><meta charset="utf-8">
 </html>
 """
 WEB_LIBRARIES = ("react", "react-dom", "scheduler", "lucide-react")
+
+
+class EntryPoint(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.assets: set[str] = set()
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in {"script", "link"}:
+            return
+        reference = dict(attrs).get("src" if tag == "script" else "href")
+        if not reference or not reference.startswith("./") or not ASSET.fullmatch(reference[2:]):
+            raise ValueError("Unexpected resource in the static entry-point references.")
+        self.assets.add(reference[2:])
 
 
 def public_model(value):
@@ -122,6 +138,13 @@ def audit_paths(root: Path, *, require_notices=True):
         mandatory.add(notices)
     if not mandatory <= files or not any(path.endswith(".js") for path in files):
         raise ValueError("The expected static export is incomplete.")
+    entry = EntryPoint()
+    entry.feed((root / "index.html").read_text(encoding="utf-8"))
+    entry.close()
+    if entry.assets != {name for name in files if ASSET.fullmatch(name)}:
+        raise ValueError("Static assets differ from the entry-point references.")
+    if (root / "_headers").read_text(encoding="utf-8") != HEADERS:
+        raise ValueError("Static hosting headers differ from the reviewed policy.")
     fingerprints = {}
     for name in sorted(files):
         path = root / name
@@ -134,6 +157,8 @@ def audit_paths(root: Path, *, require_notices=True):
         if require_notices and b"127.0.0.1:8000" in value:
             raise ValueError(f"Local API reference present in the static export: {name}")
         fingerprints[name] = sha256(path)
+    if fingerprints["study.json"] != APPROVED_STUDY:
+        raise ValueError("Static study bytes differ from the reviewed aggregate.")
     study = read_json(root / "study.json")
     if study["schema"] != 1 or study["replay"]["seeds"] != 200:
         raise ValueError("Unsupported or partial study export.")
@@ -204,8 +229,8 @@ def main():
         write_json(Path("artifacts/release-audit.json"), audit)
         extensions = Path("web/src/research-evidence.json")
         if extensions.is_file():
-            write_json(Path("release/v1.0.0-manifest.json"), {
-                "schema_version": 1, "release": "v1.0.0", "files": audit,
+            write_json(Path("release/static-build-manifest.json"), {
+                "schema_version": 1, "release_target": "v1.0.0", "files": audit,
                 "frozen_study_sha256": audit["study.json"],
                 "research_extensions_sha256": sha256(extensions),
             })

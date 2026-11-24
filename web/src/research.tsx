@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, Note, PageHeading, Plot, Select, Status, Table } from "./components";
-import { number, percent } from "./numbers";
+import { number, percent, points } from "./numbers";
 import evidence from "./research-evidence.json";
 
 const policyLabels: Record<string, string> = {
@@ -41,16 +41,16 @@ export function ResearchExtensions() {
       <Plot title="Estimation error and review yield by policy" series={plot}
         rangeX={[0, Math.max(0.02, ...plot.map((row) => row.points[0][0])) * 1.1]}
         rangeY={[0, Math.max(0.4, ...plot.map((row) => row.points[0][1])) * 1.05]}
-        xLabels={(value) => percent(value, 1)} xTitle="Cohort rate RMSE" yTitle="Review yield" />
+        xLabels={(value) => points(value, 1)} xTitle="Cohort rate RMSE" yTitle="Review yield" />
       <Table caption="Adaptive allocation evidence" headings={["Policy", "Reviews", "Yield", "Cohort RMSE", "Coverage", "Exploration", "Review minutes"]}
         rows={rows.map((row) => [policyLabels[row.policy], number(row.reviews), percentValue(row.yield.mean),
-          percentValue(row.cohort_rmse.value), percentValue(row.coverage.mean), number(row.exploration.mean ?? 0),
+          points(row.cohort_rmse.value), percentValue(row.coverage.mean), number(row.exploration.mean ?? 0),
           number(row.minutes.mean ?? 0)])} />
       <details className="provenance"><summary>H4 uncertainty and provenance</summary>
         <p>Monte Carlo standard errors use the paired-seed grid. The interval reports uncertainty for the released cohort rate.</p>
         <Table caption="Adaptive allocation Monte Carlo standard errors" headings={["Policy", "Yield MCSE", "RMSE MCSE", "Selected-only RMSE"]}
           rows={rows.map((row) => [policyLabels[row.policy], percentValue(row.yield.mcse),
-            percentValue(row.cohort_rmse.mcse), percentValue(row.selected_only_rmse.value)])} />
+            points(row.cohort_rmse.mcse), points(row.selected_only_rmse.value)])} />
         <p className="digest">{adaptive.evidence.sha256}</p>
       </details>
     </Card>

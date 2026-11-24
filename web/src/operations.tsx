@@ -22,6 +22,7 @@ type Overview = {
 };
 type Receipt = {
   digest: string; intake_event_digest: string; design_status: string; outcomes: Finding[];
+  history: { seq: number; kind: string; tick: number; digest: string }[];
   receipt: { case_id: string; run_id: string; input_sha256: string; snapshot_sha256: string;
     score: { calibrated_risk: number; model: string; explanation: { method: string };
       shadow?: { status: string; model: string; risk?: number } };
@@ -44,6 +45,8 @@ export function Operations() {
   const [run, setRun] = useState("");
   const [cases, setCases] = useState<Case[]>([]);
   const [selected, setSelected] = useState("");
+  const [queueState, setQueueState] = useState("all");
+  const [queueOrder, setQueueOrder] = useState("case");
   const [receipt, setReceipt] = useState<Receipt>();
   const [trace, setTrace] = useState<Trace>();
   const [lifecycle, setLifecycle] = useState<Lifecycle>();
@@ -59,6 +62,8 @@ export function Operations() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const current = cases.find((item) => item.case_id === selected);
+  const queueRows = cases.filter((item) => queueState === "all" || item.state === queueState)
+    .sort((a, b) => (queueOrder === "state" ? a.state.localeCompare(b.state) : 0) || a.case_id.localeCompare(b.case_id));
   const tick = overview?.tick ?? 0;
 
   async function refresh(nextRun?: string, caseId = "") {
@@ -70,7 +75,10 @@ export function Operations() {
     setOverview(summary);
     setLifecycle(models);
     setRun(active);
-    if (!active) return;
+    if (!active) {
+      setCases([]); setSelected(""); setReceipt(undefined); setTrace(undefined);
+      return;
+    }
     const [queue, events] = await Promise.all([
       localRequest<{ cases: Case[] }>(`${operations}/runs/${active}/cases`),
       localRequest<Trace>(`${operations}/runs/${active}/trace`),
@@ -147,8 +155,8 @@ export function Operations() {
     {error && <p className="error" role="alert">{error}</p>}
     {message && <p className="note" role="status">{message}</p>}
     <div className="kpi-grid">
-      {[["Simulation tick", tick], ["Queued reviews", overview?.states.queued ?? 0],
-        ["Cases with revealed findings", overview?.revealed_cases ?? 0],
+      {[["Simulation tick", overview?.tick ?? "No data"], ["Queued reviews", overview ? overview.states.queued ?? 0 : "No data"],
+        ["Cases with revealed findings", overview?.revealed_cases ?? "No data"],
         ["Event p95", overview?.event_latency.p95_ms == null ? "No data" : `${number(overview.event_latency.p95_ms, 1)} ms`]]
         .map(([label, value]) => <div className="kpi" key={label}><p className="kpi-label">{label}</p><strong>{value}</strong></div>)}
     </div>
@@ -169,16 +177,22 @@ export function Operations() {
       <Card title="Review queue" subtitle="Findings appear when their availability tick is reached">
         {overview?.recent_runs.length ? <div className="filters">
           <Select label="Intake run" value={run} items={options(overview.recent_runs.map((item) => item.run_id))}
-            onChange={(value) => void execute(() => refresh(value))} />
+            onChange={(value) => { setQueueState("all"); void execute(() => refresh(value)); }} />
         </div> : <Empty text="Intake a sample batch to create a queue." />}
-        {cases.length > 0 && <Table caption="Synthetic review queue" headings={["Case", "State", "Finding", "Details"]}
-          rows={cases.map((row) => [row.case_id, row.state, row.finding?.finding ?? "—",
+        {cases.length > 0 && <div className="filters">
+          <Select label="Queue state" value={queueState} items={options(["all", ...new Set(cases.map((item) => item.state))])}
+            onChange={setQueueState} />
+          <Select label="Sort cases" value={queueOrder} items={options(["case", "state"])} onChange={setQueueOrder} />
+        </div>}
+        {queueRows.length > 0 && <Table caption="Synthetic review queue" headings={["Case", "State", "Finding", "Details"]}
+          rows={queueRows.map((row) => [row.case_id, row.state, row.finding?.finding ?? "—",
             <button className={`button ${selected === row.case_id ? "" : "secondary"}`} disabled={busy}
               onClick={() => void execute(async () => {
                 setSelected(row.case_id);
                 setReplacement("");
                 setReceipt(await localRequest<Receipt>(`${operations}/receipts/${row.case_id}`));
               })}>Inspect {row.case_id.split("-").at(-1)}</button>])} />}
+        {cases.length > 0 && !queueRows.length && <Empty text="No cases match this queue state." />}
         {current && <div className="case-actions">
           <h3>{current.case_id}</h3>
           <div className="filters">
@@ -219,9 +233,18 @@ export function Operations() {
               receipt.receipt.score.shadow.risk == null ? receipt.receipt.score.shadow.status : percent(receipt.receipt.score.shadow.risk, 2)}</dd></div>}
             <div><dt>Digest</dt><dd className="digest">{receipt.digest}</dd></div>
           </dl>
+          <button className="button secondary" disabled={busy} onClick={() => void execute(async () => {
+            const integrity = await localRequest<{ sequence: number }>(`${operations}/integrity`);
+            setMessage(`Receipt projection and event chain verified through event ${integrity.sequence}.`);
+          })}>Verify event chain</button>
           {receipt.outcomes.length ? <Table caption="Finding history" headings={["Version", "Finding", "Available tick"]}
             rows={receipt.outcomes.map((item) => [item.version, item.finding, item.available])} />
             : <Empty text="No finding available at this simulation tick." />}
+          {!!receipt.history.length && <details className="provenance">
+            <summary>Case actions</summary>
+            <Table caption="Persisted case actions" headings={["Sequence", "Action", "Tick"]}
+              rows={receipt.history.map((item) => [item.seq, item.kind, item.tick])} />
+          </details>}
         </> : <Empty text="Select a case to inspect its receipt." />}
       </Card>
     </div>

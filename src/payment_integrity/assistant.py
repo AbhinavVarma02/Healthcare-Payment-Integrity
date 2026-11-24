@@ -12,12 +12,12 @@ from pydantic import Field
 
 from .contracts import Input
 from .planning import Scenario
+from .publication import APPROVED_STUDY
 from .workflow_contracts import CaseID
 
 TOOLS = Literal["risk", "policies", "budget", "validation", "drift", "report"]
 MODELS = {"qwen2.5:1.5b"}
 MODEL_LIMIT = threading.BoundedSemaphore(1)
-APPROVED_STUDY = "eaf69560201573458508a359471a70d5720226e8e37d75d77b500d10db222b32"
 QUESTIONS = {
     "explain this case risk": "risk",
     "show the score explanation": "risk",

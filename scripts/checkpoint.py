@@ -22,6 +22,7 @@ HEARTBEAT = PROJECT / "heartbeat.json"
 SNAPSHOTS = PROJECT / "checkpoints"
 MASTER = PROJECT / "MASTER_PROMPT.md"
 UPGRADE = PROJECT / "V2_MASTER_PROMPT.md"
+FINAL = PROJECT / "FINAL_RELEASE_PROMPT.md"
 LEDGERS = ("TASKS", "DECISIONS", "SESSION_LOG", "ERRORS", "VALIDATION", "BLOCKERS")
 
 
@@ -115,7 +116,12 @@ def validate(state):
         with UPGRADE.open("rb") as handle:
             actual = hashlib.file_digest(handle, "sha256").hexdigest()
         if actual != state["upgrade_sha256"]:
-            raise SystemExit("Active upgrade specification checksum has changed.")
+            raise SystemExit("Upgrade specification checksum has changed.")
+    if "final_release_sha256" in state:
+        with FINAL.open("rb") as handle:
+            actual = hashlib.file_digest(handle, "sha256").hexdigest()
+        if actual != state["final_release_sha256"] or state["active_spec"] != f".project/{FINAL.name}":
+            raise SystemExit("Active final release specification or its pointer has changed.")
 
 
 def commit_checkpoint(args):
@@ -148,8 +154,15 @@ def commit_checkpoint(args):
     if UPGRADE.is_file():
         with UPGRADE.open("rb") as handle:
             current["upgrade_sha256"] = hashlib.file_digest(handle, "sha256").hexdigest()
-        upgrade_line = (f"\n- Active specification `.project/{UPGRADE.name}`, SHA-256 "
+        label = "Internal milestone specification" if FINAL.is_file() else "Active specification"
+        upgrade_line = (f"\n- {label} `.project/{UPGRADE.name}`, SHA-256 "
                         f"`{current['upgrade_sha256']}`. First public release target `v1.0.0`.")
+    if FINAL.is_file():
+        current["active_spec"] = f".project/{FINAL.name}"
+        with FINAL.open("rb") as handle:
+            current["final_release_sha256"] = hashlib.file_digest(handle, "sha256").hexdigest()
+        upgrade_line += (f"\n- Active specification `{current['active_spec']}`, SHA-256 "
+                         f"`{current['final_release_sha256']}`.")
     validate(current)
     statuses = Counter(re.findall(r"\| (pending|in progress|implemented|verified|blocked|deferred) \|",
                                  (PROJECT / "TASKS.md").read_text(encoding="utf-8")))

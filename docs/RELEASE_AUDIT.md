@@ -1,32 +1,25 @@
-# Release audit
+# Healthcare Payment Integrity v1.0.0 release audit
 
-## Scope and evidence
+The release is a local research prototype with a static, aggregate-only preview. It preserves the audited `d5bfc82` baseline and extends the closed-loop candidate at `e81e2c6`. The frozen protocol is pinned at `aab39fdc790597c2c476e0f4d79aaf8543e74b09`. The release manifest records exact tree, commit and static output fingerprints. [Requirements traceability](RELEASE_TRACEABILITY.md)
 
-The v1.0.0 release candidate extends the audited commit `d5bfc8238c42cd62f622d41c3eb3445ec85fc1cd`. The frozen protocol remains at `aab39fdc790597c2c476e0f4d79aaf8543e74b09`. H1 remains unsupported, H2 inconclusive and H3 mixed. The original research aggregate SHA-256 is `eaf69560201573458508a359471a70d5720226e8e37d75d77b500d10db222b32`. The preserved local baseline export and its seven file hashes provide the original static reference. [Baseline audit](AUDIT_REPORT.md) · [Historical evidence](EVIDENCE.md)
-
-| Gate | Release evidence |
+| Gate | Evidence and result |
 | --- | --- |
-| Bounded workflow | SQLite transaction recovery, duplicate idempotency, conflicts, capacity, delayed findings, corrections, role checks, rejected event metadata and a persisted review queue. |
-| Decision provenance | Canonical payload, model and policy digests, rational inclusion probabilities, deterministic projection replay and independently retained anchor. Corruption and removed anchored events are detected. |
-| Candidate lifecycle | Actual workflow recalibration, shadow scoring and gate rejection. Separate synthetic fixtures verify stale approval, corrupt shadow, interrupted rollback and recovery to the reference. |
-| H4 adaptive allocation | Full four-cohort retrospective grid, 200 seeds and 22,400 policy records. Adaptive tied its matched fixed rule. An independent rerun reproduced all 200 seed artifacts byte for byte and the aggregate matched apart from elapsed time. Exact enumeration and interval coverage simulation passed. |
-| H5 synthetic learning | Full 120-run grid with paired controls. Recalibration helped under the prespecified prevalence shift and worsened Brier slightly under stationarity. All 20 seed batches reproduced for decisions and statistics after excluding inference timing. |
-| H6 analyst interface | Ten deterministic scenarios passed. The optional installed model timed out on seven requests and missed its gate. Release uses deterministic tools. |
-| Reliability and recovery | Seed 5022 simulated 430 accepted events and ten checks. Restored a SQLite backup and verified its event anchor and model references. |
-| Publication and privacy | Git allowlist, reviewed aggregate projection, content and history checks, synthetic static example, local static-only preview and versioned manifest. |
+| Frozen research | The independent audit rebuilt cohort counts and verified 51,200 replay records. The result matches the prior independent audit byte for byte. The public aggregate totals 199,052 eligible groups and remains pinned to SHA-256 `eaf69560201573458508a359471a70d5720226e8e37d75d77b500d10db222b32`. Baseline inventory matched 60 files, 800 seed comparisons and the seven retained export files. [Research audit](AUDIT_REPORT.md) |
+| H1–H3 findings | H1 failed the practical improvement criteria. H2 remains inconclusive with a paired interval spanning zero. H3 remains mixed, including the more precise uniform reference and the negative full inverse-weight learning result. [Research report](REPORT.md) |
+| H4–H6 extensions | H4 reproduced all 200 historical seed row digests after correcting the inclusive five-point trigger. Separate synthetic stress covered four populations and 5,600 policy results. H5 repeated 120 synthetic scenarios and matched prior decisions and metrics after excluding timing. The 50-case supplemental deterministic analyst suite passed. Optional local model selection missed its gate again. [Experiment report](EXPERIMENT_REPORT.md) |
+| Review and lifecycle | The persisted SQLite queue handles matched intake, idempotence, delayed and corrected findings and integrity-checked decisions. Tests cover rejected and accepted promotion, shadow isolation and rollback with synthetic evidence. An isolated 430-event run restored from backup and verified its model-linked anchor. [Operations and recovery](OPERATIONS_RUNBOOK.md) |
+| Engineering tests | The expanded suites cover 137 Python and 39 frontend instances, with seven scratch-copy faults detected. The initial clean archive exposed a Windows replay-manifest read race. The release uses bounded shared read/write retries and verifies that persistent permission failures still propagate. Package-wide Python coverage remains below the stretch targets. [Test evidence](TEST_EVIDENCE.md) |
+| Product and browser QA | Edge and Firefox each passed all 14 workflows across the static export and local FastAPI/Vite workspace. The three-size route matrix and desktop axe checks passed. Curated screenshots depict the static workflow. [Workspace design](UI_DESIGN.md) |
+| Load and recovery | A bounded local run measured 1.713 s cold readiness, 10.51 ms single-request p95, 40.29 ms batch p95 and 4,871 batch cases/s. The synthetic store restored and verified in 0.050 s. [Performance results](PERFORMANCE.md) |
+| Publication | The static export contains the CSP and 404 configuration, entry point, frozen aggregate, JS/CSS and bundled-library notices. The build verifies the aggregate hash, each referenced asset, reviewed headers and the absence of local API references. The staged source and history use an explicit allowlist. [Publication policy](PUBLICATION_POLICY.md) |
+| Dependencies and cost | npm and the Windows Python locked runtime advisory queries found zero known advisories in the accessed databases. Coverage.py, V8 coverage and axe-core are development tools. Bundled licenses ship in `THIRD_PARTY_NOTICES.txt`. Additional expenditure was $0. [Licensing](LICENSING.md) |
 
-## Performance and dependencies
+## Reproduce the release
 
-The local loopback benchmark used Windows 11, Python 3.13.2, 32 logical cores and 34.05 GB system memory. Cold readiness was 1.71 seconds. The 60 single-case requests had 10.78 ms p95 latency. The 40 requests of 32 cases with four concurrent clients had 23.26 ms p95 and 5,989 cases per second. Process-tree peak RSS was 201.43 MB. The synthetic workflow ended at 195.40 MB process RSS and restored and verified its backup in 0.132 seconds. These measurements characterize the tested hardware and loads. [Benchmark procedure](PERFORMANCE.md) · [Workflow procedure](OPERATIONS_RUNBOOK.md)
+Build the static preview from the reviewed aggregates, then validate two independent source archives with the locked dependency caches. The clean build gate concerns static packaging and fixture verification. The separate frozen-audit and experiment runs assess scientific reproducibility. [Reproduction commands](REPRODUCIBILITY.md)
 
-The locked npm and Windows Python runtime advisory queries returned zero known findings at the time of review. The project used local compute and public advisory queries with $0 additional expenditure. Source rights, the frozen CERT reporting frame, optional local model limits and a future untouched cohort remain documented. External publication requires authorization for the exact target. [Source rights](LICENSING.md) · [Scope limits](LIMITATIONS.md) · [Deployment](DEPLOYMENT.md)
+The local benchmark, fixture inputs and reviewed cohort analyses support engineering and retrospective research claims. Real payer deployment would require representative operational data, prospective and external validation, a privacy and security assessment, and operational testing. The static export has no metered service dependency. External hosting awaits target authorization. [Limitations](LIMITATIONS.md) · [Deployment](DEPLOYMENT.md)
 
-## Verification commands
+## Local release disposition
 
-| Gate | Executed result |
-| --- | --- |
-| `uv sync --offline --locked --python 3.13.2`, `scripts/fixture_smoke.py`, `pytest -q --basetemp .cache/pytest`, Ruff and mypy | Exit 0 in a clean Windows archive. 30 Python tests passed. The upstream Starlette TestClient deprecation warning remains. |
-| `npm --prefix web ci --offline --ignore-scripts`, `npm --prefix web run test`, `npm --prefix web run build` | Exit 0 in the clean archive. Two frontend tests passed. |
-| `npm --prefix web run test:browser` | Exit 0. Five Edge flows passed, including static route reload, mobile layout, local replay, delayed review and correction. |
-| `scripts/audit_release.py`, `payment_integrity.publication check`, `payment_integrity.publication export` | Exit 0. Git and static content checks passed. All seven files reproduced from the clean archive. Export manifest SHA-256 `2bd95090d39cc47b642a272ac6f83945a4ae29cf47cf16543a58329945a2733f`. |
-| `npm audit --json --ignore-scripts`, `pip-audit` over the locked runtime | Exit 0. Zero known advisory findings at evaluation time. |
+The local v1.0.0 candidate met the release gates for the declared research and static demo scope. Two independent locked source archives produced identical SHA-256 fingerprints for all seven export files. The release manifest records the exact integrated source tree, clean-archive proofs, browser report and experimental evidence. The historical baseline export remains independently fingerprinted. External publication is pending target authorization.

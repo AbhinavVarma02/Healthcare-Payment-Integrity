@@ -1,73 +1,111 @@
 import { useState } from "react";
-import { Activity, Database, FlaskConical, Target } from "lucide-react";
+import { ArrowDownToLine, ArrowRight } from "lucide-react";
 import { Card, Empty, Note, PageHeading, Plot, Select, Status, Table } from "./components";
-import type { Series } from "./components";
 import type { Study } from "./contracts";
-import { cents, interval, label, number, percent, scenarioNet } from "./numbers";
+import { cents, interval, label, number, percent, points, scenarioNet } from "./numbers";
 
 const capacities = [1, 2, 5, 10].map((value) => ({ value, text: `${value}% of claims` }));
 const years = (values: { year: number }[]) => values.map(({ year }) => ({ value: year, text: String(year) })).reverse();
 const categories = (values: string[]) => values.map((value) => ({ value, text: label(value) }));
+const benchmarkDesigns = ["greedy", "hybrid-10", "uniform"];
+
+function TradeOff({ study, year, budget, exploration = "hybrid-10" }: {
+  study: Study; year: number; budget: number; exploration?: string;
+}) {
+  const rows = [benchmarkDesigns[0], exploration, benchmarkDesigns[2]].flatMap((strategy) =>
+    study.replay.policies.filter((row) => row.year === year && row.budget_percent === budget &&
+      row.weight === "unweighted" && row.strategy === strategy));
+  return rows.length ? <div className="tradeoff">
+    <div className="trade-head" aria-hidden="true"><span>Strategy</span><span>Mean review yield</span><span>Rate RMSE</span></div>
+    <ul aria-label="Equal-budget review outcomes">{rows.map(({ strategy, metrics: m }) =>
+      <li key={strategy} className={strategy === exploration ? "highlight" : undefined}>
+        <span><strong>{label(strategy)}</strong><small>{strategy === "greedy" ? "Selected-only" : "Design-aware"}</small></span>
+        <span className="bar-cell"><meter className="bar-track" aria-hidden="true" min={0} max={1} value={m.yield_rate.mean ?? 0} />
+          <strong>{percent(m.yield_rate.mean, 2)}</strong></span>
+        <strong>{points(strategy === "greedy" ? m.naive_rmse : m.ht_rmse)}</strong>
+      </li>)}</ul>
+  </div> : <Empty text="No historical policy result for this configuration." />;
+}
 
 export function Overview({ study }: { study: Study }) {
   const latest = study.models.at(-1)!;
   const latestFinance = study.finance.at(-1)!;
   const results = study.replay.conclusions.components;
   const claims = study.cohorts.reduce((n, cohort) => n + cohort.claims, 0);
-  const series: Series[] = [{ name: "Eligible public cohort", points: study.cohorts.map(
-    (cohort) => [cohort.year, cohort.disagreements / cohort.claims],
-  ) }];
+  const firstYear = study.cohorts[0].year;
+  const lastYear = latest.year;
+  const reviews = study.replay.policies.find((row) => row.year === lastYear && row.budget_percent === 5 &&
+    row.strategy === "hybrid-10" && row.weight === "unweighted")?.review_count;
   const metrics = [
-    { title: "Claims in scope", metric: number(claims), detail: "Part B and DME claim groups", Icon: Database },
-    { title: "Study window", metric: `${study.cohorts[0].year}–${latest.year}`, detail: "CMS CERT reporting years", Icon: Activity },
-    { title: "Replay seeds", metric: number(study.replay.seeds), detail: "Completed across four capacities", Icon: FlaskConical },
+    { title: "Claims in scope", metric: number(claims), detail: "Part B and DME claim groups" },
+    { title: "Study window", metric: `${firstYear}–${lastYear}`, detail: "CMS CERT reporting years" },
+    { title: "Replay seeds", metric: number(study.replay.seeds), detail: "Each across four capacities" },
     { title: "Greedy yield retained", metric: percent(results.hybrid_vs_greedy.yield_ratio),
-      detail: `${latest.year} · 10% exploration · 5% budget`, Icon: Target },
+      detail: `${lastYear} · 10% exploration · 5% capacity` },
   ];
   return <>
-    <PageHeading eyebrow="Research workspace" title="Study overview"
-      description="How review selection affects findings, workload, and what can be inferred about a cohort." />
-    <div className="kpi-grid">{metrics.map(({ title, metric, detail, Icon }) => <section className="kpi" key={title}>
-      <div className="kpi-label"><span>{title}</span><Icon size={18} aria-hidden="true" /></div>
-      <strong>{metric}</strong><p>{detail}</p>
-    </section>)}</div>
+    <div className="overview-intro">
+      <PageHeading eyebrow="Medicare fee-for-service · CMS CERT" title="Study overview"
+        description="Prioritize claim reviews within a fixed audit budget. Compare how much each strategy finds and how well it estimates disagreement across the published cohort." />
+      <div className="actions"><a className="button" href="#/planner">Plan an audit <ArrowRight size={16} aria-hidden="true" /></a>
+        <a className="button secondary" href="#/methods">Study methods</a></div>
+    </div>
+    <dl className="metric-band">{metrics.map(({ title, metric, detail }) => <div key={title}>
+      <dt>{title}</dt><dd><strong>{metric}</strong><small>{detail}</small></dd>
+    </div>)}</dl>
     <div className="overview-grid">
-      <Card title="Disagreement by reporting year" subtitle="Share of eligible claim groups with at least one disagreement.">
-        <Plot title="Observed disagreement rate by CMS reporting year" series={series}
-          rangeX={[study.cohorts[0].year, latest.year]} rangeY={[0, 0.4]}
-          xTicks={study.cohorts.map((row) => row.year)} xLabels={String}
-          yTitle="Observed disagreement" xTitle="CMS reporting year" />
+      <Card title="Review yield and estimation error" subtitle={`${lastYear} cohort · ${number(reviews)} reviews per strategy · 5% capacity`}>
+        <TradeOff study={study} year={lastYear} budget={5} />
+        <p className="quiet">Review yield is the share of audited groups with a disagreement. Lower rate RMSE means more precise cohort estimates across replay seeds. Uniform sampling had the lowest RMSE.</p>
+        <a className="text-action" href="#/replay">Inspect the replay and coverage <ArrowRight size={15} aria-hidden="true" /></a>
       </Card>
-      <Card title="Primary results" subtitle={`Reporting year ${latest.year} · frozen protocol`} className="findings-card">
-        <div className="finding"><div><h3>Model comparison</h3><Status value={latest.comparison.status} /></div>
-          <p>Boosted trees fell short of the practical improvement thresholds over the lookup.</p></div>
-        <div className="finding"><div><h3>Financial scenario</h3><Status value={latestFinance.primary.status} /></div>
-          <p>Value ranking changed weighted findings by {percent(latestFinance.primary.relative_weighted_gain)} at matched capacity.</p></div>
-        <div className="finding"><div><h3>Selective-label replay</h3><Status value={study.replay.conclusions.status} /></div>
-          <p>With 10% exploration, the design-aware cohort-rate estimate had {number(100 * results.hybrid_vs_greedy.rmse_improvement, 1)} percentage points lower RMSE than greedy’s selected-only estimate.</p></div>
+      <Card title="Frozen hypothesis results" subtitle={`Reporting year ${latest.year} · protocol ${study.protocol}`} className="findings-card">
+        <div className="finding"><div><h3>H1 · Risk scoring</h3><Status value={latest.comparison.status} /></div>
+          <p>Boosted trees missed the practical thresholds. The hierarchical lookup remains active for research.</p></div>
+        <div className="finding"><div><h3>H2 · Scenario value</h3><Status value={latestFinance.primary.status} /></div>
+          <p>Fictional weighted findings changed {percent(latestFinance.primary.relative_weighted_gain, 2)}. The paired interval spans zero.</p></div>
+        <div className="finding"><div><h3>H3 · Random exploration</h3><Status value={study.replay.conclusions.status} /></div>
+          <p>Hybrid preserved much of greedy yield. Full inverse weighting worsened Brier loss.</p></div>
       </Card>
     </div>
     <Note>CMS suppresses some rows in the public extract. Rates and estimates apply to the eligible published cohort. Financial settings represent fictional scenarios.</Note>
+    <nav className="workflow-links" aria-label="Guided study">
+      <a href="#/planner"><strong>Choose an audit budget</strong><span>Compare reviews, burden and fictional exposure.</span></a>
+      <a href="#/review"><strong>Inspect a decision receipt</strong><span>Follow a fictional review and correction.</span></a>
+      <a href="#/validation"><strong>Review the champion decision</strong><span>See the active model and validation limits.</span></a>
+    </nav>
   </>;
 }
 
 export function Explorer({ study }: { study: Study }) {
   const [part, setPart] = useState("All");
+  const [year, setYear] = useState("all");
+  const cohorts = study.cohorts.filter((row) => year === "all" || row.year === Number(year));
   return <>
     <PageHeading eyebrow="Data explorer" title="Cohort coverage"
       description="Reconciled source rows, eligible claim groups, and public release vintages." />
-    <Card title="Annual source files" subtitle="Latest row-level release in this study is 2025."
-      action={<Select label="Claim part" value={part} onChange={setPart} items={categories(["All", "Part B", "DME"])} />}>
+    <Card title="Annual source files" subtitle={`Latest row-level release in the study is ${study.cohorts.at(-1)!.year}.`}
+      action={<a className="button secondary" href="./study.json" download><ArrowDownToLine size={15} aria-hidden="true" /> Study JSON</a>}>
+      <div className="filters">
+        <Select label="Reporting year" value={year} onChange={setYear} items={[{ value: "all", text: "All years" }, ...years(study.cohorts)]} />
+        <Select label="Claim part" value={part} onChange={setPart} items={categories(["All", "Part B", "DME"])} />
+      </div>
       <Table caption="Cohort counts by reporting year"
         headings={part === "All" ? ["Year", "Source rows", "In-scope rows", "In-scope claims", "Disagreements", "Catalog vintage"]
                                   : ["Year", "Published rows", "Eligible claims", "Missing provider categories", "Catalog vintage"]}
-        rows={study.cohorts.map((row) => {
+        rows={cohorts.map((row) => {
           if (part === "Part B" || part === "DME") {
             const group = row.parts[part];
             return [row.year, number(group.visible_lines), number(group.claims), number(group.missing_provider), row.version];
           }
           return [row.year, number(row.rows), number(row.in_scope_rows), number(row.claims), number(row.disagreements), row.version];
         })} />
+    </Card>
+    <Card title="Disagreement by reporting year" subtitle="Share of eligible claim groups with at least one disagreement, across all parts.">
+      <Plot title="Observed disagreement rate by CMS reporting year" series={[{ name: "Eligible public cohort",
+        points: study.cohorts.map(({ year, disagreements, claims }) => [year, disagreements / claims]) }]}
+        rangeX={[study.cohorts[0].year, study.cohorts.at(-1)!.year]} rangeY={[0, 0.4]}
+        xTicks={study.cohorts.map((row) => row.year)} xLabels={String} yTitle="Observed disagreement" xTitle="CMS reporting year" />
     </Card>
     <Note>Reporting years represent submission windows that end on June 30 of the prior year. Grouping and decisions follow the rows available within each release.</Note>
   </>;
@@ -105,7 +143,17 @@ export function Models({ study }: { study: Study }) {
           number(row.auroc, 3), number(row.brier, 3), percent(row.capacity[budget].precision),
           percent(row.capacity[budget].recall)])} />
     </Card>
-    <Note>Challenger minus lookup average precision was {number(cohort.comparison.average_precision_delta, 4)} with a 97.5% paired interval of {interval(cohort.comparison.intervals.ap, (v) => number(v, 4))}. Reliability plots omit cells below disclosure thresholds.</Note>
+    <Card title="Challenger acceptance criteria" subtitle="Frozen H1 practical thresholds · 2025 primary">
+      <Table caption="Observed challenger change and preregistered thresholds" headings={["Measure", "Observed change", "97.5% paired interval", "Required lower bound"]}
+        rows={[
+          ["Average precision", number(cohort.comparison.average_precision_delta, 5),
+            interval(cohort.comparison.intervals.ap, (v) => number(v, 5)), "Above 0.01"],
+          ["Precision at 5% capacity", points(cohort.comparison.precision_at_5_delta),
+            interval(cohort.comparison.intervals.precision_at_5, points), "Above 2 pp"],
+        ]} />
+      <p className="quiet">Both lower interval bounds must clear their respective thresholds. The lookup remains the research champion.</p>
+    </Card>
+    <Note>Reliability plots omit cells below disclosure thresholds. The paired intervals describe variation within the eligible released cohort.</Note>
   </>;
 }
 
@@ -115,16 +163,23 @@ export function Planner({ study }: { study: Study }) {
   const [exposure, setExposure] = useState(study.finance_primary.exposure);
   const [fraction, setFraction] = useState(study.finance_primary.relevant_percent);
   const [cost, setCost] = useState(study.finance_primary.review_cost_cents);
+  const [exploration, setExploration] = useState("hybrid-10");
   const cohort = study.finance.find((row) => row.year === year)!;
   const chosen = cohort.grid.find((row) => row.budget_percent === budget && row.exposure === exposure &&
     row.relevant_percent === fraction && row.review_cost_cents === cost);
   return <>
     <PageHeading eyebrow="Audit planner" title="Review budget scenarios"
       description="Compare review strategies against the same historical cohort and capacity." />
-    <Card title="Study configuration" subtitle="Precomputed, matched-capacity comparisons">
+    <Card title="Study configuration" subtitle="Matched capacity within each study comparison"
+      action={<button className="button secondary" onClick={() => {
+        setYear(study.finance.at(-1)!.year); setBudget(5); setExploration("hybrid-10");
+        setExposure(study.finance_primary.exposure); setFraction(study.finance_primary.relevant_percent);
+        setCost(study.finance_primary.review_cost_cents);
+      }}>Reset scenario</button>}>
       <div className="filters">
         <Select label="Reporting year" value={year} onChange={(v) => setYear(+v)} items={years(study.finance)} />
         <Select label="Review capacity" value={budget} onChange={(v) => setBudget(+v)} items={capacities} />
+        <Select label="Hybrid exploration" value={exploration} onChange={setExploration} items={categories(["hybrid-5", "hybrid-10", "hybrid-20"])} />
         <Select label="Exposure scenario" value={exposure} onChange={setExposure}
           items={categories(["DME higher", "Part B higher", "Uniform"])} />
         <Select label="Relevant fraction" value={fraction} onChange={(v) => setFraction(+v)}
@@ -133,7 +188,11 @@ export function Planner({ study }: { study: Study }) {
           items={[1500, 3000, 6000].map((value) => ({ value, text: cents(value) }))} />
       </div>
     </Card>
-    <Card title="Strategy comparison" subtitle={`${number(cohort.eligible)} eligible claims scored with ${label(study.selection.scoring).toLowerCase()}`}>
+    <Card title="Review design comparison" subtitle={`${year} cohort · ${budget}% capacity · H3 historical replay`}>
+      <TradeOff study={study} year={year} budget={budget} exploration={exploration} />
+      <a className="text-action" href="#/replay">See interval coverage and learning results <ArrowRight size={15} aria-hidden="true" /></a>
+    </Card>
+    <Card title="Financial scenario comparison" subtitle={`${number(cohort.eligible)} eligible claims · Fictional exposure and costs`}>
       {chosen ? <Table caption="Matched audit budget strategy comparison"
         headings={["Strategy", "Reviewed", "Findings", "Yield", "Nonfindings / finding", "Expected scenario net", "DME share"]}
         rows={Object.entries(chosen.plans).map(([name, plan]) => [label(name), number(plan.reviews),
@@ -174,7 +233,7 @@ export function Replay({ study }: { study: Study }) {
       <Table caption="Replay strategy comparison"
         headings={["Strategy", "Reviews per seed", "Mean yield", "Naive RMSE", "Design-aware RMSE", "95% interval coverage", "Brier"]}
         rows={rows.map((row) => [label(row.strategy), number(row.review_count), percent(row.metrics.yield_rate.mean),
-          percent(row.metrics.naive_rmse), percent(row.metrics.ht_rmse), percent(row.metrics.coverage.mean),
+          points(row.metrics.naive_rmse), points(row.metrics.ht_rmse), percent(row.metrics.coverage.mean),
           number(row.metrics.brier.mean, 4)])} />
     </Card>
     <Card title="Review yield by capacity" subtitle={label(weight)}>
@@ -189,8 +248,8 @@ export function Replay({ study }: { study: Study }) {
           rows={[
             ["Cumulative findings", number(selected.metrics.cumulative_findings.mean, 1), number(selected.metrics.cumulative_findings.mcse, 2)],
             ["Effective sample size", number(selected.metrics.ess.mean, 1), number(selected.metrics.ess.mcse, 2)],
-            ["Design-aware bias", percent(selected.metrics.ht_bias.mean, 2), percent(selected.metrics.ht_bias.mcse, 2)],
-            ["Expected calibration error", percent(selected.metrics.ece.mean, 2), percent(selected.metrics.ece.mcse, 2)],
+            ["Design-aware bias", points(selected.metrics.ht_bias.mean), points(selected.metrics.ht_bias.mcse)],
+            ["Expected calibration error", points(selected.metrics.ece.mean), points(selected.metrics.ece.mcse)],
           ]} /> : <Empty text="This weighting and strategy combination has no measured result." />}
       </Card>
       <Card title="Outcome timeline" subtitle="Public catalog vintage proxies for label availability">

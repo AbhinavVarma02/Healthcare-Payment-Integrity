@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { CircleHelp, Info } from "lucide-react";
 import { number } from "./numbers";
@@ -44,7 +45,7 @@ export function Select({ label, value, items, onChange }: {
 }
 
 export function Table({ headings, rows, caption }: { headings: string[]; rows: ReactNode[][]; caption: string }) {
-  return <div className="table-wrap" tabIndex={0} aria-label={caption}>
+  return <div className="table-wrap" role="region" tabIndex={0} aria-label={caption}>
     <table aria-label={caption}><thead><tr>{headings.map((head) => <th key={head} scope="col">{head}</th>)}</tr></thead>
       <tbody>{rows.map((row, i) => <tr key={i}>{row.map((cell, j) => j === 0
         ? <th key={j} scope="row">{cell}</th> : <td key={j}>{cell}</td>)}</tr>)}</tbody>
@@ -59,6 +60,7 @@ export function Plot({ title, series, rangeX, rangeY, xLabels, xTicks, xTitle, y
   title: string; series: Series[]; rangeX: [number, number]; rangeY: [number, number];
   xLabels?: (x: number) => string; xTicks?: number[]; xTitle?: string; yTitle?: string; diagonal?: boolean;
 }) {
+  const [dataOpen, setDataOpen] = useState(false);
   const left = 51, right = 546, top = 18, bottom = 215;
   const x = (v: number) => left + (v - rangeX[0]) / (rangeX[1] - rangeX[0]) * (right - left);
   const y = (v: number) => bottom - (v - rangeY[0]) / (rangeY[1] - rangeY[0]) * (bottom - top);
@@ -90,5 +92,12 @@ export function Plot({ title, series, rangeX, rangeY, xLabels, xTicks, xTitle, y
       <svg width="14" height="9" aria-hidden="true"><rect width="14" height="3" y="3" fill={colors[i % colors.length]} /></svg>
       {line.name}
     </span>)}</div>
+    <details className="provenance" onToggle={(event) => setDataOpen(event.currentTarget.open)}>
+      <summary>Chart values</summary>
+      {dataOpen && <Table caption={title} headings={["Series", xTitle ?? "X", yTitle ?? "Y"]}
+        rows={series.flatMap((line) => line.points.map(([a, b]) => [
+          line.name, xLabels ? xLabels(a) : `${number(a * 100, 2)}%`, `${number(b * 100, 2)}%`,
+        ]))} />}
+    </details>
   </div>;
 }

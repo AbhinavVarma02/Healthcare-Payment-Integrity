@@ -89,11 +89,14 @@ export async function studyData(signal: AbortSignal): Promise<Study> {
   const endpoint = new URL("./study.json", window.location.href);
   const response = await fetch(endpoint, { signal });
   if (!response.ok) throw new Error("The aggregate study file could not be loaded.");
-  const value: Study = await response.json();
-  if (value.schema !== 1 || !value.cohorts?.length || !value.replay?.timeline?.length) {
+  const value: Partial<Study> | null = await response.json().catch(() => null);
+  if (value?.schema !== 1 || !value.cohorts?.length || !value.models?.length || !value.finance?.length ||
+      !value.finance_primary || !value.selection || !value.split || !value.validation?.cohorts ||
+      !value.replay?.timeline?.length || !value.replay.policies?.length || !value.replay.conclusions?.components ||
+      !Array.isArray(value.ledger)) {
     throw new Error("The aggregate study file uses an unsupported schema.");
   }
-  return value;
+  return value as Study;
 }
 
 export async function localRequest<T>(path: string, data?: unknown): Promise<T> {
@@ -103,7 +106,7 @@ export async function localRequest<T>(path: string, data?: unknown): Promise<T> 
     body: data === undefined ? undefined : JSON.stringify(data),
     signal: AbortSignal.timeout(10_000),
   });
-  const value = await response.json();
-  if (!response.ok) throw new Error(value.error?.message ?? "The local request did not complete.");
+  const value = await response.json().catch(() => null);
+  if (!response.ok || value === null) throw new Error(value?.error?.message ?? "The local request did not complete.");
   return value as T;
 }

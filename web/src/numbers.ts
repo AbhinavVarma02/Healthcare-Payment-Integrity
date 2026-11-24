@@ -3,6 +3,7 @@ import type { Interval, Nullable } from "./contracts";
 export const number = (value: Nullable | undefined, decimals = 0) => value == null ? "Unavailable" :
   new Intl.NumberFormat("en-US", { maximumFractionDigits: decimals, minimumFractionDigits: decimals }).format(value);
 export const percent = (value: Nullable | undefined, decimals = 1) => value == null ? "Unavailable" : `${number(value * 100, decimals)}%`;
+export const points = (value: Nullable | undefined, decimals = 2) => value == null ? "Unavailable" : `${number(value * 100, decimals)} pp`;
 export const cents = (value: Nullable | undefined) => value == null ? "Unavailable" :
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value / 100);
 export const interval = (value: Interval | undefined, formatter = percent) => value?.bounds

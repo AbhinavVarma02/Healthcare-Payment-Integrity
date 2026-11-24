@@ -8,11 +8,19 @@ A local research platform for prioritizing Medicare Fee-for-Service reviews unde
 | --- | --- |
 | H1 · Boosted trees vs hierarchical lookup | The practical improvement criteria were **not supported**. Average precision changed by −0.00497, with a paired 97.5% interval of [−0.00930, 0.00005]. Precision at 5% changed by +0.10 percentage points, interval [−1.69, +2.28]. |
 | H2 · Fictional value ranking vs risk ranking | **Inconclusive.** At 1,009 reviews, value ranking found 320 disagreements versus 365. Scenario-weighted findings rose 1.72%, interval [−2.60%, +7.82%], while nonfinding reviews per finding increased by 0.389, interval [0.178, 0.597]. |
-| H3 · Exploration, design and learning | **Mixed.** At 5% capacity over 200 seeds, the 10% hybrid's design-aware RMSE was 3.89 percentage points versus 16.87 for greedy's selected-only rate. It retained 95.9% of greedy yield. Uniform sampling had lower estimation RMSE than either design-aware alternative. Inverse weighting raised Brier by 0.00390 versus unweighted hybrid learning. |
+| H3 · Exploration, design and learning | **Mixed.** At 5% capacity over 200 seeds, the 10% hybrid retained 95.9% of greedy yield. Rate RMSE was 3.89 percentage points for hybrid design-aware estimation, 16.87 for greedy’s selected-only rate and 1.23 for uniform design-aware estimation. Inverse weighting raised Brier loss by 0.00390 versus unweighted hybrid learning. |
 
 The 2025 denominator is 20,180 eligible public claim groups, including 4,015 with at least one published disagreement. Public suppression limits what the sample represents. Disagreement is a review outcome. Financial values are fictional assumptions. The active lookup scorecard is research-only. [Research report](docs/REPORT.md) · [Evidence ledger](docs/EVIDENCE.md)
 
 ![Verified static analyst workspace overview](docs/images/overview.png)
+
+## Two-minute walkthrough
+
+1. Start in **Overview**. Compare what each review strategy finds with how precisely it estimates disagreement in the released cohort.
+2. Open **Audit planner**. Switch review capacity from 5% to 10%, then vary hybrid exploration. Compare each strategy at the same capacity and reset the scenario.
+3. In **Policy replay**, inspect 95% interval coverage and the uniform reference. The selected-only and design-aware columns use different estimators.
+4. Open **Review simulation**. Assign a fictional case, submit a finding, advance the simulated clock and record a correction. Inspect the receipt’s original inclusion probability.
+5. Finish in **Validation** and **Risk models**. Check the active lookup, the challenger’s paired intervals and the frozen criteria it missed. [Walkthrough and local operations](docs/DEMO.md) · [Planner screenshot](docs/images/planner.png)
 
 ## Start locally on Windows
 
@@ -55,6 +63,6 @@ CMS CSVs are acquired with SHA-256 sidecars. DuckDB builds Parquet feature snaps
 | Extended experiments | [Registered protocol](docs/RESEARCH_PROTOCOL_EXTENSIONS.md), [Experiment report](docs/EXPERIMENT_REPORT.md) |
 | Model risk | [Validation and model card](docs/MODEL_VALIDATION.md), [Limitations](docs/LIMITATIONS.md) |
 | Operations | [Architecture and API](docs/ARCHITECTURE.md), [Operations runbook](docs/OPERATIONS_RUNBOOK.md), [Model lifecycle](docs/MODEL_LIFECYCLE.md), [Threat model](docs/THREAT_MODEL.md), [Performance](docs/PERFORMANCE.md) |
-| Release | [v1.0.0 release notes](docs/RELEASE_NOTES.md), [Release audit](docs/RELEASE_AUDIT.md), [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md), [Demo](docs/DEMO.md) |
+| Release | [v1.0.0 release notes](docs/RELEASE_NOTES.md), [Release audit](docs/RELEASE_AUDIT.md), [Traceability](docs/RELEASE_TRACEABILITY.md), [Tests](docs/TEST_EVIDENCE.md), [Workspace design](docs/UI_DESIGN.md), [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md) |
 
 The original implementation is MIT-licensed. CMS material and third-party components retain their own rights. The local export is in `release/static` after building. External hosting requires separate authorization.

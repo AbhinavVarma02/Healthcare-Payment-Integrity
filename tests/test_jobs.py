@@ -1,10 +1,13 @@
 import threading
 import time
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from payment_integrity import storage
 from payment_integrity.jobs import JobConflict, Jobs
-from payment_integrity.storage import write_json
+from payment_integrity.storage import read_json, write_json
 
 
 def wait_for(jobs, job_id, state):
@@ -78,3 +81,32 @@ def test_shutdown_marks_job_interrupted_for_restart(tmp_path):
     finally:
         jobs.close()
     assert jobs.get(job_id)["status"] == "interrupted"
+
+
+@pytest.mark.parametrize("platform,transient,expected_reads", [
+    ("nt", 2, 3), ("nt", 8, 8), ("posix", 2, 1),
+], ids=["recovers-on-windows", "bounded-on-windows", "immediate-on-posix"])
+def test_job_manifest_read_handles_sharing_violations(tmp_path, monkeypatch, platform, transient, expected_reads):
+    manifest = tmp_path / "job.json"
+    write_json(manifest, {"status": "cancelled"})
+    attempts, delays = 0, []
+    original = Path.read_text
+
+    def read(path, *args, **kwargs):
+        nonlocal attempts
+        if path == manifest:
+            attempts += 1
+            if attempts <= transient:
+                raise PermissionError("Simulated denied read during atomic replacement.")
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", read)
+    monkeypatch.setattr(storage, "os", SimpleNamespace(name=platform))
+    monkeypatch.setattr(storage, "time", SimpleNamespace(sleep=delays.append))
+    if transient < expected_reads:
+        assert read_json(manifest) == {"status": "cancelled"}
+    else:
+        with pytest.raises(PermissionError):
+            read_json(manifest)
+    assert attempts == expected_reads
+    assert delays == [0.01 * attempt for attempt in range(1, expected_reads)]

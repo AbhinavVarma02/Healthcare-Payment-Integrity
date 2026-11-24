@@ -16,6 +16,21 @@ In 2025 the 5% capacity was 1,009 of 20,180 eligible groups. RMSE estimates refe
 
 Adaptive retained 98.02% of greedy yield and tied the matched schedule on estimation error. Uniform had the lowest RMSE among identifiable designs. Greedy's selected-only rate describes reviewed cases. It has zero tail inclusion probability. Hypergeometric intervals report finite-cohort uncertainty when all selected outcomes are available. Review minutes are scenario assumptions. H4's learner and interval method differ from H3's frozen study. [Frozen study](REPORT.md) · [Registered extension protocol](RESEARCH_PROTOCOL_EXTENSIONS.md)
 
+The release corrected floating-point classification at exactly a five-point change in visible DME share. A fresh historical run reproduced the row digest for all 200 seeds, all 22,400 policy records and every summary. The historical shifts stayed on the same side of the trigger.
+
+### Synthetic H4 stress
+
+Four fixed, fictional populations of 1,000 claims each were sampled with 50 reviews per policy across 200 paired seeds per population. The generator fixes draws and case scores before sampling. Reversal changes the outcome relationship while policy inputs use equivalent visible features. Coverage refers to repeated sampling within each fixed synthetic cohort.
+
+| Synthetic population | Adaptive reserve | Adaptive yield | Adaptive RMSE | Fixed 10% RMSE | Uniform RMSE | Adaptive coverage |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Stationary | 10% | 59.44% | 19.93 pp | 19.93 pp | 7.36 pp | 99.5% |
+| Visible mix shift | 20% | 68.14% | 14.33 pp | 21.06 pp | 6.56 pp | 99.5% |
+| Latent rank reversal | 10% | 6.22% | 20.92 pp | 20.92 pp | 6.69 pp | 98.5% |
+| Mix shift and reversal | 20% | 8.51% | 15.19 pp | 20.88 pp | 6.14 pp | 98.5% |
+
+The rule tied fixed 20% when triggered and tied fixed 10% otherwise. Under a visible mix shift alone, its 68.14% yield fell below the 95% greedy-retention floor given greedy's 72.00% yield. Under an isolated rank reversal, the visible-mix trigger missed the change. Uniform had the lowest RMSE in all four scenarios. The machine output records yield and coverage MCSE, interval width, estimator distinction and all 5,600 policy results.
+
 ## H5 · Simulated model updates
 
 The declared grid ran 120 synthetic scenarios across 20 seeds, three drift settings and two feedback delays. Each scenario used eight waves of 500 cases with 100 feedback reviews per wave. The candidate arms made 60 simulated approvals and rejected or failed to fit on 1,020 other eligible attempts. Approval in the study used an in-memory candidate. Separate operational tests exercised serialization, artifact integrity, explicit approval and rollback.
@@ -27,6 +42,8 @@ The isolated operational run trained on 120 mature synthetic findings, calibrate
 ## H6 · Analyst tools
 
 All ten deterministic scenarios passed, including exact integer cents, receipt attribution, access rejection, unavailable evidence and abstention on unsupported actions. The installed Qwen2.5 1.5B model timed out on seven permitted attempts under the eight-second request budget. The six-match gate was unmet. Deterministic fallback supplied allowed answers and zero critical failures were observed across the tested scenarios. The release runs the deterministic interface. [Structured outputs](https://docs.ollama.com/capabilities/structured-outputs) · [Local model card](https://ollama.com/library/qwen2.5:1.5b)
+
+The supplemental release corpus passed 50 of 50 deterministic checks on independently specified cents, frozen evidence, workflow fixtures, abstention, invalid inputs and role controls. The isolated retry of the registered model suite matched zero of seven eligible requests again, with seven deterministic fallbacks. Each eligible request took about eight seconds. Sampled process-tree peak RSS was 1.07 GB and total diagnostic time was 58.0 seconds. The cached model was 986 MB. The loopback API and static build use deterministic mode. [Release test evidence](TEST_EVIDENCE.md)
 
 ## Reproduction
 
@@ -40,6 +57,8 @@ $freeze = git rev-parse aab39fd
 .venv/Scripts/python.exe -m payment_integrity.lifecycle_study --development --output artifacts/lifecycle-dev
 .venv/Scripts/python.exe -m payment_integrity.lifecycle_study --output artifacts/lifecycle-final
 .venv/Scripts/python.exe scripts/evaluate_assistant.py --output artifacts/assistant/deterministic.json
+.venv/Scripts/python.exe scripts/evaluate_release_analyst.py --output artifacts/assistant/release-v1.json
+.venv/Scripts/python.exe scripts/stress_adaptive.py --output artifacts/final-h4-stress.json
 .venv/Scripts/python.exe scripts/evaluate_assistant.py --model qwen2.5:1.5b --output artifacts/assistant/h6.json
 .venv/Scripts/python.exe scripts/project_extensions.py --check
 ```

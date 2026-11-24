@@ -2,7 +2,7 @@ import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity, BarChart3, BookOpenText, ClipboardList, Database, FlaskConical, LayoutDashboard, Menu,
-  ShieldCheck, SlidersHorizontal, Terminal, WalletCards, X,
+  MessageSquareText, ShieldCheck, SlidersHorizontal, Terminal, WalletCards, X,
 } from "lucide-react";
 import { Empty, PageHeading } from "./components";
 import { studyData } from "./contracts";
@@ -10,6 +10,7 @@ import type { Study } from "./contracts";
 import { Explorer, Finance, Methods, Models, Overview, Planner, Replay, Validation } from "./pages";
 import { ResearchExtensions } from "./research";
 import { ReviewPreview } from "./review-preview";
+import { Analyst } from "./analyst";
 import "./styles.css";
 
 const localMode = import.meta.env.DEV;
@@ -30,6 +31,7 @@ const navigation = [
   { key: "validation", text: "Validation", Icon: ShieldCheck, Page: Validation },
   { key: "evidence", text: "Policy and lifecycle lab", Icon: Activity, Page: ResearchExtensions },
   { key: "review", text: "Review simulation", Icon: ClipboardList, Page: ReviewPreview },
+  { key: "analyst", text: "Analyst", Icon: MessageSquareText, Page: Analyst },
   { key: "methods", text: "Methodology", Icon: BookOpenText, Page: Methods },
 ];
 
@@ -44,13 +46,17 @@ function Workspace() {
   const [study, setStudy] = useState<Study>();
   const [status, setStatus] = useState("Loading study…");
   const [attempt, setAttempt] = useState(0);
+  const showLocal = route === "local" && localMode;
+  const showOperations = route === "operations" && localMode;
+  const needsStudy = !showLocal && !showOperations;
   useEffect(() => {
+    if (!needsStudy || study) return;
     const controller = new AbortController();
     studyData(controller.signal).then((value) => {
       setStudy(value); setStatus("");
     }, (failure: Error) => { if (!controller.signal.aborted) setStatus(failure.message); });
     return () => controller.abort();
-  }, [attempt]);
+  }, [attempt, needsStudy, study]);
   useEffect(() => {
     function onNavigate() {
       setRoute(activeRoute());
@@ -62,24 +68,26 @@ function Workspace() {
     return () => window.removeEventListener("hashchange", onNavigate);
   }, []);
   const current = navigation.find((item) => item.key === route);
-  const showLocal = route === "local" && localMode;
-  const showOperations = route === "operations" && localMode;
   const Page = current?.Page;
   return <div className="workspace">
     <a className="skip" href="#main" onClick={(event) => {
       event.preventDefault(); document.getElementById("main")?.focus();
     }}>Skip to content</a>
-    <aside className={`sidebar ${open ? "open" : ""}`}>
+    <aside className={`sidebar ${open ? "open" : ""}`} onKeyDown={(event) => {
+      if (open && event.key === "Escape") {
+        setOpen(false);
+        document.getElementById("nav-toggle")?.focus();
+      }
+    }}>
       <a className="identity" href="#/overview">
         <span className="mark"><Activity size={24} aria-hidden="true" /></span>
         <span>Healthcare<br /><strong>Payment Integrity</strong></span>
       </a>
-      <button className="nav-toggle" aria-expanded={open} aria-controls="navigation"
+      <button id="nav-toggle" className="nav-toggle" aria-expanded={open} aria-controls="navigation"
         aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen(!open)}>
         {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
       </button>
       <nav id="navigation" className="navigation" aria-label="Workspace">
-        <p>ANALYST WORKSPACE</p>
         {navigation.map(({ key, text, Icon }) => <a href={`#/${key}`} key={key}
           onClick={() => setOpen(false)} aria-current={route === key ? "page" : undefined}>
           <Icon size={18} aria-hidden="true" /><span>{text}</span>
@@ -89,11 +97,11 @@ function Workspace() {
         {localMode && <a href="#/operations" onClick={() => setOpen(false)}
           aria-current={showOperations ? "page" : undefined}><ClipboardList size={18} aria-hidden="true" /><span>Operations</span></a>}
       </nav>
-      <div className="side-note"><span className="mode-light" />{localMode ? "Local mode" : "Static study"}<span>CMS CERT · Research use</span></div>
+      <div className="side-note">Release v1.0.0<span>CMS CERT · Research use</span></div>
     </aside>
     <div className="surface">
       <header className="topbar"><span>{current?.text ?? (showLocal ? "Local workflows" : showOperations ? "Operations" : "Workspace")}</span>
-        <span className="source-label"><span className="mode-light" />{localMode ? "Local research" : "Precomputed results"}</span>
+        <span className="source-label"><span className="mode-light" />{localMode ? "Local workspace" : "Static study"}</span>
       </header>
       <main id="main" tabIndex={-1}>
         {showOperations && Operations ? <Suspense fallback={<p role="status">Loading operations…</p>}>

@@ -39,7 +39,7 @@ def project_csv(path: Path, year: int, include_outcomes: bool):
     quarantine = []
     with path.open(encoding="utf-8-sig", newline="") as stream:
         reader = csv.reader(stream, strict=True)
-        if tuple(next(reader)) != HEADER:
+        if tuple(next(reader, ())) != HEADER:
             raise ValueError(f"{year}: unrecognized source schema")
         for row_number, row in enumerate(reader, 2):
             counts["rows"] += 1
@@ -162,6 +162,8 @@ def build_year(raw: Path, root: Path, sources: dict, year: int, rebuild: bool = 
 def feature_snapshot(root: Path, year: int) -> tuple[pd.DataFrame, dict]:
     folder = partition(root, year)
     manifest = read_json(folder / "manifest.json")
+    if manifest.get("reporting_year") != year:
+        raise ValueError(f"Feature snapshot reporting year differs from {folder.name}.")
     frame = read_parquet(check_partition(folder, manifest, "features"))
     if tuple(frame.columns) != ("claim_key", *FEATURES) or not frame["claim_key"].is_unique:
         raise ValueError(f"Unexpected feature columns or duplicate claim key in {folder.name}.")
@@ -173,6 +175,8 @@ def development_outcomes(root: Path, year: int) -> pd.DataFrame:
         raise ValueError("This interface provides development outcomes only.")
     folder = partition(root, year)
     manifest = read_json(folder / "manifest.json")
+    if manifest.get("reporting_year") != year:
+        raise ValueError(f"Outcome snapshot reporting year differs from {folder.name}.")
     frame = read_parquet(check_partition(folder, manifest, "development-outcomes"))
     if (tuple(frame.columns) != ("claim_key", "disagreement") or not frame["claim_key"].is_unique
             or not frame["disagreement"].dropna().isin((0, 1)).all()):

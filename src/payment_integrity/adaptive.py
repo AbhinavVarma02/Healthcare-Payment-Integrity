@@ -3,7 +3,7 @@
 import argparse
 import time
 from functools import lru_cache
-from math import sqrt
+from math import isclose, sqrt
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +24,10 @@ SEEDS = 200
 
 
 def adaptive_share(dme_share, prior_share):
-    return 20 if prior_share is not None and abs(dme_share - prior_share) >= 0.05 else 10
+    if prior_share is None:
+        return 10
+    difference = abs(dme_share - prior_share)
+    return 20 if difference > 0.05 or isclose(difference, 0.05, rel_tol=0, abs_tol=1e-12) else 10
 
 
 @lru_cache(maxsize=16_384)

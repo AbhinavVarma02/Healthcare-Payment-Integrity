@@ -15,6 +15,14 @@ npm --prefix web ci --ignore-scripts
 npm --prefix web run test
 ```
 
+For line and branch evidence use the locked coverage tools.
+
+```powershell
+.venv/Scripts/python.exe -m coverage run --branch --source=payment_integrity -m pytest -q --basetemp .cache/pytest
+.venv/Scripts/python.exe -m coverage json -o artifacts/python-coverage.json
+npm --prefix web run test:coverage
+```
+
 The fixture smoke uses generated fictional rows and never opens CMS data. For the reference experiment use the full ID of the frozen commit. The commands preserve interrupted seed checkpoints. Run from a clean checkout or use fresh local output roots for a new evidence series.
 
 ```powershell
@@ -56,6 +64,13 @@ npm --prefix web run build
 .venv/Scripts/python.exe scripts/serve_static.py
 ```
 
-For browser verification, run the loopback API, Vite dev server and static server on ports 8000, 5173 and 4173, then use `npm --prefix web run test:browser`. The configuration uses installed Microsoft Edge. If your Windows sandbox blocks loopback socket creation, run those commands in an approved local shell. Screenshot outputs live in ignored browser test results.
+For browser verification, run the loopback API, Vite dev server and static server on ports 8000, 5173 and 4173, then use `npm --prefix web run test:browser` with system Edge. For Firefox, set `PLAYWRIGHT_BROWSERS_PATH` to a project-local absolute cache directory and run `node web/node_modules/@playwright/test/cli.js install firefox`. From the web directory use `node node_modules/@playwright/test/cli.js test --project=firefox`. Screenshot outputs live in ignored browser test results. Windows sandbox restrictions may require approved local loopback execution.
 
 An offline clean archive can run the fixture and build gates with a populated uv and npm cache. The tracked historical and extension aggregates are sufficient for the static build. Reproducing H4–H6 uses the audited data or local reference registry as described in the experiment report. The receipt verifier can check a SQLite backup against a separate anchor and the retained model versions. [Extended experiments](EXPERIMENT_REPORT.md) · [Operations runbook](OPERATIONS_RUNBOOK.md)
+
+```powershell
+scripts/verify_clean_release.ps1 -Label release-a -Ref HEAD
+scripts/verify_clean_release.ps1 -Label release-b -Ref HEAD
+```
+
+Use new archive labels for repeat runs. Each archive installs the locked dependencies offline from the existing caches, runs the fixture/test/coverage gates and produces its own static fingerprint file. The two fingerprints must match the root export. This gate covers deterministic static packaging. Raw acquisition and research recomputation have separate evidence.

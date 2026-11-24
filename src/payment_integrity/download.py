@@ -48,8 +48,8 @@ def fetch(url: str, path: Path, kind: str, refresh: bool = False) -> dict:
                     raise ValueError("The resource did not return a CSV header.")
         else:
             read_json(pending)
-        record = dict(url=url, sha256=sha256(pending), bytes=size, exit_code=result.returncode,
-                      retrieved_utc=datetime.now(UTC).isoformat(timespec="seconds"))
+        record = {"url": url, "sha256": sha256(pending), "bytes": size, "exit_code": result.returncode,
+                      "retrieved_utc": datetime.now(UTC).isoformat(timespec="seconds")}
         pending.replace(path)
         write_json(manifest, record)
         return record

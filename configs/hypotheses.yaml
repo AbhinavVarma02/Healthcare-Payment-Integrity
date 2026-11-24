@@ -1,0 +1,21 @@
+# Frozen definitions. Runtime settings and source checksums are in protocol.json.
+protocol: cert-v1
+hypotheses:
+  H1:
+    primary_year: 2025
+    comparison: development-selected ML minus hierarchical beta-binomial lookup
+    metrics: [average_precision, precision_at_5_percent]
+    minimally_meaningful_absolute_differences: [0.01, 0.02]
+    interval: paired claim bootstrap, two two-sided 97.5% intervals
+  H2:
+    primary_year: 2025
+    comparison: fictional-weight rank minus risk-only rank at matched 5% claim capacity
+    metrics: [scenario_weighted_findings_per_review, nonfinding_reviews_per_finding]
+    minimally_meaningful_relative_weighted_gain: 0.05
+    maximum_increase_in_nonfinding_reviews_per_finding: 0.5
+    interval: paired claim bootstrap, two two-sided 97.5% intervals
+  H3:
+    primary_year: 2025
+    comparison: 10% exploration versus greedy, stratified SRS versus uniform, IPW versus unweighted
+    metrics: [design_bias, rate_rmse, interval_coverage, yield, brier]
+    rule: apply the prespecified component criteria in research_protocol.md

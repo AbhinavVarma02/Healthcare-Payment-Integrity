@@ -1,0 +1,83 @@
+{
+  "bootstrap_replicates": 400,
+  "budget_percent": [
+    1,
+    2,
+    5,
+    10
+  ],
+  "calibration": 2022,
+  "development": 2023,
+  "exploration_percent": [
+    5,
+    10,
+    20
+  ],
+  "holdout": [
+    2024,
+    2025
+  ],
+  "id": "cert-v1",
+  "primary_year": 2025,
+  "replay_seeds": 200,
+  "replay_warm_start": [
+    2018,
+    2019,
+    2020
+  ],
+  "replay_years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "scenario": {
+    "exposures_cents": {
+      "DME higher": [
+        10000,
+        25000
+      ],
+      "Part B higher": [
+        25000,
+        10000
+      ],
+      "Uniform": [
+        10000,
+        10000
+      ]
+    },
+    "primary": {
+      "exposure": "DME higher",
+      "relevant_percent": 35,
+      "review_cost_cents": 3000
+    },
+    "relevant_percent": [
+      15,
+      35,
+      60
+    ],
+    "review_costs_cents": [
+      1500,
+      3000,
+      6000
+    ]
+  },
+  "schema": "cert-claim-v1",
+  "seed": 37301,
+  "source_sha256": {
+    "2018": "b657a2d040bcd4d5d4206cdf5e142075967854e2d5224901de1c4b60feb317ef",
+    "2019": "c81594fb6dd4304956a5485a6b25a67be62b9efdb8514f4a1ef6ac65b589dc08",
+    "2020": "0e1d78cbf51b1f0159740b3027788fc078220f13d9a19a926f04bc2a1e8dd32e",
+    "2021": "b7240467e9c55a2b8c09ce6d22fff828a232695ad7eab42bf1d751b184464c7f",
+    "2022": "4ec9d14cba884e51c2944f885178418c4c14f8d815616ee293465fded655a719",
+    "2023": "8c4306a0d4781dfa23656593ed3f2b7578c54c74b841f2551214ad0d9a6198bd",
+    "2024": "10c41511696a693ab8e6003f506509f34479f8d9caab5a6f3fd565ee74d1473a",
+    "2025": "df6996cdbe3ac5e5ad1a052b1f8a08bdea9685887e8beb9773baa66d12e61972"
+  },
+  "train": [
+    2018,
+    2019,
+    2020,
+    2021
+  ]
+}

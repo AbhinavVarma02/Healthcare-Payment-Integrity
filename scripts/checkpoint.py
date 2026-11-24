@@ -50,13 +50,13 @@ def read(path):
 
 
 def git(*args):
-    result = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+    result = subprocess.run(["git", *args], check=False, cwd=ROOT, capture_output=True, text=True)
     return result.stdout.strip() if result.returncode == 0 else None
 
 
 def lock(owner, minutes):
-    metadata = dict(owner=owner, pid=os.getpid(), host=socket.gethostname(),
-                    workspace=str(ROOT), created=utc())
+    metadata = {"owner": owner, "pid": os.getpid(), "host": socket.gethostname(),
+                    "workspace": str(ROOT), "created": utc()}
     with LOCK.open("x", encoding="utf-8") as handle:
         handle.write(dump(metadata))
         handle.flush()
@@ -65,7 +65,7 @@ def lock(owner, minutes):
     print(f"Acquired writer lease ({owner})", flush=True)
     try:
         while time.monotonic() < end:
-            atomic(HEARTBEAT, dump(dict(owner=owner, heartbeat=utc())))
+            atomic(HEARTBEAT, dump({"owner": owner, "heartbeat": utc()}))
             if (PROJECT / f"stop-{owner}").exists():
                 break
             time.sleep(2)
@@ -110,8 +110,8 @@ def commit_checkpoint(args):
     with MASTER.open("rb") as handle:
         spec_hash = hashlib.file_digest(handle, "sha256").hexdigest()
     revision = previous["revision"] + 1 if previous else 1
-    status = dict(research="Incomplete", implementation="Incomplete", validation="Incomplete",
-                  publication="Unverified", deployment="Undeployed")
+    status = {"research": "Incomplete", "implementation": "Incomplete", "validation": "Incomplete",
+                  "publication": "Unverified", "deployment": "Undeployed"}
     if previous:
         status.update(previous["status"])
     for update in args.status:
@@ -119,13 +119,13 @@ def commit_checkpoint(args):
         if key not in status:
             raise SystemExit(f"Unrecognized status key: {key}")
         status[key] = value
-    current = dict(schema_version=1, revision=revision, phase=args.phase, task=args.task,
-                   spec_version="2.0", spec_sha256=spec_hash, timestamp_utc=utc(),
-                   branch=git("branch", "--show-current"), commit=git("rev-parse", "HEAD"),
-                   run_ids=args.run or (previous["run_ids"] if previous else []), status=status,
-                   action=args.action, next=args.next, checks=args.check,
-                   research=args.research, blockers=args.blockers, jobs=args.jobs,
-                   dirty_tree=git("status", "--short"), task_state=args.task_state)
+    current = {"schema_version": 1, "revision": revision, "phase": args.phase, "task": args.task,
+                   "spec_version": "2.0", "spec_sha256": spec_hash, "timestamp_utc": utc(),
+                   "branch": git("branch", "--show-current"), "commit": git("rev-parse", "HEAD"),
+                   "run_ids": args.run or (previous["run_ids"] if previous else []), "status": status,
+                   "action": args.action, "next": args.next, "checks": args.check,
+                   "research": args.research, "blockers": args.blockers, "jobs": args.jobs,
+                   "dirty_tree": git("status", "--short"), "task_state": args.task_state}
     validate(current)
     statuses = Counter(re.findall(r"\| (pending|in progress|implemented|verified|blocked|deferred) \|",
                                  (PROJECT / "TASKS.md").read_text(encoding="utf-8")))

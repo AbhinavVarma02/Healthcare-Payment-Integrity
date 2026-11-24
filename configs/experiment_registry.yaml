@@ -1,0 +1,14 @@
+protocol: cert-v1
+experiments:
+  - id: dev-model-select
+    data: [2018, 2019, 2020, 2021, 2022, 2023]
+    purpose: fit on 2018–2021, calibrate on 2022, select ML and scorecard on 2023
+  - id: H1-holdout
+    data: [2024, 2025]
+    purpose: score the fixed candidates and baseline, produce paired intervals
+  - id: H2-holdout
+    data: [2024, 2025]
+    purpose: compare matched review capacity and fictional value sensitivity
+  - id: H3-sequential
+    data: [2022, 2023, 2024, 2025]
+    purpose: compare six conditional designs and three learning rules, with delayed availability

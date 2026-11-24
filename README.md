@@ -22,6 +22,7 @@ Prerequisites are PowerShell, Git, Python 3.13, uv and Node 24. From the reposit
 $env:UV_CACHE_DIR = '.cache/uv'
 uv sync --locked
 $env:PYTHONPATH = 'src'
+New-Item -ItemType Directory -Force .cache | Out-Null
 .venv/Scripts/python.exe -m pytest -q --basetemp .cache/pytest
 npm --prefix web ci --ignore-scripts
 npm --prefix web run build

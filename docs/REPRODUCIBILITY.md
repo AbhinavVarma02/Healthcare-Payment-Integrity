@@ -7,6 +7,7 @@ $env:UV_CACHE_DIR = '.cache/uv'
 uv sync --locked
 $env:PYTHONPATH = 'src'
 .venv/Scripts/python.exe scripts/fixture_smoke.py
+New-Item -ItemType Directory -Force .cache | Out-Null
 .venv/Scripts/python.exe -m pytest -q --basetemp .cache/pytest
 .venv/Scripts/ruff.exe check src scripts tests
 .venv/Scripts/mypy.exe --ignore-missing-imports --explicit-package-bases src/payment_integrity scripts

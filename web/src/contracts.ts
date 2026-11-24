@@ -76,7 +76,8 @@ export type Score = {
   explanation: { method: string; case_raw_risk: number; part_raw_risk?: number; provider_raw_risk?: number };
 };
 export type LocalPlan = {
-  summary: { reviews: number; expected_scenario_net_cents: number; minutes: number; unused_capacity: number };
+  summary: { reviews: number; expected_scenario_net_cents: number; minutes: number; unused_capacity: number;
+             unused_minutes?: number };
   model: string; selected_input_positions: number[]; exploration_count: number; scope: string;
 };
 export type Job = {

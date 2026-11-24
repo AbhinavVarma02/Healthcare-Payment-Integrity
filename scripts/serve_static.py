@@ -21,7 +21,7 @@ class StaticHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
         translated = Path(self.translate_path(self.path))
-        if not translated.is_relative_to(self.root) or translated.name == "_headers":
+        if not translated.resolve().is_relative_to(self.root) or translated.name == "_headers":
             return self.not_found()
         if translated.is_dir() and translated != self.root:
             return self.not_found()

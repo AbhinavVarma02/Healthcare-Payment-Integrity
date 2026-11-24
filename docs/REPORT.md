@@ -36,7 +36,7 @@ The simulation used four replay waves with 23,468, 20,247, 27,996 and 20,180 eli
 | Uniform | 20.00% | 1.23 pp | 1.23 pp | 95.0% | 0.16729 |
 | Score-stratified | 22.06% | 2.48 pp | 1.39 pp | 93.5% | 0.16711 |
 
-The hybrid preserved 95.9% of greedy’s yield and produced a lower error rate estimate RMSE. Its effective sample size averaged 110.7 despite 1,009 reviews. Score stratification did not improve RMSE over uniform, though it increased mean findings at the same budget. Full IPW under the 10% hybrid increased Brier by 0.00390 (95% paired Monte Carlo interval [0.00353, 0.00427]); clipped weights achieved Brier 0.16672. Conditional sampling math was checked against exact finite toy enumerations. Interval coverage describes repeated simulated selections on fixed cohorts. It does not measure out-of-frame uncertainty. This is mixed support for H3.
+The 10% hybrid preserved 95.9% of greedy’s yield. Its design-aware estimate was 12.98 percentage points lower in RMSE than greedy’s selected-only rate. Greedy has zero inclusion probability outside the reviewed group. At the same capacity, uniform had lower design-aware RMSE than the hybrid or score stratification. Hybrid effective sample size averaged 110.7 despite 1,009 reviews. Full IPW under the 10% hybrid increased Brier by 0.00390 (95% paired Monte Carlo interval [0.00353, 0.00427]). Clipped weights achieved Brier 0.16672. Interval coverage describes repeated simulated selections on fixed released cohorts. This is mixed support for H3. [Reproduction and exploratory interval checks](AUDIT_REPORT.md)
 
 ## Interpretation
 

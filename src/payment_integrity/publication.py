@@ -47,13 +47,18 @@ def collect(workspace: Path):
     study = root / "study"
     h1, h2, h3 = (read_json(path) for path in
                   (study / "h1.json", study / "h2.json", root / "replay" / "h3.json"))
-    if (not h1["complete"] or not h3["complete"] or len(h2["cohorts"]) != len(h1["cohorts"])
+    if (not h1["complete"] or not h3["complete"] or h2["source_h1_sha256"] != sha256(study / "h1.json")
+            or [row["year"] for row in h2["cohorts"]] != [row["year"] for row in h1["cohorts"]]
             or len({item["freeze_sha256"] for item in (h1, h2, h3)}) != 1):
         raise ValueError("Only completed, protocol-matched research can be exported.")
     eda = read_json(root / "eda.json")
     dev = read_json(study / "development.json")
     governance = read_json(study / "governance.json")
     validation = read_json(root / "registry" / governance["active"] / "validation.json")
+    expected = {"h1": sha256(study / "h1.json"), "h2": sha256(study / "h2.json"),
+                "h3": sha256(root / "replay" / "h3.json")}
+    if validation["evidence"] != expected or dev["freeze_sha256"] != h1["freeze_sha256"]:
+        raise ValueError("Governance or development evidence differs from the exported study.")
     rows = []
     for cohort in eda["cohorts"]:
         result = {
@@ -106,7 +111,11 @@ def collect(workspace: Path):
 
 
 def audit_paths(root: Path, *, require_notices=True):
-    files = {file.relative_to(root).as_posix() for file in root.rglob("*") if file.is_file()}
+    entries = list(root.rglob("*"))
+    if (root.is_symlink() or root.is_junction()
+            or any(path.is_symlink() or path.is_junction() for path in entries)):
+        raise ValueError("Static export contains a filesystem link.")
+    files = {file.relative_to(root).as_posix() for file in entries if file.is_file()}
     mandatory = {"index.html", "404.html", "study.json", "_headers"}
     notices = "THIRD_PARTY_NOTICES.txt"
     if require_notices:
@@ -134,6 +143,8 @@ def audit_paths(root: Path, *, require_notices=True):
 
 
 def export(build: Path, root: Path):
+    if sha256(build / "study.json") != sha256(build.parent / "public" / "study.json"):
+        raise ValueError("The build aggregate differs from the reviewed source file.")
     if root.exists() and any(root.iterdir()):
         previous = audit_paths(root, require_notices=False)
     else:
@@ -147,7 +158,7 @@ def export(build: Path, root: Path):
             shutil.copyfile(build / name, stage / name)
         for asset in (build / "assets").iterdir():
             name = f"assets/{asset.name}"
-            if not asset.is_file() or not ASSET.fullmatch(name):
+            if not asset.is_file() or asset.is_symlink() or not ASSET.fullmatch(name):
                 raise ValueError(f"Unexpected build artifact: {name}")
             shutil.copyfile(asset, stage / name)
         (stage / "_headers").write_text(HEADERS, encoding="utf-8")

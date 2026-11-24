@@ -38,7 +38,16 @@ def test_endpoints_enforce_schema_and_preserve_scoring_parity(tmp_path: Path):
         assert client.post("/v1/score", content=b"x" * (MAX_BODY + 1)).status_code == 413
         assert client.get("/v1/validation/fixture").json()["scope"] == "synthetic"
         assert client.get("/v1/runs/missing").status_code == 404
+        assert client.get("/v1/runs").json() == {"runs": []}
+        assert client.get("/v1/runs?limit=500").status_code == 422
+        denied = client.post("/v1/score", json=row, headers={"origin": "https://example.invalid"})
+        assert denied.status_code == 403 and denied.json()["error"]["code"] == "origin_denied"
+        allowed = client.post("/v1/score", json=row, headers={"origin": "http://127.0.0.1:5173"})
+        assert allowed.json() == single.json()
         plan = client.post("/v1/audit-plan", json={"claims": [row, row], "capacity": 1})
         assert plan.status_code == 200
         assert plan.json()["selected_input_positions"] == [0]
+        time_plan = client.post("/v1/audit-plan", json={"claims": [row], "capacity": 0,
+                                                    "strategy": "time", "minute_budget": 15})
+        assert time_plan.json()["summary"]["unused_minutes"] == 15
         assert client.get("/health", headers={"host": "unexpected.invalid"}).status_code == 400

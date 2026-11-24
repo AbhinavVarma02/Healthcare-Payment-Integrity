@@ -3,13 +3,14 @@
 import argparse
 from pathlib import Path
 
-from .cohorts import feature_snapshot, read_parquet
+from .cohorts import feature_snapshot
 from .model_io import load_scorecard
 from .models import ML, feature_frame
 from .monitoring import assess, development_thresholds, profile
 from .protocol import Freeze, load_freeze, verify_vintage
 from .registry import Registry
 from .storage import read_json, sha256, write_json
+from .study import verified_predictions
 
 
 def run(workspace: Path, freeze: Freeze, study: Path, replay: Path, destination: Path):
@@ -19,7 +20,9 @@ def run(workspace: Path, freeze: Freeze, study: Path, replay: Path, destination:
     h3 = read_json(replay / "h3.json")
     if any(item["freeze_sha256"] != freeze.sha256 for item in (dev, h1, h2, h3)):
         raise ValueError("Study evidence does not match the requested protocol.")
-    if not h1["complete"] or not h3["complete"] or len(h2["cohorts"]) != len(freeze.config["holdout"]):
+    if (not h1["complete"] or not h3["complete"] or h2["source_h1_sha256"] != sha256(study / "h1.json")
+            or [row["year"] for row in h1["cohorts"]] != freeze.config["holdout"]
+            or [row["year"] for row in h2["cohorts"]] != freeze.config["holdout"]):
         raise ValueError("Governance requires completed H1–H3 core studies.")
     registry = Registry(destination)
     selection = dev["selection"]
@@ -41,8 +44,9 @@ def run(workspace: Path, freeze: Freeze, study: Path, replay: Path, destination:
         baseline = reference[freeze.config["calibration"]]
         thresholds = development_thresholds(baseline, reference[freeze.config["development"]])
         monitors = []
-        for year in freeze.config["holdout"]:
-            rows = read_parquet(study / f"predictions-{year}.parquet")
+        for cohort in h1["cohorts"]:
+            year = cohort["year"]
+            rows = verified_predictions(study, cohort)
             features = feature_frame(rows)
             scores = curve.predict(model.predict(features))
             current = profile(features, scores, providers)

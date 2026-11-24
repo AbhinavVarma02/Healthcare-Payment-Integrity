@@ -8,7 +8,7 @@ A local research platform for prioritizing Medicare Fee-for-Service reviews unde
 | --- | --- |
 | H1 · Boosted trees vs hierarchical lookup | The practical improvement criteria were **not supported**. Average precision changed by −0.00497, with a paired 97.5% interval of [−0.00930, 0.00005]. Precision at 5% changed by +0.10 percentage points, interval [−1.69, +2.28]. |
 | H2 · Fictional value ranking vs risk ranking | **Inconclusive.** At 1,009 reviews, value ranking found 320 disagreements versus 365. Scenario-weighted findings rose 1.72%, interval [−2.60%, +7.82%], while nonfinding reviews per finding increased by 0.389, interval [0.178, 0.597]. |
-| H3 · Exploration, design and learning | **Mixed.** At 5% capacity over 200 seeds, 10% exploration reduced cohort-rate RMSE from 16.87 to 3.89 percentage points and retained 95.9% of greedy yield. Uniform sampling had lower RMSE than the score-stratified design. Inverse weighting raised Brier by 0.00390 versus unweighted hybrid learning. |
+| H3 · Exploration, design and learning | **Mixed.** At 5% capacity over 200 seeds, the 10% hybrid's design-aware RMSE was 3.89 percentage points versus 16.87 for greedy's selected-only rate. It retained 95.9% of greedy yield. Uniform sampling had lower estimation RMSE than either design-aware alternative. Inverse weighting raised Brier by 0.00390 versus unweighted hybrid learning. |
 
 The 2025 denominator is 20,180 eligible public claim groups, including 4,015 with at least one published disagreement. Public suppression limits what the sample represents. Disagreement is a review outcome. Financial values are fictional assumptions. The active lookup scorecard is research-only. [Research report](docs/REPORT.md) · [Evidence ledger](docs/EVIDENCE.md)
 
@@ -51,7 +51,7 @@ CMS CSVs are acquired with SHA-256 sidecars. DuckDB builds Parquet feature snaps
 | Area | Documentation |
 | --- | --- |
 | Data and rights | [Feasibility](docs/DATA_FEASIBILITY.md), [Data card](docs/DATA_CARD.md), [Licensing](docs/LICENSING.md) |
-| Research | [Protocol](docs/research_protocol.md), [Development EDA](docs/DEVELOPMENT_EDA.md), [Report](docs/REPORT.md), [Sources](docs/REFERENCES.md) |
+| Research | [Protocol](docs/research_protocol.md), [Development EDA](docs/DEVELOPMENT_EDA.md), [Report](docs/REPORT.md), [Repository audit](docs/AUDIT_REPORT.md), [Sources](docs/REFERENCES.md) |
 | Model risk | [Validation and model card](docs/MODEL_VALIDATION.md), [Limitations](docs/LIMITATIONS.md) |
 | Operations | [Architecture and API](docs/ARCHITECTURE.md), [Runbook](docs/REPRODUCIBILITY.md), [Threat model](docs/THREAT_MODEL.md), [Performance](docs/PERFORMANCE.md) |
 | Release | [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md), [Demo](docs/DEMO.md) |

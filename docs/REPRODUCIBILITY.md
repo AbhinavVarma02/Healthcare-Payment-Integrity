@@ -30,7 +30,22 @@ $freeze = git rev-parse aab39fd
 .venv/Scripts/python.exe scripts/benchmark.py
 ```
 
-Each module provides `--help`. Stop on a nonzero exit. If a CMS file is revised or a cached download fails verification, inspect the provenance. `--refresh` retrieves a fresh copy without changing pinned study digests. An updated source requires a new protocol decision. `cohorts --rebuild` recreates the partitions while keeping holdout outcomes sealed from the ingestion reader. On replay restart, use the same exact freeze and output directory. Completed seeds are reloaded only after verifying the selection archive digest. Use a new directory for partial previews.
+Each module provides `--help`. Stop on a nonzero exit. If a CMS file is revised or a cached download fails verification, inspect the provenance. Use `download --refresh --root data/raw-review` to inspect a fresh copy while retaining the pinned source. An updated source requires a new protocol decision. `cohorts --rebuild` recreates the partitions while keeping holdout outcomes sealed from the ingestion reader. On replay restart, use the same exact freeze and output directory. Completed seeds are reloaded only after verifying the selection archive digest. Use a new directory for partial previews.
+
+Preserve any existing confirmatory series by using an alternate directory for each rerun. Original H1 runs predating prediction-file digests are still retained as historical evidence. Run `study evaluate` under the current code in the alternate study directory before using it for H2 or governance.
+
+```powershell
+$study = 'artifacts/audit/verified-study'
+$replay = 'artifacts/audit/verified-replay'
+.venv/Scripts/python.exe -m payment_integrity.study select --freeze $freeze --output $study
+.venv/Scripts/python.exe -m payment_integrity.study evaluate --freeze $freeze --output $study
+.venv/Scripts/python.exe -m payment_integrity.finance --freeze $freeze --output $study
+.venv/Scripts/python.exe -m payment_integrity.replay --freeze $freeze --output $replay
+.venv/Scripts/python.exe -m payment_integrity.governance --freeze $freeze --study $study --replay $replay --registry artifacts/audit/verified-registry
+.venv/Scripts/python.exe scripts/audit_research.py --freeze $freeze --replay $replay
+```
+
+The last command independently reconstructs cohort counts and replay estimates and emits aggregate exploratory interval diagnostics. Keep its output with research audit evidence. The static export uses the reviewed aggregate in `web/public/study.json`.
 
 Governance writes immutable registry versions. If you intentionally rerun the study and the resulting validation digest changes, build into an alternate `--registry` path for review before replacing the local model version from a stopped service. Inspect `/v1/models/active` and `/ready` after activation. To roll back, use Python with `from payment_integrity.registry import Registry` and call `Registry(Path("artifacts/registry")).rollback()`. A prior version must exist.
 

@@ -33,7 +33,7 @@ def fetch(url: str, path: Path, kind: str, refresh: bool = False) -> dict:
     pending = Path(temporary)
     try:
         result = subprocess.run(
-            ["curl", "--fail", "--silent", "--show-error", "--proto", "=https",
+            ["curl", "--disable", "--fail", "--silent", "--show-error", "--proto", "=https",
              "--connect-timeout", "10", "--max-time", "25", "--retry", "2",
              "--retry-max-time", "45", "--max-filesize", str(MAX_BYTES),
              "--output", str(pending), url],

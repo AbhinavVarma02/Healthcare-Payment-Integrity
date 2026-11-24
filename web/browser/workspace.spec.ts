@@ -68,8 +68,15 @@ test("local workspace scores, plans, and completes one real replay seed", async 
   await expect(page.getByText("Calibrated disagreement risk")).toBeVisible();
   await page.getByRole("button", { name: "Build plan" }).click();
   await expect(page.getByText("Selected examples")).toBeVisible();
+  await page.getByLabel("Selection strategy").selectOption("time");
+  await page.getByLabel("Minute budget").fill("0");
+  await page.getByRole("button", { name: "Build plan" }).click();
+  await expect(page.getByText(/0 unused minutes/)).toBeVisible();
   await page.getByRole("button", { name: "Start replay" }).click();
   await expect(page.getByText("1/1 seeds completed")).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText("completed", { exact: true })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "1/1 seeds completed" })).toBeVisible();
+  await expect(page.getByRole("row", { name: /completed.*1\/1.*View run/ })).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("1/1 seeds completed")).toBeVisible();
   await page.screenshot({ path: "test-results/local-desktop.png", fullPage: true });
 });

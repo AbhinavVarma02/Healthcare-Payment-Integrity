@@ -1,9 +1,11 @@
 """Known-probability selection designs and finite-population estimators."""
 
+from bisect import bisect_left, bisect_right
 from dataclasses import dataclass
 from math import sqrt
 
 import numpy as np
+from scipy.stats import hypergeom
 
 from .metrics import capacity, ranked
 
@@ -92,3 +94,11 @@ def estimate(selected_labels, strata, confidence_z=Z95):
         radius = confidence_z * sqrt(variance)
         result.update(variance=float(variance), interval=[rate - radius, rate + radius])
     return result
+
+
+def hypergeometric_bounds(population, draws, findings, tail):
+    """Invert hypergeometric tails for an exploratory interval on the event total."""
+    totals = range(findings, population - draws + findings + 1)
+    lower = bisect_left(totals, tail, key=lambda k: hypergeom.sf(findings - 1, population, k, draws))
+    upper = bisect_right(totals, -tail, key=lambda k: -hypergeom.cdf(findings, population, k, draws)) - 1
+    return totals[lower], totals[upper]

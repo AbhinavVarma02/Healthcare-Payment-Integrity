@@ -6,11 +6,11 @@ from pathlib import Path
 
 import numpy as np
 
-from .cohorts import read_parquet
 from .metrics import capacity, paired_intervals, ranked
 from .planning import Scenario, choose_count, choose_minutes, plan_summary, review_minutes
 from .protocol import load_freeze
 from .storage import read_json, sha256, write_json
+from .study import verified_predictions
 
 
 def compare(y, risk, net, keys, exposure, config):
@@ -43,7 +43,8 @@ def compare(y, risk, net, keys, exposure, config):
 def run(freeze, output: Path):
     config = freeze.config
     value = read_json(output / "h1.json")
-    if value["freeze_sha256"] != freeze.sha256 or not value["complete"]:
+    if (value["freeze_sha256"] != freeze.sha256 or not value["complete"]
+            or [cohort["year"] for cohort in value["cohorts"]] != config["holdout"]):
         raise ValueError("A complete held-out prediction run from this protocol is required.")
     result = {
         "schema": 1, "study_id": "H2-holdout", "freeze_sha256": freeze.sha256,
@@ -51,8 +52,9 @@ def run(freeze, output: Path):
         "model": value["selection"]["scoring"], "cohorts": [],
         "amounts": "fictional scenario cents", "primary": config["scenario"]["primary"],
     }
-    for year in config["holdout"]:
-        frame = read_parquet(output / f"predictions-{year}.parquet").dropna(subset=["disagreement"])
+    for cohort in value["cohorts"]:
+        year = cohort["year"]
+        frame = verified_predictions(output, cohort).dropna(subset=["disagreement"])
         risk, keys = frame["score"].to_numpy(), frame["claim_key"].to_numpy(dtype=str)
         parts, y = frame["part"].to_numpy(), frame["disagreement"].to_numpy(dtype=int)
         times = review_minutes(frame["visible_lines"])

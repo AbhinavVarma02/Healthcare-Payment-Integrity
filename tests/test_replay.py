@@ -6,7 +6,7 @@ import pytest
 from sklearn.metrics import average_precision_score
 
 from payment_integrity.models import fit_lookup
-from payment_integrity.replay import HiddenWave, Learner, VisibleWave, aggregate, ballot
+from payment_integrity.replay import HiddenWave, Learner, RevealedBatch, VisibleWave, aggregate, ballot
 
 
 def test_hidden_outcome_poisoning_and_delay():
@@ -39,3 +39,19 @@ def test_hidden_outcome_poisoning_and_delay():
         learner.score_cells(after.cells, [a], after.decision_date),
         learner.score_cells(after.cells, [b], after.decision_date),
     )
+
+
+def test_policy_interface_receives_only_matured_batches():
+    source = pd.DataFrame({"part": ["DME"], "provider_type": ["Supply"], "visible_lines": [1],
+                           "claim_key": ["fictional"]})
+    wave = VisibleWave.from_frame(2025, date(2024, 6, 30), source)
+    available = RevealedBatch(wave.decision_date, ())
+    future = RevealedBatch(date(2024, 7, 1), ())
+
+    class LearnerProbe:
+        def score_cells(self, _cells, history, _cutoff):
+            assert history == (available,)
+            return np.array([0.25])
+
+    _, sample = ballot(wave, LearnerProbe(), [available, future], 1, "uniform", np.random.default_rng(1))
+    assert sample.indices.tolist() == [0]

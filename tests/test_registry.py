@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from payment_integrity.model_io import save_scorecard
-from payment_integrity.models import Sigmoid, fit_lookup
+from payment_integrity.model_io import load_scorecard, save_scorecard
+from payment_integrity.models import Sigmoid, fit_lookup, fit_ml
 from payment_integrity.monitoring import assess, development_thresholds
 from payment_integrity.registry import Registry
-from payment_integrity.storage import sha256
+from payment_integrity.storage import read_json, sha256, write_json
 
 
 @pytest.fixture
@@ -57,3 +57,18 @@ def test_drift_alerts_and_label_availability():
     assert report["measured_performance"] is None
     measured = assess(base, adverse, thresholds, np.array([1, np.nan]), np.array([0.5, 0.8]))
     assert measured["measured_performance"]["brier"] == 0.25
+
+
+def test_boosted_scorecard_roundtrip_and_invalid_calibrator(synthetic_model, tmp_path):
+    _, frame, _, _ = synthetic_model
+    model = fit_ml(frame, np.array([0, 1] * 30), "xgb", 2, 1)
+    folder = tmp_path / "boosted"
+    path = folder / "scorecard.json"
+    save_scorecard(folder, model, Sigmoid())
+    loaded, _ = load_scorecard(folder, sha256(path))
+    np.testing.assert_array_equal(loaded.predict(frame), model.predict(frame))
+    metadata = read_json(path)
+    metadata["calibration"]["slope"] = 0
+    write_json(path, metadata)
+    with pytest.raises(ValueError, match="Calibrator has invalid"):
+        load_scorecard(folder, sha256(path))

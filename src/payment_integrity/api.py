@@ -9,12 +9,13 @@ from typing import Annotated, Literal, Self
 
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from xgboost.core import XGBoostError
 
 from .cohorts import FEATURES, SCHEMA
 from .jobs import JobConflict, Jobs
@@ -28,6 +29,11 @@ from .storage import read_json
 LOG = logging.getLogger("uvicorn.error").getChild("payment_integrity")
 MAX_BODY = 256_000
 MAX_BATCH = 500
+LOCAL_ORIGINS = (
+    "http://127.0.0.1:5173", "http://localhost:5173",
+    "http://127.0.0.1:4173", "http://localhost:4173",
+)
+ARTIFACT_ERRORS = (OSError, ValueError, KeyError, TypeError, XGBoostError)
 
 
 def problem(status, code, message):
@@ -50,22 +56,28 @@ class RequestLimits:
             if scope["method"] != "POST":
                 await self.app(scope, receive, send)
                 return
+            origins = [value for name, value in scope["headers"] if name == b"origin"]
+            if origins and (len(origins) != 1 or origins[0].decode("latin-1") not in LOCAL_ORIGINS):
+                await problem(403, "origin_denied", "This origin may not submit local requests.")(
+                    scope, receive, send)
+                return
             body = bytearray()
-            while True:
-                try:
-                    packet = await asyncio.wait_for(receive(), timeout=5)
-                except TimeoutError:
-                    await problem(408, "read_timeout", "Timed out reading request body.")(scope, receive, send)
-                    return
-                if packet["type"] == "http.disconnect":
-                    return
-                if len(body) + len(packet.get("body", b"")) > MAX_BODY:
-                    await problem(413, "payload_limit", "Request body exceeds the local limit.")(
-                        scope, receive, send)
-                    return
-                body.extend(packet.get("body", b""))
-                if not packet.get("more_body"):
-                    break
+            try:
+                async with asyncio.timeout(5):
+                    while True:
+                        packet = await receive()
+                        if packet["type"] == "http.disconnect":
+                            return
+                        if len(body) + len(packet.get("body", b"")) > MAX_BODY:
+                            await problem(413, "payload_limit", "Request body exceeds the local limit.")(
+                                scope, receive, send)
+                            return
+                        body.extend(packet.get("body", b""))
+                        if not packet.get("more_body"):
+                            break
+            except TimeoutError:
+                await problem(408, "read_timeout", "Timed out reading request body.")(scope, receive, send)
+                return
             replayed = False
 
             async def bounded_receive():
@@ -187,10 +199,8 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
     app = FastAPI(title="Healthcare Payment Integrity", version="1.0", lifespan=lifespan)
     app.add_middleware(RequestLimits)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
-    app.add_middleware(CORSMiddleware, allow_origins=[
-        "http://127.0.0.1:5173", "http://localhost:5173",
-        "http://127.0.0.1:4173", "http://localhost:4173",
-    ], allow_methods=["GET", "POST"], allow_headers=["content-type"])
+    app.add_middleware(CORSMiddleware, allow_origins=LOCAL_ORIGINS,
+                       allow_methods=["GET", "POST"], allow_headers=["content-type"])
 
     @app.middleware("http")
     async def request_log(request, call_next):
@@ -214,7 +224,7 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
     def active_or_error():
         try:
             return registry.active()
-        except (OSError, ValueError, KeyError, TypeError):
+        except ARTIFACT_ERRORS:
             return None
 
     @app.get("/health")
@@ -241,7 +251,7 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
     def score_claims(claims):
         try:
             return predictions(registry, claims)
-        except (OSError, ValueError, KeyError, TypeError):
+        except ARTIFACT_ERRORS:
             return None
 
     @app.post("/v1/score")
@@ -272,7 +282,8 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
         if payload.strategy == "time":
             chosen, solver = choose_minutes(net, times, keys, payload.minute_budget or 0, exact=True)
             stats = plan_summary(chosen, parts, net, times, len(chosen))
-            stats["unused_minutes"] = payload.minute_budget - stats["minutes"]
+            stats.update(minute_budget=payload.minute_budget,
+                         unused_minutes=payload.minute_budget - stats["minutes"])
             explored = 0
         else:
             score_map = {"uniform": np.random.default_rng(payload.seed).random(len(risk)), "risk": risk,
@@ -299,6 +310,10 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
         except FileNotFoundError:
             return problem(404, "run_not_found", "The local run does not exist.")
 
+    @app.get("/v1/runs")
+    def recent_runs(limit: Annotated[int, Query(ge=1, le=20)] = 10):
+        return {"runs": jobs.recent(limit)}
+
     @app.post("/v1/runs/{job_id}/cancel", status_code=202)
     def cancel_job(job_id: str):
         try:
@@ -318,7 +333,7 @@ def create_app(workspace: Path | None = None, registry_root: Path | None = None,
         try:
             registry.load(version)
             return read_json(registry.root / version / "validation.json")
-        except (OSError, ValueError, KeyError, TypeError):
+        except ARTIFACT_ERRORS:
             return problem(404, "validation_unavailable", "Verified validation evidence is unavailable.")
 
     return app

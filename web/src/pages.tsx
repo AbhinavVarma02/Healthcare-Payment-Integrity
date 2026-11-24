@@ -44,7 +44,7 @@ export function Overview({ study }: { study: Study }) {
         <div className="finding"><div><h3>Financial scenario</h3><Status value={latestFinance.primary.status} /></div>
           <p>Value ranking changed weighted findings by {percent(latestFinance.primary.relative_weighted_gain)} at matched capacity.</p></div>
         <div className="finding"><div><h3>Selective-label replay</h3><Status value={study.replay.conclusions.status} /></div>
-          <p>10% exploration lowered cohort-rate RMSE by {number(100 * results.hybrid_vs_greedy.rmse_improvement, 1)} percentage points versus greedy’s selected-only estimate.</p></div>
+          <p>With 10% exploration, the design-aware cohort-rate estimate had {number(100 * results.hybrid_vs_greedy.rmse_improvement, 1)} percentage points lower RMSE than greedy’s selected-only estimate.</p></div>
       </Card>
     </div>
     <Note>CMS suppresses some rows in the public extract. Rates and estimates apply to the eligible published cohort. Financial settings represent fictional scenarios.</Note>
@@ -152,7 +152,7 @@ export function Replay({ study }: { study: Study }) {
   const [strategy, setStrategy] = useState("hybrid-10");
   const rows = study.replay.policies.filter((row) => row.year === year && row.budget_percent === capacity && row.weight === weight);
   const selected = rows.find((row) => row.strategy === strategy);
-  const designs = ["uniform", "greedy", "hybrid-10", "stratified"];
+  const designs = ["uniform", "greedy", "hybrid-5", "hybrid-10", "hybrid-20", "stratified"];
   const policyChart = designs.flatMap((key) => {
     const points: [number, number][] = study.replay.policies.filter(
       (row) => row.year === year && row.strategy === key && row.weight === weight,
@@ -199,7 +199,7 @@ export function Replay({ study }: { study: Study }) {
             row.year, row.decision, row.label_available])} />
       </Card>
     </div>
-    <Note>Greedy reviews assign zero probability to unselected claims at partial budgets. A whole-cohort design-aware estimate is unavailable for that policy.</Note>
+    <Note>Greedy leaves some claims with zero inclusion probability. Its selected-only rate describes the reviewed claims. Design-aware intervals measure repeated review selections within a fixed released cohort. Uniform random is the matched-capacity reference for estimation precision.</Note>
   </>;
 }
 

@@ -10,5 +10,6 @@ The public aggregate in `web/public/study.json` holds the protocol commit, sourc
 | H3 yield, estimation, and Brier | `H3-sequential`, CERT 2022–2025, warm-start 2018–2020, 37301–37500 | `artifacts/replay/h3.json`, seed and selection hashes, `replay` in aggregate | `python -m payment_integrity.replay --freeze $freeze` |
 | Model status and shift | Governance, activated lookup and measured holdouts | `artifacts/registry/<version>/validation.json`, `validation` in aggregate | `python -m payment_integrity.governance --freeze $freeze` |
 | Engineering latency and throughput | Local run against real scorecard, 60 single and 40 batch requests | `artifacts/benchmark.json` | `python scripts/benchmark.py` |
+| Audit reconstruction and exploratory interval sensitivity | Original frozen source and seed selection evidence, 2025 primary budget | `policy_wave_seed_rows_verified` and `exploratory_2025_at_5_percent_capacity` from the audit CLI | `python scripts/audit_research.py --freeze $freeze` |
 
 Confirmatory reference commit `aab39fd` and protocol SHA-256 `23758de970e3ac9b833420315fdfa95c3336d56981f9d478fa37c114036d9e52`. [Reproduction commands](REPRODUCIBILITY.md)

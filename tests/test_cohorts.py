@@ -1,8 +1,9 @@
 import csv
 
+import pandas as pd
 import pytest
 
-from payment_integrity.cohorts import HEADER, development_outcomes, project_csv
+from payment_integrity.cohorts import HEADER, development_outcomes, project_csv, read_parquet, write_parquet
 
 
 def test_repeats_mixed_decisions_and_unknown_do_not_modify_features(tmp_path):
@@ -33,3 +34,9 @@ def test_repeats_mixed_decisions_and_unknown_do_not_modify_features(tmp_path):
 def test_holdout_blocked_by_development_reader(tmp_path):
     with pytest.raises(ValueError, match="development outcomes only"):
         development_outcomes(tmp_path, 2024)
+
+
+def test_parquet_schema_does_not_infer_directory_columns(tmp_path):
+    path = tmp_path / "ry=2025" / "features.parquet"
+    write_parquet(path, pd.DataFrame({"visible_lines": [2]}))
+    assert list(read_parquet(path).columns) == ["visible_lines"]

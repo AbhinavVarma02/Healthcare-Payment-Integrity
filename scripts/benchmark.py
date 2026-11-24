@@ -90,9 +90,10 @@ def benchmark(port):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8011)
+    parser.add_argument("--output", type=Path, default=Path("artifacts/benchmark.json"))
     args = parser.parse_args()
     result = benchmark(args.port)
-    write_json(Path("artifacts/benchmark.json"), result)
+    write_json(args.output, result)
     print(result)
 
 

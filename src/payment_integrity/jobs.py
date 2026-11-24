@@ -6,6 +6,7 @@ import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
+from heapq import nlargest
 from pathlib import Path
 from uuid import uuid4
 
@@ -35,6 +36,7 @@ class Jobs:
         self.mutex = threading.RLock()
         self.task: str | None = None
         self.stop_signal = threading.Event()
+        self.closing = False
         self.worker = None
 
     def recover(self):
@@ -42,16 +44,23 @@ class Jobs:
             self.process_lock.acquire()
         except LockTimeout:
             return False
-        for path in self.folder.glob("*.json"):
-            if JOB_ID.fullmatch(path.stem):
-                row = read_json(path)
-                if row["status"] in {"running", "queued"}:
-                    self.store({**row, "status": "interrupted"})
-        self.worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="cert-replay")
+        try:
+            for path in self.folder.glob("*.json"):
+                if JOB_ID.fullmatch(path.stem):
+                    row = read_json(path)
+                    if row["status"] in {"running", "queued"}:
+                        self.store({**row, "status": "interrupted"})
+            self.closing = False
+            self.worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="cert-replay")
+        except BaseException:
+            self.process_lock.release()
+            raise
         return True
 
     def close(self):
-        self.stop_signal.set()
+        with self.mutex:
+            self.closing = True
+            self.stop_signal.set()
         if self.worker is not None:
             self.worker.shutdown(wait=True)
             self.worker = None
@@ -70,9 +79,19 @@ class Jobs:
     def get(self, job_id):
         return read_json(self.path(job_id))
 
+    def recent(self, limit):
+        candidates = (path for path in self.folder.glob("*.json") if JOB_ID.fullmatch(path.stem))
+        rows = []
+        for path in nlargest(limit, candidates, key=lambda p: (p.stat().st_mtime_ns, p.name)):
+            try:
+                rows.append(self.get(path.stem))
+            except (OSError, ValueError):
+                LOG.warning("replay_manifest_unavailable id=%s", path.stem)
+        return rows
+
     def start(self, freeze, seeds):
         with self.mutex:
-            if self.task is not None or self.worker is None:
+            if self.closing or self.task is not None or self.worker is None:
                 raise JobConflict("One replay job can run at a time.")
             row = self.store({"id": uuid4().hex, "status": "queued", "freeze": freeze,
                               "seeds_requested": seeds, "seeds_completed": 0,
@@ -80,7 +99,7 @@ class Jobs:
             return self.queue(row)
 
     def queue(self, row):
-        if self.task is not None or self.worker is None:
+        if self.closing or self.task is not None or self.worker is None:
             raise JobConflict("The replay worker is busy or disabled.")
         self.stop_signal.clear()
         self.task = row["id"]
@@ -90,7 +109,7 @@ class Jobs:
     def resume(self, job_id):
         with self.mutex:
             row = self.get(job_id)
-            if (row["status"] not in {"interrupted", "cancelled", "failed"}
+            if (self.closing or row["status"] not in {"interrupted", "cancelled", "failed"}
                     or self.task is not None or self.worker is None):
                 raise JobConflict("The job cannot be resumed in its current state.")
             return self.queue(self.store({**row, "status": "queued", "error": None}))
@@ -112,12 +131,14 @@ class Jobs:
         try:
             self.store({**row, "status": "running"})
             result = self.work(row, self.folder / job_id, progress, self.stop_signal.is_set)
-            self.store({**self.get(job_id), "status": "completed", "summary": result["conclusions"]})
+            updates = {"status": "completed", "summary": result["conclusions"]}
         except InterruptedError:
-            self.store({**self.get(job_id), "status": "cancelled"})
+            updates = {"status": "interrupted" if self.closing else "cancelled"}
         except Exception as exc:
             LOG.warning("replay_failed id=%s error_family=%s", job_id, type(exc).__name__)
-            self.store({**self.get(job_id), "status": "failed", "error": "replay_execution_failed"})
-        finally:
-            with self.mutex:
+            updates = {"status": "failed", "error": "replay_execution_failed"}
+        with self.mutex:
+            try:
+                self.store({**self.get(job_id), **updates})
+            finally:
                 self.task = None

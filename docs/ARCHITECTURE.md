@@ -32,6 +32,7 @@ The evaluator verifies the Git freeze, source hashes, feature frame and allowed 
 | POST `/v1/score/batch` | `claims` array, 1–500 entries. Returns ordered scores. |
 | POST `/v1/audit-plan` | Claims, capacity, strategy and fictional financial scenario with optional count constraints. Time mode uses a minute budget. |
 | POST `/v1/replay` | Seed count 1–10. Starts a local preview of the frozen historical experiment. |
+| GET `/v1/runs` | Up to 20 recent local manifests, sorted by most recent update. |
 | GET `/v1/runs/{id}` | Persistent job state and completed seed count. |
 | POST `/v1/runs/{id}/cancel`, `/resume` | Cancel the local worker or resume eligible interrupted, failed or cancelled work. |
 | GET `/v1/validation/{version}` | Verified model validation and monitor evidence. |

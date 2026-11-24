@@ -13,6 +13,13 @@ const demoClaims: Claim[] = [
 ];
 
 const isRunning = (status: string) => status === "running" || status === "queued";
+const scenarioDefaults = { part_b_cents: 10_000, dme_cents: 25_000, relevant_percent: 35, review_cost_cents: 3_000 };
+const scenarioFields = [
+  ["part_b_cents", "Part B exposure (cents)", 10_000_000],
+  ["dme_cents", "DME exposure (cents)", 10_000_000],
+  ["relevant_percent", "Financially relevant share (%)", 100],
+  ["review_cost_cents", "Review cost (cents)", 10_000_000],
+] as const;
 const errorMessage = (failure: unknown) => failure instanceof TypeError
   ? "The local API could not be reached at 127.0.0.1:8000."
   : failure instanceof Error ? failure.message : "The local workflow failed.";
@@ -23,26 +30,58 @@ export function LocalWorkflows() {
   const [score, setScore] = useState<Score>();
   const [plan, setPlan] = useState<LocalPlan>();
   const [job, setJob] = useState<Job>();
+  const [recent, setRecent] = useState<Job[]>();
   const [budget, setBudget] = useState(2);
   const [strategy, setStrategy] = useState("risk");
+  const [reserve, setReserve] = useState(0);
+  const [groupCap, setGroupCap] = useState(4);
+  const [minutes, setMinutes] = useState(60);
+  const [scenario, setScenario] = useState(scenarioDefaults);
+  const [seeds, setSeeds] = useState(1);
+  const [pollFailed, setPollFailed] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
 
   const check = () => localRequest<{ status: string }>("/ready").then(
     (response) => setReadiness(response.status), () => setReadiness("Unavailable"));
-  useEffect(() => { void check(); }, []);
+  const refreshRecent = () => localRequest<{ runs: Job[] }>("/v1/runs").then(
+    ({ runs }) => setRecent(runs), () => setRecent(undefined));
+  useEffect(() => {
+    void check();
+    const id = sessionStorage.getItem("last-local-replay");
+    if (id && /^[a-f0-9]{32}$/.test(id)) {
+      void localRequest<Job>(`/v1/runs/${id}`).then(setJob, () => setPollFailed(true));
+    }
+  }, []);
+
+  useEffect(() => { void refreshRecent(); }, [job?.status]);
+
+  function updateJob(value: Job) {
+    sessionStorage.setItem("last-local-replay", value.id);
+    setPollFailed(false);
+    setJob(value);
+  }
+
+  function refreshJob() {
+    const id = sessionStorage.getItem("last-local-replay");
+    setError("");
+    if (id) void localRequest<Job>(`/v1/runs/${id}`).then(updateJob, (failure) => {
+      setPollFailed(true);
+      setError(errorMessage(failure));
+    });
+  }
 
   useEffect(() => {
-    if (!job || !isRunning(job.status)) return;
+    if (!job || !isRunning(job.status) || pollFailed) return;
     let stopped = false;
     const timer = window.setTimeout(() => {
       localRequest<Job>(`/v1/runs/${job.id}`).then(
         (next) => { if (!stopped) setJob(next); },
-        (failure) => { if (!stopped) setError(errorMessage(failure)); },
+        (failure) => { if (!stopped) { setPollFailed(true); setError(errorMessage(failure)); } },
       );
     }, 750);
     return () => { stopped = true; window.clearTimeout(timer); };
-  }, [job]);
+  }, [job, pollFailed]);
 
   async function execute<T>(key: string, path: string, data: unknown, onSuccess: (value: T) => void) {
     setBusy(key);
@@ -89,36 +128,73 @@ export function LocalWorkflows() {
         </div>}
       </Card>
       <Card title="Plan four fictional claims" subtitle="Live local scoring and scenario planning">
+        <form onSubmit={(event) => {
+          event.preventDefault();
+          const limits = strategy === "time" ? { capacity: 0, minute_budget: minutes } :
+            { capacity: budget, group_cap: groupCap, exploration_count: reserve };
+          void execute<LocalPlan>("plan", "/v1/audit-plan", { claims: demoClaims, strategy, ...limits, scenario }, setPlan);
+        }}>
         <div className="filters">
-          <Select label="Review slots" value={budget} onChange={(v) => setBudget(+v)}
-            items={[1, 2, 3, 4].map((n) => ({ value: n, text: String(n) }))} />
           <Select label="Selection strategy" value={strategy} onChange={setStrategy}
             items={[{ value: "risk", text: "Risk only" }, { value: "value", text: "Scenario value" },
-              { value: "uniform", text: "Uniform random" }]} />
+              { value: "uniform", text: "Uniform random" }, { value: "value_per_minute", text: "Value per minute" },
+              { value: "time", text: "Time budget" }]} />
+          {strategy === "time" ? <label className="control"><span>Minute budget</span>
+            <input type="number" required min={0} max={30_000} value={Number.isNaN(minutes) ? "" : minutes}
+              onChange={(e) => setMinutes(e.target.valueAsNumber)} /></label> : <>
+            <Select label="Review slots" value={budget} onChange={(v) => { setBudget(+v); setReserve(Math.min(reserve, +v)); }}
+              items={[0, 1, 2, 3, 4].map((n) => ({ value: n, text: String(n) }))} />
+            <Select label="Exploration slots" value={reserve} onChange={(v) => setReserve(+v)}
+              items={Array.from({ length: budget + 1 }, (_, n) => ({ value: n, text: String(n) }))} />
+            <Select label="Maximum per claim part" value={groupCap} onChange={(v) => setGroupCap(+v)}
+              items={[0, 1, 2, 3, 4].map((n) => ({ value: n, text: String(n) }))} />
+          </>}
         </div>
+        <details><summary>Financial assumptions</summary><div className="calculator">
+          {scenarioFields.map(([key, title, maximum]) => <label className="control" key={key}>
+            <span>{title}</span><input type="number" required min={0} max={maximum}
+              value={Number.isNaN(scenario[key]) ? "" : scenario[key]}
+              onChange={(e) => setScenario({ ...scenario, [key]: e.target.valueAsNumber })} />
+          </label>)}
+        </div></details>
         <Table caption="Fictional claim candidates" headings={["Candidate", "Part", "Visible lines"]}
           rows={demoClaims.map((item, i) => [`Example ${i + 1}`, item.part, item.visible_lines])} />
-        <button className="button" disabled={!!busy} onClick={() => void execute<LocalPlan>(
-          "plan", "/v1/audit-plan", { claims: demoClaims, capacity: budget, strategy }, setPlan,
-        )}>{busy === "plan" ? "Planning…" : "Build plan"}</button>
+        <button className="button" disabled={!!busy}>{busy === "plan" ? "Planning…" : "Build plan"}</button>
+        </form>
         {plan && <div className="result-block" role="status">
           <span>Selected examples</span>
           <strong>{plan.selected_input_positions.map((i) => i + 1).join(", ") || "None"}</strong>
           <p>{number(plan.summary.minutes)} assumed minutes · {cents(plan.summary.expected_scenario_net_cents)} expected scenario net</p>
+          <p>{plan.summary.unused_minutes == null ? `${plan.summary.unused_capacity} unused slots` :
+            `${plan.summary.unused_minutes} unused minutes`} · {plan.exploration_count} exploration reviews</p>
         </div>}
       </Card>
     </div>
-    <Card title="Replay preview" subtitle="One seed using the frozen local cohort files">
+    <Card title="Replay preview" subtitle="Uses the frozen local cohort files">
       <div className="actions">
+        <Select label="Preview seeds" value={seeds} onChange={(v) => setSeeds(+v)}
+          items={[1, 2, 5, 10].map((n) => ({ value: n, text: String(n) }))} />
         <button className="button" disabled={!!busy || (!!job && isRunning(job.status))}
-          onClick={() => void execute<Job>("job", "/v1/replay", { seeds: 1 }, setJob)}>Start replay</button>
+          onClick={() => void execute<Job>("job", "/v1/replay", { seeds }, updateJob)}>Start replay</button>
+        {pollFailed && <button className="button secondary" onClick={refreshJob}>Refresh replay status</button>}
         {job && isRunning(job.status) && <button className="button secondary" disabled={!!busy}
-          onClick={() => void execute<Job>("job", `/v1/runs/${job.id}/cancel`, {}, setJob)}>Cancel replay</button>}
+          onClick={() => void execute<Job>("job", `/v1/runs/${job.id}/cancel`, {}, updateJob)}>Cancel replay</button>}
         {job && ["interrupted", "cancelled", "failed"].includes(job.status) &&
           <button className="button secondary" disabled={!!busy}
-            onClick={() => void execute<Job>("job", `/v1/runs/${job.id}/resume`, {}, setJob)}>Resume replay</button>}
+            onClick={() => void execute<Job>("job", `/v1/runs/${job.id}/resume`, {}, updateJob)}>Resume replay</button>}
       </div>
       {job && <p className="job-state" role="status"><Status value={job.status} /> {job.seeds_completed}/{job.seeds_requested} seeds completed</p>}
+      {job && <p><small>Run ID <code>{job.id}</code></small></p>}
+    </Card>
+    <Card title="Recent local runs">
+      {!recent?.length ? <p>{recent ? "No local runs yet." : "Local run history is unavailable."}</p> :
+        <Table caption="Recent local replay run history" headings={["Run ID", "Status", "Seeds", "Details"]}
+          rows={recent.map((run) => [<code key={run.id}>{run.id}</code>, run.status,
+            `${run.seeds_completed}/${run.seeds_requested}`,
+            <button className="button secondary" key={run.id} onClick={() => {
+              sessionStorage.setItem("last-local-replay", run.id);
+              refreshJob();
+            }}>View run</button>])} />}
     </Card>
   </>;
 }

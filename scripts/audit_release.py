@@ -27,15 +27,34 @@ def audit(require_exact=True):
         raise ValueError(f"Paths missing from release allowlist: {sorted(unexpected)}")
     if require_exact and allowed - indexed:
         raise ValueError(f"Approved paths absent from index: {sorted(allowed - indexed)}")
-    for name in sorted(indexed):
-        staged_blob = git("show", f":{name}")
-        if any(pattern.search(staged_blob) for pattern in SECRETS):
-            raise ValueError(f"Suspected credential material in indexed path: {name}")
+    blobs = {}
+    for entry in git("ls-files", "--stage", "-z").split(b"\0"):
+        if entry:
+            metadata, name = entry.split(b"\t", 1)
+            mode, digest, stage = metadata.split()
+            if mode not in {b"100644", b"100755"} or stage != b"0":
+                raise ValueError(f"Unexpected mode or merge stage in indexed path: {name.decode()}")
+            blobs[digest] = name
+    for commit in git("rev-list", "--all").decode().splitlines():
+        for entry in git("ls-tree", "-rz", commit).split(b"\0"):
+            if entry:
+                metadata, name = entry.split(b"\t", 1)
+                mode, object_type, digest = metadata.split()
+                if mode not in {b"100644", b"100755"} or object_type != b"blob":
+                    raise ValueError(f"Unexpected mode in historical path: {name.decode()}")
+                blobs[digest] = name
+    for digest, name in blobs.items():
+        blob = git("cat-file", "blob", digest.decode())
+        if any(pattern.search(blob) for pattern in SECRETS):
+            raise ValueError(f"Suspected credential material in Git path: {name.decode()}")
     if git("ls-files", "--", ".project", "AGENTS.md", "CLAUDE.md", "data", "artifacts", "release"):
         raise ValueError("Local-only project files are tracked.")
-    git("check-ignore", ".project/STATE.json", "AGENTS.md", "CLAUDE.md",
-        "data/raw/sample.csv", "artifacts/registry/sample.json", "release/static/study.json")
-    print(f"Reviewed {len(indexed)} indexed files and {len(historical)} historical paths.")
+    private_checks = {".project/STATE.json", "AGENTS.md", "CLAUDE.md", "data/raw/sample.csv",
+                      "artifacts/registry/sample.json", "release/static/study.json"}
+    correctly_ignored = set(git("check-ignore", "--", *sorted(private_checks)).decode().splitlines())
+    if correctly_ignored != private_checks:
+        raise ValueError("A required local-only path lacks an ignore rule.")
+    print(f"Reviewed {len(indexed)} indexed files, {len(historical)} historical paths and {len(blobs)} blobs.")
 
 
 def main():

@@ -5,7 +5,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from payment_integrity.sampling import STRATEGIES, estimate, select
+from payment_integrity.sampling import STRATEGIES, estimate, hypergeometric_bounds, select
 
 
 @given(size=st.integers(0, 100), percent=st.integers(0, 100))
@@ -53,3 +53,14 @@ def test_hybrid_inclusion_marginals():
         assert sample.strata == ((3, 3), (5, 1))
     assert np.all(hits[-3:] == 1500)
     assert np.allclose(hits[:5] / 1500, 0.2, atol=0.03)
+
+
+def test_exploratory_exact_interval_covers_toy_populations():
+    for events in range(13):
+        population = [1] * events + [0] * (12 - events)
+        intervals = [hypergeometric_bounds(12, 4, findings, 0.025) for findings in range(5)]
+        draws = list(combinations(population, 4))
+        covers = sum(intervals[sum(draw)][0] <= events <= intervals[sum(draw)][1] for draw in draws)
+        assert covers / len(draws) >= 0.95
+    assert hypergeometric_bounds(12, 4, 0, 0.025)[1] > 0
+    assert hypergeometric_bounds(12, 12, 4, 0.025) == (4, 4)

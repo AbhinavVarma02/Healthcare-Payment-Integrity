@@ -7,6 +7,7 @@ configs/hypotheses.yaml
 configs/protocol.json
 configs/release_allowlist.txt
 docs/ARCHITECTURE.md
+docs/AUDIT_REPORT.md
 docs/DATA_CARD.md
 docs/DATA_FEASIBILITY.md
 docs/DEMO.md
@@ -30,6 +31,7 @@ LICENSE
 pyproject.toml
 README.md
 scripts/audit_release.py
+scripts/audit_research.py
 scripts/benchmark.py
 scripts/checkpoint.py
 scripts/fixture_smoke.py

@@ -26,6 +26,7 @@ class Freeze:
     commit: str
     sha256: str
     config: dict
+    sources: dict
 
 
 def git(root: Path, *commands: str) -> bytes:
@@ -49,11 +50,12 @@ def load_freeze(root: Path, commit: str) -> Freeze:
         raise ValueError("Invalid frozen year boundaries.")
     if not config["calibration"] < config["development"] < min(config["holdout"]):
         raise ValueError("Calibration, development and holdout periods must be disjoint.")
-    return Freeze(commit, combined.hexdigest(), config)
+    return Freeze(commit, combined.hexdigest(), config, read_json(root / FROZEN_PATHS[1]))
 
 
 def verify_vintage(year: int, manifest: dict, freeze: Freeze) -> None:
-    if manifest["source_sha256"] != freeze.config["source_sha256"][str(year)]:
+    if (manifest["source_sha256"] != freeze.config["source_sha256"][str(year)]
+            or manifest["reporting_year"] != year or manifest["source"] != freeze.sources[str(year)]):
         raise ValueError(f"{year}: source differs from frozen vintage.")
 
 
@@ -87,7 +89,10 @@ class Evaluator:
                     "commit": self.freeze.commit, "source": manifest["source_sha256"],
                     "first_access_attempt_utc": datetime.now(UTC).isoformat(timespec="seconds"),
                 })
-            _, labels, _, _ = project_csv(source, year, True)
+            projected, labels, _, _ = project_csv(source, year, True)
+            if list(projected.itertuples(index=False, name=None)) != list(
+                    features.itertuples(index=False, name=None)):
+                raise ValueError("Holdout features differ from the independently reprojected frozen source.")
         else:
             labels = development_outcomes(root, year)
         return labels.set_index("claim_key").loc[keys, "disagreement"].to_numpy(

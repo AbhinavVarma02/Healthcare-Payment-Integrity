@@ -44,6 +44,7 @@ def test_worker_cancellation_resume_and_process_lock(tmp_path):
         finish.set()
         jobs.resume(job)
         assert wait_for(jobs, job, "completed")["seeds_completed"] == 1
+        assert [row["id"] for row in jobs.recent(1)] == [job]
     finally:
         jobs.close()
         second.close()
@@ -55,3 +56,25 @@ def test_worker_cancellation_resume_and_process_lock(tmp_path):
         assert recovered.get(ghost)["status"] == "interrupted"
     finally:
         recovered.close()
+
+
+def test_shutdown_marks_job_interrupted_for_restart(tmp_path):
+    entered = threading.Event()
+
+    def work(_row, _folder, _progress, cancelled):
+        entered.set()
+        deadline = time.monotonic() + 4
+        while not cancelled() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        if cancelled():
+            raise InterruptedError
+        raise RuntimeError("Shutdown did not signal the worker.")
+
+    jobs = Jobs(tmp_path, work)
+    assert jobs.recover()
+    try:
+        job_id = jobs.start("fixture", 1)["id"]
+        assert entered.wait(2)
+    finally:
+        jobs.close()
+    assert jobs.get(job_id)["status"] == "interrupted"

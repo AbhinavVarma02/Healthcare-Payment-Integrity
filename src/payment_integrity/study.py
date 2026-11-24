@@ -11,7 +11,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 from threadpoolctl import threadpool_limits
 
-from .cohorts import SCHEMA, development_outcomes, feature_snapshot, write_parquet
+from .cohorts import SCHEMA, development_outcomes, feature_snapshot, read_parquet, write_parquet
 from .metrics import paired_intervals, precision_at, study_metrics
 from .model_io import load_scorecard, save_scorecard
 from .models import ML, Lookup, calibrate, feature_frame, fit_lookup, fit_ml
@@ -125,6 +125,16 @@ def h1_comparison(y, scores, baseline, keys, config):
     }
 
 
+def verified_predictions(output: Path, cohort: dict) -> pd.DataFrame:
+    path = output / f"predictions-{cohort['year']}.parquet"
+    digest = cohort.get("predictions_sha256")
+    if digest is None:
+        raise ValueError("Evaluate H1 in a fresh output directory to attest the prediction snapshots.")
+    if sha256(path) != digest:
+        raise ValueError("Held-out prediction snapshot differs from the verified H1 run.")
+    return read_parquet(path)
+
+
 def evaluate(root: Path, freeze: Freeze, output: Path):
     development = read_json(output / "development.json")
     if development["freeze_sha256"] != freeze.sha256:
@@ -172,8 +182,9 @@ def evaluate(root: Path, freeze: Freeze, output: Path):
             if len(group_y) >= 100 and 20 <= group_y.sum() <= len(group_y) - 20:
                 cohort["groups"][name] = study_metrics(
                     group_y, scored[scoring][mask], keys[mask], budget, curve=False)
-        write_parquet(output / f"predictions-{year}.parquet",
-                      rows.assign(score=scored[scoring], disagreement=labels))
+        predictions_path = output / f"predictions-{year}.parquet"
+        write_parquet(predictions_path, rows.assign(score=scored[scoring], disagreement=labels))
+        cohort["predictions_sha256"] = sha256(predictions_path)
         cohort["runtime_seconds"] = time.perf_counter() - start
         results.append(cohort)
         write_json(output / "h1.json", {

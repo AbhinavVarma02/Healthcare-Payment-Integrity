@@ -1,5 +1,8 @@
 """Serialize typed scorecards without pickle, with version and digest checks."""
 
+import hashlib
+import json
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
@@ -7,7 +10,7 @@ import numpy as np
 from xgboost import XGBClassifier
 
 from .models import ML, Encoder, Lookup, Sigmoid
-from .storage import atomic_bytes, read_json, sha256, write_json
+from .storage import atomic_bytes, sha256, write_json
 
 
 def save_scorecard(folder: Path, model: Lookup | ML, curve: Sigmoid):
@@ -33,10 +36,10 @@ def save_scorecard(folder: Path, model: Lookup | ML, curve: Sigmoid):
 
 
 def load_scorecard(folder: Path, expected_hash: str):
-    source = folder / "scorecard.json"
-    if sha256(source) != expected_hash:
+    source = (folder / "scorecard.json").read_bytes()
+    if hashlib.sha256(source).hexdigest() != expected_hash:
         raise ValueError("Scorecard integrity verification failed.")
-    value = read_json(source)
+    value = json.loads(source)
     kind = value["kind"]
     model: Lookup | ML
     if kind in {"lookup", "global", "historical"}:
@@ -46,20 +49,28 @@ def load_scorecard(folder: Path, expected_hash: str):
             {tuple(key): risk for key, risk in value["bands"]},
             {tuple(key): risk for key, risk in value["historical"]}, kind,
         )
+        probabilities = [model.rate, *model.parts.values(), *model.providers.values(),
+                         *model.bands.values(), *model.historical.values()]
+        if any(not 0 <= risk <= 1 for risk in probabilities) or not 0 < model.strength < float("inf"):
+            raise ValueError("Lookup scorecard has invalid fitted parameters.")
     elif kind in {"logistic", "xgb"}:
         encoder = Encoder(tuple(value["encoder"]["providers"]), value["encoder"]["counts"])
         model = ML(encoder, kind, intercept=value["intercept"])
         if kind == "xgb":
-            source = folder / "booster.json"
-            if sha256(source) != value["booster_sha256"]:
+            source = (folder / "booster.json").read_bytes()
+            if hashlib.sha256(source).hexdigest() != value["booster_sha256"]:
                 raise ValueError("Tree artifact integrity verification failed.")
             model.booster = XGBClassifier(n_jobs=1)
-            model.booster.load_model(source)
+            model.booster.load_model(bytearray(source))
         else:
             model.coefficients = np.asarray(value["coefficients"], dtype=float)
             if model.coefficients.shape != (len(encoder.feature_names),):
                 raise ValueError("Unexpected logistic model shape.")
+            if not np.isfinite(model.coefficients).all() or not isfinite(model.intercept):
+                raise ValueError("Logistic scorecard has nonfinite fitted parameters.")
     else:
         raise ValueError("Unrecognized model kind.")
     curve = Sigmoid(**value["calibration"])
+    if not isfinite(curve.intercept) or not isfinite(curve.slope) or curve.slope <= 0:
+        raise ValueError("Calibrator has invalid fitted parameters.")
     return model, curve

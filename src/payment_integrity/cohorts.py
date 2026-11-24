@@ -104,7 +104,8 @@ def write_parquet(path: Path, frame: pd.DataFrame):
 
 def read_parquet(path: Path) -> pd.DataFrame:
     with duckdb.connect(config={"threads": 1}) as connection:
-        return connection.execute("SELECT * FROM read_parquet(?)", [str(path)]).fetchdf()
+        return connection.execute("SELECT * FROM read_parquet(?, hive_partitioning = false)",
+                                  [str(path)]).fetchdf()
 
 
 def partition(root: Path, year: int) -> Path:
@@ -132,7 +133,9 @@ def build_year(raw: Path, root: Path, sources: dict, year: int, rebuild: bool = 
     include_outcomes = year in DEVELOPMENT
     if output.is_file() and not rebuild:
         cached = read_json(output)
-        if cached["source_sha256"] == source_hash and cached["source"] == version:
+        expected_tables = {"features", "development-outcomes"} if include_outcomes else {"features"}
+        if (cached["source_sha256"] == source_hash and cached["source"] == version
+                and cached["reporting_year"] == year and set(cached["tables"]) == expected_tables):
             for kind in cached["tables"]:
                 check_partition(folder, cached, kind)
             return cached
@@ -150,6 +153,8 @@ def build_year(raw: Path, root: Path, sources: dict, year: int, rebuild: bool = 
                     "counts": counts, "tables": checksums}
     if quarantine:
         write_json(folder / "quarantine.json", quarantine)
+    else:
+        (folder / "quarantine.json").unlink(missing_ok=True)
     write_json(output, manifest)
     return manifest
 
@@ -157,7 +162,10 @@ def build_year(raw: Path, root: Path, sources: dict, year: int, rebuild: bool = 
 def feature_snapshot(root: Path, year: int) -> tuple[pd.DataFrame, dict]:
     folder = partition(root, year)
     manifest = read_json(folder / "manifest.json")
-    return read_parquet(check_partition(folder, manifest, "features")), manifest
+    frame = read_parquet(check_partition(folder, manifest, "features"))
+    if tuple(frame.columns) != ("claim_key", *FEATURES) or not frame["claim_key"].is_unique:
+        raise ValueError(f"Unexpected feature columns or duplicate claim key in {folder.name}.")
+    return frame, manifest
 
 
 def development_outcomes(root: Path, year: int) -> pd.DataFrame:
@@ -165,7 +173,11 @@ def development_outcomes(root: Path, year: int) -> pd.DataFrame:
         raise ValueError("This interface provides development outcomes only.")
     folder = partition(root, year)
     manifest = read_json(folder / "manifest.json")
-    return read_parquet(check_partition(folder, manifest, "development-outcomes"))
+    frame = read_parquet(check_partition(folder, manifest, "development-outcomes"))
+    if (tuple(frame.columns) != ("claim_key", "disagreement") or not frame["claim_key"].is_unique
+            or not frame["disagreement"].dropna().isin((0, 1)).all()):
+        raise ValueError(f"Unexpected outcome schema or values in {folder.name}.")
+    return frame
 
 
 def main():

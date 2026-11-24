@@ -10,6 +10,7 @@ from datetime import date
 from pathlib import Path
 
 import numpy as np
+from filelock import FileLock
 
 from .cohorts import feature_snapshot
 from .metrics import capacity, mean_with_mcse
@@ -103,7 +104,9 @@ class HiddenWave:
     """Evaluator-side labels. Only an explicitly chosen sample can yield training entries."""
 
     def __init__(self, wave, labels, available):
-        self._labels = np.asarray(labels).copy()
+        self._labels = np.asarray(labels, dtype=float).copy()
+        if self._labels.shape != wave.groups.shape:
+            raise ValueError("Replay outcomes do not match the feature frame.")
         self._labels.flags.writeable = False
         self.wave = wave
         self.available = available
@@ -132,6 +135,8 @@ class HiddenWave:
                                       np.ones(len(self._labels))))
 
     def metrics(self, cell_scores):
+        if not self.complete:
+            raise ValueError("Metrics require complete outcomes for the replay cohort.")
         p = cell_scores
         total = len(self._labels)
         truth = float(self.positives.sum() / total)
@@ -148,7 +153,8 @@ class HiddenWave:
 
 
 def ballot(wave, learner, history, budget, strategy, rng):
-    cell_risk = learner.score_cells(wave.cells, history, wave.decision_date)
+    available = tuple(batch for batch in history if batch.available <= wave.decision_date)
+    cell_risk = learner.score_cells(wave.cells, available, wave.decision_date)
     scores = cell_risk[wave.groups]
     order = wave.hash_order[np.argsort(-scores[wave.hash_order], kind="stable")]
     return cell_risk, select(scores, wave.keys, budget, strategy, rng, order=order)
@@ -166,7 +172,7 @@ def prepare(workspace, freeze):
     learner = Learner(warm, prior)
     waves = []
     provenance = []
-    sources = read_json(workspace / "configs" / "cms_sources.json")
+    sources = freeze.sources
     cutoff = date.fromisoformat(sources[str(config["replay_years"][0])]["submission_end"])
     if any(date.fromisoformat(sources[str(year)]["version"]) > cutoff for year in warm_years):
         raise ValueError("Replay warm-start vintage is unavailable on the first decision date.")
@@ -176,6 +182,8 @@ def prepare(workspace, freeze):
         source = manifest["source"]
         wave = VisibleWave.from_frame(year, date.fromisoformat(source["submission_end"]), frame)
         available = date.fromisoformat(source["version"])
+        if available <= wave.decision_date:
+            raise ValueError("Replay label vintage must follow the simulated review decision.")
         labels = evaluator.outcomes(year, list(wave.keys), "H3")
         hidden = HiddenWave(wave, labels, available)
         provenance.append({"year": year, "decision": wave.decision_date.isoformat(),
@@ -282,14 +290,24 @@ def summarize(complete_seed_rows, seed_count, primary_year):
 def run(workspace: Path, freeze: Freeze, output: Path, seed_count: int,
         progress: Callable[[int, int], None] = lambda _n, _max: None,
         cancel: Callable[[], bool] = lambda: False):
+    output.mkdir(parents=True, exist_ok=True)
+    with FileLock(output / ".run-lock", timeout=0):
+        return run_locked(workspace, freeze, output, seed_count, progress, cancel)
+
+
+def run_locked(workspace, freeze, output, seed_count, progress, cancel):
     config = freeze.config
     if not 1 <= seed_count <= config["replay_seeds"]:
         raise ValueError("Requested seed count is outside the protocol bound.")
     start = time.perf_counter()
-    learner, waves, timeline = prepare(workspace, freeze)
     manifest = output / "job.json"
-    if manifest.exists() and read_json(manifest)["freeze"] != freeze.sha256:
-        raise ValueError("Replay output belongs to another frozen study.")
+    if manifest.exists():
+        previous = read_json(manifest)
+        if previous["freeze"] != freeze.sha256:
+            raise ValueError("Replay output belongs to another frozen study.")
+        if seed_count < previous["requested_seeds"]:
+            raise ValueError("Use a separate output directory for fewer replay seeds.")
+    learner, waves, timeline = prepare(workspace, freeze)
     completed, oracle, all_rows = [], [], []
     history: list[RevealedBatch] = []
     for wave, hidden in waves:
@@ -303,7 +321,7 @@ def run(workspace: Path, freeze: Freeze, output: Path, seed_count: int,
         selections = output / "seeds" / f"{seed}.npz"
         if evidence.exists():
             cached = read_json(evidence)
-            if (cached["schema"] != RUN_SCHEMA or cached["freeze"] != freeze.sha256
+            if (cached["schema"] != RUN_SCHEMA or cached["freeze"] != freeze.sha256 or cached["seed"] != seed
                     or sha256(selections) != cached["selections_sha256"]):
                 raise ValueError("Replay seed checkpoint failed integrity verification.")
             rows = cached["rows"]
@@ -321,6 +339,8 @@ def run(workspace: Path, freeze: Freeze, output: Path, seed_count: int,
         progress(len(completed), seed_count)
     summary, conclusions = summarize(all_rows, seed_count, config["primary_year"])
     complete = seed_count == config["replay_seeds"] and len(waves) == len(config["replay_years"])
+    if not complete:
+        conclusions["status"] = "inconclusive"
     result = {"schema": RUN_SCHEMA, "study_id": "H3-sequential", "freeze_sha256": freeze.sha256,
               "freeze_commit": freeze.commit, "timeline": timeline, "seeds": seed_count,
               "complete": complete, "runtime_seconds": time.perf_counter() - start,
@@ -344,7 +364,8 @@ def main():
         if n == 1 or n % 10 == 0 or n == count:
             print(f"Completed {n}/{count} seeds.", flush=True)
 
-    result = run(workspace, freeze, args.output, args.seeds or freeze.config["replay_seeds"], progress)
+    seeds = freeze.config["replay_seeds"] if args.seeds is None else args.seeds
+    result = run(workspace, freeze, args.output, seeds, progress)
     print(result["conclusions"], result["runtime_seconds"])
 
 

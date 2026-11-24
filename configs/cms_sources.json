@@ -1,0 +1,66 @@
+{
+  "2018": {
+    "csv": "https://data.cms.gov/sites/default/files/2021-01/Medicare_FFS_CERT_Data_2018.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/e9d0fb3a-ca8d-4e80-8bd3-0ae336ac76e6/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2017-06-30",
+    "submission_start": "2016-07-01",
+    "version": "2021-05-20"
+  },
+  "2019": {
+    "csv": "https://data.cms.gov/sites/default/files/2021-01/Medicare_FFS_CERT_Data_2019.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/6b92a8b2-efaa-49ae-8a01-1922ef1fe534/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2018-06-30",
+    "submission_start": "2017-07-01",
+    "version": "2021-05-20"
+  },
+  "2020": {
+    "csv": "https://data.cms.gov/sites/default/files/2021-01/2020%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/8e02cc09-8179-4aaf-a437-c6012642f9af/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2019-06-30",
+    "submission_start": "2018-07-01",
+    "version": "2021-05-20"
+  },
+  "2021": {
+    "csv": "https://data.cms.gov/sites/default/files/2022-01/4267ffed-b89a-402a-8c70-a048b32ae642/2021%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/749f218f-0669-4925-885c-a4b40b6f0480/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2020-06-30",
+    "submission_start": "2019-07-01",
+    "version": "2022-01-13"
+  },
+  "2022": {
+    "csv": "https://data.cms.gov/sites/default/files/2022-12/16676776-b9f0-4740-8345-5cc3f84e63db/2022%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/755391cc-6682-419d-9c95-d0905fea78d4/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2021-06-30",
+    "submission_start": "2020-07-01",
+    "version": "2023-03-06"
+  },
+  "2023": {
+    "csv": "https://data.cms.gov/sites/default/files/2023-12/8e1e39c7-859f-455b-9eab-6bb3d63e516c/2023%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/a3334602-31c4-45b0-95ee-988c6274032e/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2022-06-30",
+    "submission_start": "2021-07-01",
+    "version": "2024-01-04"
+  },
+  "2024": {
+    "csv": "https://data.cms.gov/sites/default/files/2024-11/9512fdeb-578d-428e-bddb-458338517cfb/2024%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/81f4f6c8-0f55-49f1-a338-4f92a859263b/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2023-06-30",
+    "submission_start": "2022-07-01",
+    "version": "2025-10-28"
+  },
+  "2025": {
+    "csv": "https://data.cms.gov/sites/default/files/2026-01/53600220-96ac-49b3-bee7-83452b2b1df9/2025%20PartAPartB%20Public%20Data.csv",
+    "dictionary": "https://data.cms.gov/data-api/v1/dataset/dc7c7abe-57bf-41e5-a858-1d04d431d542/dictionary",
+    "license": "https://www.usa.gov/government-works",
+    "submission_end": "2024-06-30",
+    "submission_start": "2023-07-01",
+    "version": "2026-02-03"
+  }
+}

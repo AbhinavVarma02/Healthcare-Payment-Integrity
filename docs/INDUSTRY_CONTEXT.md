@@ -1,0 +1,3 @@
+# Industry context
+
+Payment integrity reviews use scarce staff time and can place documentation burdens on providers. CMS Targeted Probe and Educate describes targeted record review and education intended to reduce errors, appeals and provider burden. The project studies an analyst-facing claim selection problem using CERT public review outcomes and a fixed audit budget. The replay concerns simulated choices and workload proxies under an explicit protocol. [CMS Targeted Probe and Educate](https://www.cms.gov/data-research/monitoring-programs/medicare-fee-service-compliance-programs/medical-review-and-education/targeted-probe-and-educate-tpe)

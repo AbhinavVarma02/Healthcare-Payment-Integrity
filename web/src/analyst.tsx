@@ -68,19 +68,22 @@ export function Analyst({ study }: { study: Study }) {
   return <>
     <PageHeading eyebrow="Evidence tools" title="Research analyst"
       description="Run a structured query over reviewed evidence or calculate a fictional budget scenario." />
-    <div className="overview-grid">
-      <Card title="Evidence query" subtitle={import.meta.env.DEV ? "Deterministic · Local API" : "Deterministic · Browser and reviewed aggregates"}>
-        <form onSubmit={(event) => void run(event)} className="filters">
+    <div className="control-grid">
+      <Card title="Evidence query" subtitle={import.meta.env.DEV ? "Deterministic · Local API" : "Deterministic · Reviewed aggregates"}>
+        <form onSubmit={(event) => void run(event)} className="query-form">
           <Select label="Query" value={tool} items={examples.map((item) => ({ value: item.tool, text: item.question }))}
             onChange={(value) => { setTool(value as Tool); setAnswer(undefined); setError(""); }} />
           <button className="button" disabled={busy}>Run query</button>
         </form>
         {tool === "budget" && <p className="quiet">Example assumptions are 30% predicted disagreement, $250 exposure, 35% relevant fraction and $30 review cost.</p>}
+      </Card>
+      <Card title="Query result" subtitle="Metrics and source evidence for the selected query">
         <div aria-live="polite">
-          {busy && <p>Retrieving evidence…</p>}
+          {busy && <p className="quiet">Retrieving evidence…</p>}
           {error && <p className="error" role="alert">{error}</p>}
+          {!busy && !error && !answer && <Empty text="Run a query to retrieve its evidence." />}
           {answer?.status !== "ok" && answer && <Empty text="No verified answer is available for this query." />}
-          {data?.policies && <Table caption="Frozen 2025 replay at 5% capacity"
+          {data?.policies && <Table caption="Frozen 2025 replay at 5% capacity" numeric={[1, 2, 3]}
             headings={["Strategy", "Reviews", "Mean yield", "Rate RMSE", "Estimator"]}
             rows={data.policies.filter((row) => policyNames.includes(row.strategy)).map((row) => [
               label(row.strategy), number(row.reviews), percent(row.yield, 2), points(row.cohort_rmse ?? row.selected_only_rmse),
@@ -100,11 +103,8 @@ export function Analyst({ study }: { study: Study }) {
           </p>}
         </div>
       </Card>
-      <Card title="Evidence scope" subtitle="CMS public release cohort">
-        <p>Replay estimates apply to the eligible released claim groups. Financial scenarios use fictional assumptions. The study has no actual recovery amounts.</p>
-        <a className="text-action" href="#/methods">See the protocol and run fingerprints</a>
-      </Card>
     </div>
-    <Note>Optional local language-model selection missed its reliability gate. The workspace uses deterministic queries.</Note>
+    <Note>Replay estimates apply to eligible published claims. Financial queries use fictional assumptions. The optional language model missed its reliability gate.</Note>
+    <a className="text-action" href="#/methods">See the protocol and run fingerprints</a>
   </>;
 }

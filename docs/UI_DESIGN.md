@@ -1,23 +1,24 @@
-# Workspace design
+# Porcelain & Ink workspace
 
-The workspace uses a navy navigation shell, warm white analysis surfaces and teal for primary actions and the selected hybrid policy. Display numbers use tabular figures. The workspace uses the system font stack and bundled Lucide icons. One theme covers both modes.
+The masthead identifies the workspace and source mode. Grouped navigation separates research, audit strategy, workflows and study records. The interface uses the local system font stack with tabular numerals, a blue accent and a navy surface for the primary research readout. The theme follows the device setting until the user changes it in the masthead, where the preference is saved for that browser.
 
-| Workflow | Interaction and source |
+| Workflow | Evidence and interaction |
 | --- | --- |
-| Executive overview | Answers the fixed-budget question with the frozen 2025 yield and estimation results. Shows greedy selected-only error beside hybrid and uniform design-aware error. |
-| Cohorts | Filter by reporting year and claim part. Download the approved study JSON. A reporting-year chart summarizes the published cohorts. |
-| Validation | Inspect precision–recall and reliability, holdout scorecards, preregistered acceptance criteria, active model and monitoring thresholds. |
-| Planning and replay | Change capacity, exploration and fictional cost assumptions. Compare matched historical results and reset to the registered defaults. Inspect coverage and Monte Carlo uncertainty in replay. |
-| Investigation | The static mode walks through a fictional browser scenario. The local mode uses the persisted SQLite queue, filters, case actions, delayed findings and receipt verification. |
-| Operations | Local status, event latency and recent issues come from the API. Candidate controls require local synthetic evidence and explicit approvals. The research lab presents recorded scenario evidence in both modes. |
-| Analyst and evidence | Run structured deterministic queries with run IDs and source links. Static mode uses the reviewed aggregate and browser arithmetic. Local mode calls the read-only API. |
+| Overview and planning | Compare mean review yield with cohort rate RMSE at matched capacity. Greedy uses a selected-only estimator. Hybrid and uniform use design-aware estimates. The chart and adjacent values distinguish them. |
+| Cohort explorer | Filter inventory by reporting year and claim part. The scope panel reflects the selection. The disagreement-rate series covers the published all-parts cohorts. |
+| Risk models and validation | Inspect precision–recall, reliability bins with counts, holdout scorecards and paired intervals for challenger changes. The registry identifies the active research scorecard. |
+| Replay and research lab | Compare mean yield across the measured capacities. Replay whiskers show the selected strategy’s empirical seed percentiles. Inspect coverage, Monte Carlo error, and the paired and matched resource comparisons. |
+| Financial analysis | Adjust the assumptions for one fictional review. The plot calculates expected net from the same cent-exact formula as the readout. Study intervals below it come from the paired historical comparison. |
+| Review and operations | Follow a browser-only fictional review or use the local persisted queue. The local workspace displays receipt verification, timing, state changes and controlled model lifecycle actions. |
+| Local scoring and analyst | Run the loopback API with fictional claims, or query frozen evidence using deterministic tools. The interface labels the source mode for each workflow. |
+| Methodology | Review the decision unit, outcome, uncertainty methods, frozen protocol, run fingerprints and source links. |
 
-Narrow layouts collapse navigation into a menu. Escape restores focus to the toggle. Hash navigation focuses the main landmark. Data tables scroll in named regions and keep their headers visible. Charts expose tabular values via keyboard-operable disclosures. Controls use visible focus rings and honor reduced-motion settings. Static results, fictional scenarios and live local simulation are labeled in context.
+Keyboard users can skip to the main content, close narrow navigation with Escape, follow each review action, change the financial slider and open chart values. Charts use distinct symbols or line patterns, explicit units and accessible values. Wide tables scroll within named regions. The control outlines and text colors meet their respective contrast thresholds on the surfaces where they are used. Motion respects the browser’s reduced-motion setting.
 
-## Visual evidence
+## Visual verification
 
-The desktop overview, planner and mobile overview are actual static export captures. Browser QA covered 11 static and 13 local routes at 1440×900, 768×950 and 390×844, including an aggregate-load error and retry. Edge screenshot contact sheets showed a gap above short pages at narrow widths. Constraining the navigation grid to its content removed the gap, and a browser assertion now checks the sidebar-to-header position. Data tables can still scroll horizontally at narrow widths. [Desktop overview](images/overview.png) · [Desktop planner](images/planner.png) · [Mobile overview](images/overview-mobile.png)
+Actual browser captures show the static workspace. [Light overview](images/overview.png) · [Dark overview](images/overview-dark.png) · [Mobile overview](images/overview-mobile.png) · [Audit planner](images/planner.png)
 
-Each engine captured 72 route and viewport combinations plus the planner workflow and an error state. The desktop axe scans across 48 browser, mode and route combinations reported zero violations under the configured WCAG 2.0 and 2.1 A/AA rules. The browser suite checks keyboard focus, reloads, data and form interactions, unexpected requests and console errors. These are scoped checks of the captured application states. [Test evidence](TEST_EVIDENCE.md)
+The route matrix covers 11 static and 13 local routes at 1440×900, 768×950 and 390×844 in Edge and Firefox. It captures each route in both themes and checks horizontal page overflow, runtime errors and network requests. Desktop route checks run the configured axe WCAG 2.0 and 2.1 A/AA rules. Interaction checks cover system theme changes and persistence, keyboard navigation and review, chart values, scenario recalculation, aggregate-load recovery, deterministic queries, local scoring, replay and persisted decision receipts.
 
-The reviewed build contains 326.16 kB of JavaScript and 12.03 kB of CSS before compression. Vite reports 94.39 kB and 3.66 kB gzip sizes. The frozen JSON is 1.66 MB before compression. In the tested desktop loopback navigations, the static overview heading was ready within 128 ms and the Vite development overview within 239 ms. These are single navigation observations for each engine on the test machine.
+Visual review led to a shorter mobile planner configuration, distinct plot markers and annotations, wider tablet inventory and queue layouts, and aligned calculator inputs. The seven-file static export uses bundled assets, an embedded favicon and the existing reviewed study JSON. Vite reports 337.00 kB of JavaScript and 18.67 kB of CSS before compression, or 97.55 kB and 4.65 kB gzip.

@@ -14,7 +14,7 @@ from payment_integrity.cohorts import (
     project_csv,
     write_parquet,
 )
-from payment_integrity.publication import HEADERS, audit_paths
+from payment_integrity.publication import FAVICON, HEADERS, audit_paths
 from payment_integrity.storage import sha256, write_json
 
 CLAIM = {"part": "DME", "provider_type": "Pharmacy", "visible_lines": 2, "provider_types": 1}
@@ -130,6 +130,8 @@ def static_export(tmp_path):
 
 
 def test_publication_accepts_pinned_reviewed_aggregate_with_referenced_assets(static_export):
+    entry = static_export / "index.html"
+    entry.write_text(f'{entry.read_text(encoding="utf-8")}<link rel="icon" href="{FAVICON}">', encoding="utf-8")
     result = audit_paths(static_export)
     assert len(result) == 6
     assert result["study.json"] == "eaf69560201573458508a359471a70d5720226e8e37d75d77b500d10db222b32"
@@ -142,9 +144,11 @@ def test_publication_accepts_pinned_reviewed_aggregate_with_referenced_assets(st
     ("artifact.json", b"{}", "outside the static allowlist"),
     ("index.html", b'<script src="./assets/ui.js"></script><script src="https://cdn.invalid/ui.js"></script>',
      "entry-point references"),
+    ("index.html", b'<script src="./assets/ui.js"></script><link rel="icon" href="data:image/svg+xml,other">',
+     "entry-point references"),
     ("_headers", b"", "reviewed policy"),
 ], ids=["orphaned-asset", "loopback-in-build", "raw-identifier-schema", "unreviewed-output", "remote-script",
-        "changed-csp"])
+        "unreviewed-icon", "changed-csp"])
 def test_publication_rejects_invalid_export_paths_and_contents(static_export, name, value, reason):
     (static_export / name).write_bytes(value)
     with pytest.raises(ValueError, match=reason):

@@ -154,12 +154,13 @@ export function Operations() {
       aside={<button className="button secondary" disabled={busy} onClick={() => void execute(() => refresh(run || undefined, selected))}>Refresh operations</button>} />
     {error && <p className="error" role="alert">{error}</p>}
     {message && <p className="note" role="status">{message}</p>}
-    <div className="kpi-grid">
-      {[["Simulation tick", overview?.tick ?? "No data"], ["Queued reviews", overview ? overview.states.queued ?? 0 : "No data"],
-        ["Cases with revealed findings", overview?.revealed_cases ?? "No data"],
-        ["Event p95", overview?.event_latency.p95_ms == null ? "No data" : `${number(overview.event_latency.p95_ms, 1)} ms`]]
-        .map(([label, value]) => <div className="kpi" key={label}><p className="kpi-label">{label}</p><strong>{value}</strong></div>)}
-    </div>
+    {!overview && !error && <p className="loading operations-loading" role="status">Loading local operations…</p>}
+    {overview && <dl className="metric-band">
+      {[["Simulation tick", overview.tick], ["Queued reviews", overview.states.queued ?? 0],
+        ["Cases with revealed findings", overview.revealed_cases],
+        ["Event p95 latency", overview.event_latency.p95_ms == null ? "—" : `${number(overview.event_latency.p95_ms, 1)} ms`]]
+        .map(([label, value]) => <div key={label}><dt>{label}</dt><dd><strong>{value}</strong></dd></div>)}
+    </dl>}
     <Card title="Batch intake" subtitle="Synthetic claims · Analyst controls">
       <div className="filters">
         <Select label="Review capacity" value={capacity} items={[0, 1, 2, 3, 4].map((n) => ({ value: n, text: `${n} of 4` }))}
@@ -173,7 +174,7 @@ export function Operations() {
         })}>Advance clock one tick</button>
       </div>
     </Card>
-    <div className="overview-grid">
+    <div className="overview-grid operations-queue">
       <Card title="Review queue" subtitle="Findings appear when their availability tick is reached">
         {overview?.recent_runs.length ? <div className="filters">
           <Select label="Intake run" value={run} items={options(overview.recent_runs.map((item) => item.run_id))}
@@ -187,6 +188,7 @@ export function Operations() {
         {queueRows.length > 0 && <Table caption="Synthetic review queue" headings={["Case", "State", "Finding", "Details"]}
           rows={queueRows.map((row) => [row.case_id, row.state, row.finding?.finding ?? "—",
             <button className={`button ${selected === row.case_id ? "" : "secondary"}`} disabled={busy}
+              aria-pressed={selected === row.case_id}
               onClick={() => void execute(async () => {
                 setSelected(row.case_id);
                 setReplacement("");
@@ -248,7 +250,7 @@ export function Operations() {
         </> : <Empty text="Select a case to inspect its receipt." />}
       </Card>
     </div>
-    <div className="two-columns">
+    <div className="evidence-grid">
       <Card title="Model lifecycle" subtitle="Only synthetic operations can activate these candidates">
         <dl className="details">
           <div><dt>Active</dt><dd>{lifecycle?.active ?? "Reference research scorecard"}</dd></div>

@@ -15,6 +15,7 @@ docs/DEPLOYMENT.md
 docs/DEVELOPMENT_EDA.md
 docs/EVIDENCE.md
 docs/EXPERIMENT_REPORT.md
+docs/images/overview-dark.png
 docs/images/overview-mobile.png
 docs/images/overview.png
 docs/images/planner.png

@@ -1,8 +1,9 @@
 import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  Activity, BarChart3, BookOpenText, ClipboardList, Database, FlaskConical, LayoutDashboard, Menu,
-  MessageSquareText, ShieldCheck, SlidersHorizontal, Terminal, WalletCards, X,
+  Activity, BarChart3, BookOpenText, ChartNoAxesColumnIncreasing, ChevronRight, ClipboardList,
+  Database, FlaskConical, LayoutDashboard, Menu, MessageSquareText, Moon, ShieldCheck,
+  SlidersHorizontal, Sun, Terminal, WalletCards, X,
 } from "lucide-react";
 import { Empty, PageHeading } from "./components";
 import { studyData } from "./contracts";
@@ -34,6 +35,29 @@ const navigation = [
   { key: "analyst", text: "Analyst", Icon: MessageSquareText, Page: Analyst },
   { key: "methods", text: "Methodology", Icon: BookOpenText, Page: Methods },
 ];
+const groups = [
+  { name: "Research", keys: ["overview", "data", "models", "validation"] },
+  { name: "Audit strategy", keys: ["planner", "replay", "finance"] },
+  { name: "Workflows", keys: ["review", "analyst"] },
+  { name: "Study records", keys: ["evidence", "methods"] },
+];
+const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+type Theme = "light" | "dark";
+
+function initialTheme(): Theme {
+  try {
+    const saved = localStorage.getItem("payment-integrity-theme");
+    if (saved === "dark" || saved === "light") return saved;
+  } catch { /* The system theme is still available if storage is restricted. */ }
+  return systemTheme.matches ? "dark" : "light";
+}
+
+let followsSystem = true;
+try {
+  const saved = localStorage.getItem("payment-integrity-theme");
+  followsSystem = saved !== "light" && saved !== "dark";
+} catch { /* Storage is optional. */ }
+document.documentElement.dataset.theme = initialTheme();
 
 function activeRoute() {
   const route = window.location.hash.replace(/^#\/?/, "");
@@ -43,12 +67,25 @@ function activeRoute() {
 function Workspace() {
   const [route, setRoute] = useState(activeRoute);
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState(initialTheme);
   const [study, setStudy] = useState<Study>();
   const [status, setStatus] = useState("Loading study…");
   const [attempt, setAttempt] = useState(0);
   const showLocal = route === "local" && localMode;
   const showOperations = route === "operations" && localMode;
   const needsStudy = !showLocal && !showOperations;
+  useEffect(() => {
+    const change = () => { if (followsSystem) setTheme(systemTheme.matches ? "dark" : "light"); };
+    systemTheme.addEventListener("change", change);
+    return () => systemTheme.removeEventListener("change", change);
+  }, []);
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
+  const otherTheme = theme === "dark" ? "light" : "dark";
+  function toggleTheme() {
+    followsSystem = false;
+    setTheme(otherTheme);
+    try { localStorage.setItem("payment-integrity-theme", otherTheme); } catch { /* Theme works for this visit. */ }
+  }
   useEffect(() => {
     if (!needsStudy || study) return;
     const controller = new AbortController();
@@ -68,7 +105,15 @@ function Workspace() {
     return () => window.removeEventListener("hashchange", onNavigate);
   }, []);
   const current = navigation.find((item) => item.key === route);
+  const section = groups.find((group) => group.keys.includes(route))?.name ?? (needsStudy ? "Workspace" : "Local tools");
+  const routeName = current?.text ?? (showLocal ? "Local workflows" : showOperations ? "Operations" : "Workspace");
   const Page = current?.Page;
+  function closeNavigation(key: string) {
+    if (open && route === key) {
+      document.getElementById("main")?.focus({ preventScroll: true });
+    }
+    setOpen(false);
+  }
   return <div className="workspace">
     <a className="skip" href="#main" onClick={(event) => {
       event.preventDefault(); document.getElementById("main")?.focus();
@@ -80,7 +125,7 @@ function Workspace() {
       }
     }}>
       <a className="identity" href="#/overview">
-        <span className="mark"><Activity size={24} aria-hidden="true" /></span>
+        <span className="mark"><ChartNoAxesColumnIncreasing size={19} aria-hidden="true" /></span>
         <span>Healthcare<br /><strong>Payment Integrity</strong></span>
       </a>
       <button id="nav-toggle" className="nav-toggle" aria-expanded={open} aria-controls="navigation"
@@ -88,20 +133,34 @@ function Workspace() {
         {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
       </button>
       <nav id="navigation" className="navigation" aria-label="Workspace">
-        {navigation.map(({ key, text, Icon }) => <a href={`#/${key}`} key={key}
-          onClick={() => setOpen(false)} aria-current={route === key ? "page" : undefined}>
-          <Icon size={18} aria-hidden="true" /><span>{text}</span>
-        </a>)}
-        {localMode && <a href="#/local" onClick={() => setOpen(false)}
-          aria-current={showLocal ? "page" : undefined}><Terminal size={18} aria-hidden="true" /><span>Local workflows</span></a>}
-        {localMode && <a href="#/operations" onClick={() => setOpen(false)}
-          aria-current={showOperations ? "page" : undefined}><ClipboardList size={18} aria-hidden="true" /><span>Operations</span></a>}
+        {groups.map(({ name, keys }) => <div className="nav-group" key={name}>
+          <p>{name}</p>
+          {keys.map((key) => {
+            const { text, Icon } = navigation.find((item) => item.key === key)!;
+            return <a href={`#/${key}`} key={key} onClick={() => closeNavigation(key)}
+              aria-current={route === key ? "page" : undefined}>
+              <Icon size={16} aria-hidden="true" /><span>{text}</span>
+            </a>;
+          })}
+        </div>)}
+        {localMode && <div className="nav-group"><p>Local tools</p>
+          <a href="#/local" onClick={() => closeNavigation("local")} aria-current={showLocal ? "page" : undefined}>
+            <Terminal size={16} aria-hidden="true" /><span>Local workflows</span></a>
+          <a href="#/operations" onClick={() => closeNavigation("operations")} aria-current={showOperations ? "page" : undefined}>
+            <ClipboardList size={16} aria-hidden="true" /><span>Operations</span></a>
+        </div>}
       </nav>
-      <div className="side-note">Release v1.0.0<span>CMS CERT · Research use</span></div>
+      <div className="side-note"><Database size={16} aria-hidden="true" /><div>CMS CERT study<span>Release v1.0.0</span></div></div>
     </aside>
     <div className="surface">
-      <header className="topbar"><span>{current?.text ?? (showLocal ? "Local workflows" : showOperations ? "Operations" : "Workspace")}</span>
-        <span className="source-label"><span className="mode-light" />{localMode ? "Local workspace" : "Static study"}</span>
+      <header className="topbar">
+        <div className="location"><span>{section}</span><ChevronRight size={13} aria-hidden="true" /><strong>{routeName}</strong></div>
+        <div className="masthead-actions">
+          <span className="source-label">{localMode ? <Terminal size={14} aria-hidden="true" /> : <Database size={14} aria-hidden="true" />}
+            {localMode ? "Local workspace" : "Static study"}</span>
+          <button className="icon-button" type="button" onClick={toggleTheme} aria-label={`Switch to ${otherTheme} theme`}
+            title={`Switch to ${otherTheme} theme`}>{theme === "dark" ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}</button>
+        </div>
       </header>
       <main id="main" tabIndex={-1}>
         {showOperations && Operations ? <Suspense fallback={<p role="status">Loading operations…</p>}>

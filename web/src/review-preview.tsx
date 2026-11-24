@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Card, Empty, Note, PageHeading, Select, Status, Table } from "./components";
 import { reviewActions, reviewOutcomes, reviewSteps } from "./review-state";
 import type { Finding } from "./review-state";
@@ -7,11 +7,23 @@ export function ReviewPreview() {
   const [step, setStep] = useState(0);
   const [capacity, setCapacity] = useState(2);
   const [finding, setFinding] = useState<Finding>("agree");
+  const nextAction = useRef<HTMLButtonElement>(null);
+  const reset = useRef<HTMLButtonElement>(null);
+  const restoreFocus = useRef(false);
+  useLayoutEffect(() => {
+    if (!restoreFocus.current) return;
+    (nextAction.current ?? reset.current)?.focus();
+    restoreFocus.current = false;
+  }, [step]);
+  const moveTo = (next: number) => {
+    restoreFocus.current = true;
+    setStep(next);
+  };
   const outcomes = reviewOutcomes(step, finding);
   return <>
     <PageHeading eyebrow="Browser simulation" title="Follow a claim review"
       description="Walk through a fictional review from assignment to a delayed finding and a recorded correction." />
-    <div className="overview-grid">
+    <div className="evidence-grid">
       <Card title="Review timeline" subtitle="Fictional batch · Four eligible demo cases">
         <div className="filters">
           <Select label="Review capacity" value={capacity} items={[1, 2, 3, 4].map((n) => ({ value: n, text: `${n} of 4` }))}
@@ -24,8 +36,8 @@ export function ReviewPreview() {
             <span>{label}</span>{i === step && <Status value="Current" />}</li>)}
         </ol>
         <div className="actions">
-          {step < reviewActions.length && <button className="button" onClick={() => setStep(step + 1)}>{reviewActions[step]}</button>}
-          {step > 0 && <button className="button secondary" onClick={() => setStep(0)}>Reset example</button>}
+          {step < reviewActions.length && <button ref={nextAction} className="button" onClick={() => moveTo(step + 1)}>{reviewActions[step]}</button>}
+          {step > 0 && <button ref={reset} className="button secondary" onClick={() => moveTo(0)}>Reset example</button>}
         </div>
       </Card>
       <Card title="Illustrative receipt" subtitle="Synthetic case · Demo A">

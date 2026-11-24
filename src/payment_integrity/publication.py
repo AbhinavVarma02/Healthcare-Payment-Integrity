@@ -25,6 +25,11 @@ NOT_FOUND = """<!doctype html><html lang="en"><meta charset="utf-8">
 </html>
 """
 WEB_LIBRARIES = ("react", "react-dom", "scheduler", "lucide-react")
+FAVICON = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    "%3Crect width='32' height='32' rx='6' fill='%23315cbb'/%3E%3Cpath d='M9 23v-5m7 5V13m7 10V8' "
+    "stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"
+)
 
 
 class EntryPoint(HTMLParser):
@@ -34,6 +39,8 @@ class EntryPoint(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag not in {"script", "link"}:
+            return
+        if tag == "link" and len(attrs) == 2 and dict(attrs) == {"rel": "icon", "href": FAVICON}:
             return
         reference = dict(attrs).get("src" if tag == "script" else "href")
         if not reference or not reference.startswith("./") or not ASSET.fullmatch(reference[2:]):

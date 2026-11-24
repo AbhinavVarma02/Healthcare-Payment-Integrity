@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Note, PageHeading, Plot, Select, Status, Table } from "./components";
+import { Card, PageHeading, Plot, Select, Status, Table } from "./components";
 import { number, percent, points } from "./numbers";
 import evidence from "./research-evidence.json";
 
@@ -36,13 +36,19 @@ export function ResearchExtensions() {
           onChange={(value) => setBudget(Number(value))} />
         <Status value={adaptive.primary.status} />
       </div>
-      <Note>{number(size ?? 0)} eligible claim groups. The adaptive rule selected the same exploration resource as the matched
-        { ` ${adaptive.primary.matched_resource_percent}% ` }fixed allocation in every evaluated wave.</Note>
-      <Plot title="Estimation error and review yield by policy" series={plot}
-        rangeX={[0, Math.max(0.02, ...plot.map((row) => row.points[0][0])) * 1.1]}
-        rangeY={[0, Math.max(0.4, ...plot.map((row) => row.points[0][1])) * 1.05]}
-        xLabels={(value) => points(value, 1)} xTitle="Cohort rate RMSE" yTitle="Review yield" />
-      <Table caption="Adaptive allocation evidence" headings={["Policy", "Reviews", "Yield", "Cohort RMSE", "Coverage", "Exploration", "Review minutes"]}
+      <div className="evidence-grid">
+        <Plot title="Estimation error and review yield by policy" series={plot} scatter
+          rangeX={[0, Math.max(0.02, ...plot.map((row) => row.points[0][0])) * 1.1]}
+          rangeY={[0, Math.max(0.4, ...plot.map((row) => row.points[0][1])) * 1.05]}
+          xLabels={(value) => points(value, 1)} xValue={points} xTitle="Cohort rate RMSE" yTitle="Review yield"
+          legendNote="Policies with identical results share a marker. Greedy has no design-aware rate RMSE." />
+        <div className="result-block"><span>Adaptive vs. matched fixed rule</span>
+          <strong>{adaptive.primary.matched_resource_percent}% exploration</strong>
+          <p>Both rules used the same exploration allocation in every evaluated wave. The selected cohort has {number(size ?? 0)} eligible claim groups.</p>
+        </div>
+      </div>
+      <Table caption="Adaptive allocation evidence" numeric={[1, 2, 3, 4, 5, 6]}
+        headings={["Policy", "Reviews", "Yield", "Cohort RMSE", "Coverage", "Exploration", "Review minutes"]}
         rows={rows.map((row) => [policyLabels[row.policy], number(row.reviews), percentValue(row.yield.mean),
           points(row.cohort_rmse.value), percentValue(row.coverage.mean), number(row.exploration.mean ?? 0),
           number(row.minutes.mean ?? 0)])} />
@@ -54,19 +60,21 @@ export function ResearchExtensions() {
         <p className="digest">{adaptive.evidence.sha256}</p>
       </details>
     </Card>
-    <Card title="Controlled learning" subtitle={`H5 · ${lifecycle.scenarios} synthetic scenario runs · ${lifecycle.cases_per_wave} cases per wave`}>
-      <Table caption="Simulated delayed feedback evidence"
-        headings={["Scenario", "Delay (waves)", "Update", "Approvals", "Rejected", "Brier Δ ± MCSE", "Yield Δ"]}
-        rows={lifecycle.updates.map((row) => [row.scenario, row.delay, row.mode, row.promoted, row.rejected,
-          `${decimal(row.brier.mean)} ± ${decimal(row.brier.mcse)}`, percentValue(row.yield.mean)])} />
-      <p className="provenance">Paired differences compare post-shift waves with the static reference. Each row covers
-        { ` ${lifecycle.updates[0]?.paired_seeds} ` }seeds. [H5] <span className="digest">{lifecycle.evidence.sha256}</span></p>
-    </Card>
-    <Card title="Analyst tool evaluation" subtitle="H6 · Prespecified local test suite">
-      <p>{assistant.deterministic_passes}/10 deterministic scenarios passed with {assistant.critical_failures} critical failures.</p>
-      {assistant.local_model && <p>Local model selection matched in {assistant.model_matches}/{assistant.model_attempts} attempts.
-        Evaluation gate {assistant.model_gate}.</p>}
-      <p className="provenance digest">{assistant.evidence.sha256}</p>
-    </Card>
+    <div className="evidence-grid">
+      <Card title="Controlled learning" subtitle={`H5 · ${lifecycle.scenarios} synthetic scenario runs · ${lifecycle.cases_per_wave} cases per wave`}>
+        <Table caption="Simulated delayed feedback evidence"
+          headings={["Scenario", "Delay (waves)", "Update", "Approvals", "Rejected", "Brier Δ ± MCSE", "Yield Δ"]}
+          rows={lifecycle.updates.map((row) => [row.scenario, row.delay, row.mode, row.promoted, row.rejected,
+            `${decimal(row.brier.mean)} ± ${decimal(row.brier.mcse)}`, points(row.yield.mean)])} />
+        <p className="provenance">Paired differences compare post-shift waves with the static reference. Each row covers
+          { ` ${lifecycle.updates[0]?.paired_seeds} ` }seeds. [H5] <span className="digest">{lifecycle.evidence.sha256}</span></p>
+      </Card>
+      <Card title="Analyst tool evaluation" subtitle="H6 · Prespecified local test suite">
+        <p>{assistant.deterministic_passes}/10 deterministic scenarios passed with {assistant.critical_failures} critical failures.</p>
+        {assistant.local_model && <p>Local model selection matched in {assistant.model_matches}/{assistant.model_attempts} attempts.
+          Evaluation gate {assistant.model_gate}.</p>}
+        <p className="provenance digest">{assistant.evidence.sha256}</p>
+      </Card>
+    </div>
   </>;
 }

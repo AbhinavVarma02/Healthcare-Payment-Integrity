@@ -106,7 +106,7 @@ export function LocalWorkflows() {
       aside={<button className="button secondary" onClick={() => void check()}>Check API</button>} />
     <Note>Local API status is {readiness}. Use fictional inputs without claim or provider identifiers.</Note>
     {error && <div className="error" role="alert">{error}</div>}
-    <div className="two-columns">
+    <div className="control-grid local-workbench">
       <Card title="Score a fictional claim" subtitle="Live local model inference">
         <form onSubmit={scoreClaim} className="calculator">
           <Select label="Claim part" value={claim.part} onChange={(v) => setClaim({ ...claim, part: v as Part })}

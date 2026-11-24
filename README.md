@@ -14,6 +14,8 @@ The 2025 denominator is 20,180 eligible public claim groups, including 4,015 wit
 
 ![Verified static analyst workspace overview](docs/images/overview.png)
 
+The workspace follows the system color scheme until you set a preference in the masthead. [Dark overview](docs/images/overview-dark.png) · [Mobile overview](docs/images/overview-mobile.png)
+
 ## Two-minute walkthrough
 
 1. Start in **Overview**. Compare what each review strategy finds with how precisely it estimates disagreement in the released cohort.

@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -20,7 +21,15 @@ def atomic_bytes(path: Path, data: bytes) -> None:
             stream.write(data)
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, path)
+        for attempt in range(8):
+            try:
+                os.replace(temporary, path)
+                break
+            except PermissionError:
+                if os.name != "nt" or attempt == 7:
+                    raise
+                # Windows readers can briefly hold a file handle without delete sharing.
+                time.sleep(0.01 * (attempt + 1))
     finally:
         Path(temporary).unlink(missing_ok=True)
 

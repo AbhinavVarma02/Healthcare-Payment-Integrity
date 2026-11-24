@@ -36,7 +36,14 @@ def atomic(path, value):
         handle.flush()
         os.fsync(handle.fileno())
     try:
-        temporary.replace(path)
+        for attempt in range(8):
+            try:
+                temporary.replace(path)
+                break
+            except PermissionError:
+                if os.name != "nt" or attempt == 7:
+                    raise
+                time.sleep(0.01 * (attempt + 1))
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -77,7 +84,10 @@ def lock(owner, minutes):
 
 
 def assert_owner(owner):
-    if read(LOCK)["owner"] != owner:
+    lease = read(LOCK)
+    heartbeat = read(HEARTBEAT)
+    age = datetime.now(UTC) - datetime.fromisoformat(heartbeat["heartbeat"])
+    if lease["owner"] != owner or heartbeat["owner"] != owner or age.total_seconds() > 20:
         raise SystemExit("Checkpoint requires the active writer lease.")
 
 
@@ -96,7 +106,9 @@ def validate(state):
                  ROOT / "AGENTS.md", ROOT / "CLAUDE.md"):
         if not path.is_file():
             raise SystemExit(f"Missing recovery file: {path.name}")
-    if hashlib.file_digest(MASTER.open("rb"), "sha256").hexdigest() != state["spec_sha256"]:
+    with MASTER.open("rb") as handle:
+        actual = hashlib.file_digest(handle, "sha256").hexdigest()
+    if actual != state["spec_sha256"]:
         raise SystemExit("Master specification checksum has changed.")
 
 

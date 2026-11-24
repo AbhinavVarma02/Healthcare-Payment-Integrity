@@ -10,3 +10,5 @@
 | Research papers, guidance and reports | Publisher or agency sources | Cite and paraphrase. No bundled copies |
 
 The USA.gov works policy distinguishes federal government material from third-party copyrighted material. Original code licensing covers original code. The publication review must assess aggregate cell size, identifiers, derived model access and third-party content before releasing any study artifact. See [verified sources](REFERENCES.md).
+
+The static distribution bundles React, React DOM and Scheduler under MIT, and Lucide components under ISC with Feather attribution under MIT. The export includes their installed license texts in `THIRD_PARTY_NOTICES.txt`. Python packages and browser test tools are local dependencies from the lockfiles. They are outside the static distribution.

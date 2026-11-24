@@ -229,10 +229,12 @@ source = { virtual = "." }
 dependencies = [
     { name = "duckdb" },
     { name = "fastapi" },
+    { name = "filelock" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "scikit-learn" },
     { name = "scipy" },
+    { name = "threadpoolctl" },
     { name = "uvicorn" },
     { name = "xgboost" },
 ]
@@ -252,10 +254,12 @@ dev = [
 requires-dist = [
     { name = "duckdb", specifier = ">=1.4,<2" },
     { name = "fastapi", specifier = ">=0.129,<1" },
+    { name = "filelock", specifier = ">=3.24,<5" },
     { name = "numpy", specifier = ">=2.4,<3" },
     { name = "pandas", specifier = ">=3,<4" },
     { name = "scikit-learn", specifier = ">=1.8,<2" },
     { name = "scipy", specifier = ">=1.17,<2" },
+    { name = "threadpoolctl", specifier = ">=3.6,<4" },
     { name = "uvicorn", specifier = ">=0.41,<1" },
     { name = "xgboost", specifier = ">=3.2,<4" },
 ]

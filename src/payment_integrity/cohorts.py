@@ -35,7 +35,7 @@ class ClaimGroup:
 
 def project_csv(path: Path, year: int, include_outcomes: bool):
     groups: dict[str, ClaimGroup] = {}
-    counts = Counter()
+    counts: Counter[str] = Counter()
     quarantine = []
     with path.open(encoding="utf-8-sig", newline="") as stream:
         reader = csv.reader(stream, strict=True)

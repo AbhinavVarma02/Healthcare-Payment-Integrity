@@ -6,9 +6,9 @@
 
 **1:15–2:00.** Set Policy replay to 2025, 5% capacity and unweighted. Compare the 10% hybrid's 3.89 percentage point design-aware RMSE with the 16.87 for greedy's selected-only rate. Show the 95.9% greedy yield retained and uniform random's 1.23 percentage point RMSE.
 
-**2:00–2:35.** Open Financial analysis and move the fictional cost per review. Explain that the comparison changes scenario-weighted findings and workload while observed disagreement counts remain grounded in CERT.
+**2:00–2:35.** Open Financial scenarios and move the fictional review cost. Explain that the comparison changes scenario-weighted findings and workload while observed disagreement counts remain grounded in CERT.
 
-**2:35–3:00.** Open Operations, intake a fictional batch and submit a delayed finding. Advance the clock, record a correction and show both receipt versions. In the policy and lifecycle lab, compare adaptive and matched fixed allocation at the same resources.
+**2:35–3:00.** Open Operations, intake a fictional batch and submit a delayed finding. Advance the clock, record a correction and show both receipt versions. In Research extensions, compare adaptive and matched fixed allocation at the same resources.
 
 ## Portfolio statements
 

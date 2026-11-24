@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Card, Empty, Note, PageHeading, Select, Status, Table } from "./components";
+import { RefreshCw, ShieldCheck } from "lucide-react";
+import { Empty, Figures, Note, PageHeading, Panel, Section, Segmented, Select, Status, Table, sentence } from "./components";
 import { localRequest } from "./contracts";
 import { number, percent } from "./numbers";
 
@@ -35,7 +36,7 @@ type Lifecycle = { generation: number; active: string | null; shadow: string | n
 type AssistantReply = { status: string; mode: string; data?: { risk?: number; eligible_groups?: number; net_cents?: number };
   evidence?: { model?: string; receipt?: string; aggregate_sha256?: string; formula?: string } };
 
-const options = (values: string[]) => values.map((value) => ({ value, text: value.replaceAll("-", " ") }));
+const options = (values: string[]) => values.map((value) => ({ value, text: sentence(value.replaceAll("-", " ")) }));
 const textError = (error: unknown) => error instanceof TypeError
   ? "The loopback API is unavailable. Start it locally and retry."
   : error instanceof Error ? error.message : "The operation could not be completed.";
@@ -149,45 +150,51 @@ export function Operations() {
   }
 
   return <>
-    <PageHeading eyebrow="Local simulation" title="Review operations"
-      description="Allocate fictional cases, advance the review clock, and inspect verified decision receipts."
-      aside={<button className="button secondary" disabled={busy} onClick={() => void execute(() => refresh(run || undefined, selected))}>Refresh operations</button>} />
+    <PageHeading title="Review operations"
+      description="Intake fictional claims, allocate reviews, advance the simulated clock and verify each decision receipt. State persists in a local SQLite store."
+      aside={<button className="button secondary" type="button" disabled={busy}
+        onClick={() => void execute(() => refresh(run || undefined, selected))}><RefreshCw size={14} aria-hidden="true" />Refresh</button>} />
     {error && <p className="error" role="alert">{error}</p>}
-    {message && <p className="note" role="status">{message}</p>}
-    {!overview && !error && <p className="loading operations-loading" role="status">Loading local operations…</p>}
-    {overview && <dl className="metric-band">
-      {[["Simulation tick", overview.tick], ["Queued reviews", overview.states.queued ?? 0],
-        ["Cases with revealed findings", overview.revealed_cases],
-        ["Event p95 latency", overview.event_latency.p95_ms == null ? "—" : `${number(overview.event_latency.p95_ms, 1)} ms`]]
-        .map(([label, value]) => <div key={label}><dt>{label}</dt><dd><strong>{value}</strong></dd></div>)}
-    </dl>}
-    <Card title="Batch intake" subtitle="Synthetic claims · Analyst controls">
-      <div className="filters">
-        <Select label="Review capacity" value={capacity} items={[0, 1, 2, 3, 4].map((n) => ({ value: n, text: `${n} of 4` }))}
+    {message && <p className="message" role="status">{message}</p>}
+    {!overview && !error && <p className="loading" role="status">Loading local operations</p>}
+    {overview && <Figures label="Operations status" items={[
+      { title: "Simulation tick", value: number(overview.tick) },
+      { title: "Queued reviews", value: number(overview.states.queued ?? 0) },
+      { title: "Cases with revealed findings", value: number(overview.revealed_cases) },
+      { title: "Event p95 latency", value: overview.event_latency.p95_ms == null ? "No events" : `${number(overview.event_latency.p95_ms, 1)} ms` },
+    ]} />}
+    <Section title="Batch intake" meta="Synthetic claims · analyst role">
+      <div className="controls">
+        <Segmented label="Review capacity" value={capacity} items={[0, 1, 2, 3, 4].map((n) => ({ value: n, text: `${n} of 4` }))}
           onChange={(value) => setCapacity(Number(value))} />
-        <Select label="Selection strategy" value={strategy} items={options(["hybrid-10", "uniform", "greedy"])} onChange={setStrategy} />
-        <button className="button" onClick={startBatch} disabled={busy || !overview}>Intake sample batch</button>
-        <button className="button secondary" disabled={busy || !run} onClick={() => void execute(async () => {
-          await event("advance", "operator", { advance_to: tick + 1 });
-          await refresh(run, selected);
-          setMessage("Simulation clock advanced.");
-        })}>Advance clock one tick</button>
+        <Segmented label="Selection strategy" value={strategy} items={[{ value: "hybrid-10", text: "10% exploration" },
+          { value: "uniform", text: "Uniform" }, { value: "greedy", text: "Greedy" }]} onChange={setStrategy} />
+        <div className="actions">
+          <button className="button" type="button" onClick={startBatch} disabled={busy || !overview}>Intake sample batch</button>
+          <button className="button secondary" type="button" disabled={busy || !run} onClick={() => void execute(async () => {
+            await event("advance", "operator", { advance_to: tick + 1 });
+            await refresh(run, selected);
+            setMessage("Simulation clock advanced.");
+          })}>Advance clock one tick</button>
+        </div>
       </div>
-    </Card>
-    <div className="overview-grid operations-queue">
-      <Card title="Review queue" subtitle="Findings appear when their availability tick is reached">
-        {overview?.recent_runs.length ? <div className="filters">
+    </Section>
+    <div className="columns wide-left">
+      <Section title="Review queue" meta="Findings appear once their availability tick is reached">
+        {overview?.recent_runs.length ? <div className="controls" style={{ marginBottom: 14 }}>
           <Select label="Intake run" value={run} items={options(overview.recent_runs.map((item) => item.run_id))}
             onChange={(value) => { setQueueState("all"); void execute(() => refresh(value)); }} />
+          {cases.length > 0 && <>
+            <Select label="Queue state" value={queueState} items={options(["all", ...new Set(cases.map((item) => item.state))])}
+              onChange={setQueueState} />
+            <Select label="Sort cases" value={queueOrder} items={options(["case", "state"])} onChange={setQueueOrder} />
+          </>}
         </div> : <Empty text="Intake a sample batch to create a queue." />}
-        {cases.length > 0 && <div className="filters">
-          <Select label="Queue state" value={queueState} items={options(["all", ...new Set(cases.map((item) => item.state))])}
-            onChange={setQueueState} />
-          <Select label="Sort cases" value={queueOrder} items={options(["case", "state"])} onChange={setQueueOrder} />
-        </div>}
-        {queueRows.length > 0 && <Table caption="Synthetic review queue" headings={["Case", "State", "Finding", "Details"]}
-          rows={queueRows.map((row) => [row.case_id, row.state, row.finding?.finding ?? "—",
-            <button className={`button ${selected === row.case_id ? "" : "secondary"}`} disabled={busy}
+        {queueRows.length > 0 && <Table caption="Synthetic review queue" headings={["Case", "State", "Finding", "Receipt"]}
+          highlight={(i) => queueRows[i]?.case_id === selected}
+          rows={queueRows.map((row) => [<span className="digest" key={row.case_id}>{row.case_id}</span>, <Status key="s" value={row.state} />,
+            row.finding?.finding ?? "Pending",
+            <button key="b" type="button" className={`button small ${selected === row.case_id ? "" : "secondary"}`} disabled={busy}
               aria-pressed={selected === row.case_id}
               onClick={() => void execute(async () => {
                 setSelected(row.case_id);
@@ -195,123 +202,129 @@ export function Operations() {
                 setReceipt(await localRequest<Receipt>(`${operations}/receipts/${row.case_id}`));
               })}>Inspect {row.case_id.split("-").at(-1)}</button>])} />}
         {cases.length > 0 && !queueRows.length && <Empty text="No cases match this queue state." />}
-        {current && <div className="case-actions">
-          <h3>{current.case_id}</h3>
-          <div className="filters">
+        {current && <div className="queue-actions">
+          <h3>Actions for case {current.case_id.split("-").at(-1)} <Status value={current.state} /></h3>
+          <div className="controls">
             {current.state === "queued" && <>
               <Select label="Reviewer" value={reviewer} items={options(["reviewer-a", "reviewer-b"])} onChange={setReviewer} />
-              <button className="button" disabled={busy} onClick={() => review("assign", "reviewer", { reviewer })}>Assign review</button>
+              <button className="button" type="button" disabled={busy} onClick={() => review("assign", "reviewer", { reviewer })}>Assign review</button>
             </>}
             {(current.state === "assigned" || current.finding) && <>
               <Select label="Finding" value={finding} items={options(["agree", "disagree"])} onChange={setFinding} />
               <Select label="Review note" value={note} items={options(["documentation", "coding", "eligibility", "other"])} onChange={setNote} />
-              {current.state === "assigned" ? <button className="button" disabled={busy}
+              {current.state === "assigned" ? <button className="button" type="button" disabled={busy}
                 onClick={() => review("submit", "reviewer", { finding, note, available_tick: tick + 1 })}>Submit delayed finding</button>
-                : <button className="button secondary" disabled={busy}
+                : <button className="button secondary" type="button" disabled={busy}
                   onClick={() => review("correct", "supervisor", { finding, note, available_tick: tick + 1,
                     replaces: current.finding?.version, reason: "source_revision" })}>Record correction</button>}
-              {current.state === "reviewed" && <button className="button secondary" disabled={busy}
+              {current.state === "reviewed" && <button className="button secondary" type="button" disabled={busy}
                 onClick={() => review("close", "reviewer")}>Close</button>}
             </>}
           </div>
-          {current.state === "queued" && cases.some((row) => row.state === "unselected") && <div className="filters">
+          {current.state === "queued" && cases.some((row) => row.state === "unselected") && <div className="controls">
             <Select label="Override replacement" value={replacement}
               items={[{ value: "", text: "Choose a case" }, ...options(cases.filter((row) => row.state === "unselected").map((row) => row.case_id))]}
               onChange={setReplacement} />
-            <button className="button secondary" disabled={busy || !replacement}
+            <button className="button secondary" type="button" disabled={busy || !replacement}
               onClick={() => review("override", "supervisor", { replacement, reason: "priority_change" })}>Swap queued case</button>
           </div>}
         </div>}
-      </Card>
-      <Card title="Decision receipt" subtitle="Decision-time evidence and revealed finding versions">
-        {receipt ? <>
-          <dl className="details">
-            <div><dt>Model</dt><dd>{receipt.receipt.score.model}</dd></div>
-            <div><dt>Score</dt><dd>{percent(receipt.receipt.score.calibrated_risk, 2)} · {receipt.receipt.score.explanation.method}</dd></div>
-            <div><dt>Original selection</dt><dd>{receipt.receipt.decision.reason} · {
-              receipt.receipt.decision.probability.numerator}/{receipt.receipt.decision.probability.denominator}</dd></div>
-            <div><dt>Design status</dt><dd>{receipt.design_status}</dd></div>
-            {receipt.receipt.score.shadow && <div><dt>Shadow</dt><dd>{receipt.receipt.score.shadow.model} · {
-              receipt.receipt.score.shadow.risk == null ? receipt.receipt.score.shadow.status : percent(receipt.receipt.score.shadow.risk, 2)}</dd></div>}
-            <div><dt>Digest</dt><dd className="digest">{receipt.digest}</dd></div>
-          </dl>
-          <button className="button secondary" disabled={busy} onClick={() => void execute(async () => {
-            const integrity = await localRequest<{ sequence: number }>(`${operations}/integrity`);
-            setMessage(`Receipt projection and event chain verified through event ${integrity.sequence}.`);
-          })}>Verify event chain</button>
-          {receipt.outcomes.length ? <Table caption="Finding history" headings={["Version", "Finding", "Available tick"]}
-            rows={receipt.outcomes.map((item) => [item.version, item.finding, item.available])} />
-            : <Empty text="No finding available at this simulation tick." />}
-          {!!receipt.history.length && <details className="provenance">
-            <summary>Case actions</summary>
-            <Table caption="Persisted case actions" headings={["Sequence", "Action", "Tick"]}
-              rows={receipt.history.map((item) => [item.seq, item.kind, item.tick])} />
-          </details>}
-        </> : <Empty text="Select a case to inspect its receipt." />}
-      </Card>
+      </Section>
+      <Section title="Decision receipt" meta="Evidence captured at decision time, plus revealed finding versions">
+        {receipt ? <div className="receipt">
+          <div className="receipt-head"><Status value={receipt.design_status} /><p>{receipt.receipt.case_id.split("-").slice(-2).join("-")}</p></div>
+          <div className="receipt-body">
+            <dl className="details">
+              <div><dt>Model</dt><dd className="digest">{receipt.receipt.score.model}</dd></div>
+              <div><dt>Score</dt><dd>{percent(receipt.receipt.score.calibrated_risk, 2)} · {receipt.receipt.score.explanation.method}</dd></div>
+              <div><dt>Selection</dt><dd>{receipt.receipt.decision.reason} · inclusion {
+                receipt.receipt.decision.probability.numerator}/{receipt.receipt.decision.probability.denominator}</dd></div>
+              {receipt.receipt.score.shadow && <div><dt>Shadow</dt><dd>{receipt.receipt.score.shadow.model} · {
+                receipt.receipt.score.shadow.risk == null ? receipt.receipt.score.shadow.status : percent(receipt.receipt.score.shadow.risk, 2)}</dd></div>}
+              <div><dt>Digest</dt><dd className="digest">{receipt.digest}</dd></div>
+            </dl>
+            <div className="actions" style={{ marginTop: 14 }}>
+              <button className="button secondary small" type="button" disabled={busy} onClick={() => void execute(async () => {
+                const integrity = await localRequest<{ sequence: number }>(`${operations}/integrity`);
+                setMessage(`Receipt projection and event chain verified through event ${integrity.sequence}.`);
+              })}><ShieldCheck size={14} aria-hidden="true" />Verify event chain</button>
+            </div>
+            {receipt.outcomes.length ? <Table caption="Finding history" headings={["Version", "Finding", "Available tick"]}
+              rows={receipt.outcomes.map((item) => [item.version, item.finding, item.available])} />
+              : <div style={{ marginTop: 14 }}><Empty text="No finding available at this simulation tick." /></div>}
+            {!!receipt.history.length && <details className="disclosure" style={{ marginTop: 14 }}>
+              <summary>Case actions</summary>
+              <Table caption="Persisted case actions" headings={["Sequence", "Action", "Tick"]} numeric={[2]}
+                rows={receipt.history.map((item) => [item.seq, item.kind, item.tick])} />
+            </details>}
+          </div>
+        </div> : <Empty text="Select a case to inspect its receipt." />}
+      </Section>
     </div>
-    <div className="evidence-grid">
-      <Card title="Model lifecycle" subtitle="Only synthetic operations can activate these candidates">
+    <div className="columns">
+      <Panel title="Model lifecycle" meta="Synthetic candidates only. The research champion is never replaced.">
         <dl className="details">
           <div><dt>Active</dt><dd>{lifecycle?.active ?? "Reference research scorecard"}</dd></div>
-          <div><dt>Shadow model</dt><dd>{lifecycle?.shadow ?? "No challenger selected"}</dd></div>
+          <div><dt>Shadow</dt><dd>{lifecycle?.shadow ?? "No challenger in shadow"}</dd></div>
           <div><dt>Paired shadow feedback</dt><dd>{overview?.paired_shadow.brier_delta != null
-            ? `Brier Δ ${number(overview.paired_shadow.brier_delta, 4)} across ${overview.paired_shadow.cases} revealed demo cases`
+            ? `Brier difference ${number(overview.paired_shadow.brier_delta, 4)} across ${overview.paired_shadow.cases} revealed cases`
             : "Waiting for revealed paired findings"}</dd></div>
         </dl>
-        <div className="filters">
-          <Select label="Training mode" value={trainingMode} items={options(["recalibrate", "retrain"])} onChange={setTrainingMode} />
-          <button className="button secondary" disabled={busy || !overview} onClick={() => void execute(async () => {
+        <div className="controls" style={{ marginTop: 16 }}>
+          <Segmented label="Training mode" value={trainingMode} items={[{ value: "recalibrate", text: "Recalibrate" },
+            { value: "retrain", text: "Retrain" }]} onChange={setTrainingMode} />
+          <button className="button secondary" type="button" disabled={busy || !overview} onClick={() => void execute(async () => {
             await localRequest(`${operations}/lifecycle/train?role=operator`, { cutoff: tick, mode: trainingMode });
             await refresh(run, selected);
             setMessage("Candidate validated against mature synthetic feedback.");
           })}>Train from mature findings</button>
         </div>
-        {lifecycle?.candidates.map((candidate) => <div className="finding" key={candidate.model}>
-          <h3 className="digest">{candidate.model}</h3>
-          <p>{candidate.report ? Object.entries(candidate.report.gates).filter(([, pass]) => !pass).map(([key]) => key)
-            .join(", ") || "All validation gates passed" : "Candidate evidence unavailable"}</p>
+        <p className="quiet" style={{ marginTop: 10 }}>Training needs at least 30 mature findings in each of three chronological splits.</p>
+        {lifecycle?.candidates.map((candidate) => <div className="candidate" key={candidate.model}>
+          <h3>{candidate.model}</h3>
+          <p>{candidate.report ? Object.entries(candidate.report.gates).filter(([, pass]) => !pass).map(([key]) => key.replaceAll("_", " "))
+            .join(", ").replace(/^(.+)$/, "Failed gates: $1") || "All validation gates passed" : "Candidate evidence unavailable"}</p>
           <div className="actions">
-            <button className="button secondary" disabled={busy || !candidate.report || lifecycle.active === candidate.model}
+            <button className="button secondary small" type="button" disabled={busy || !candidate.report || lifecycle.active === candidate.model}
               onClick={() => lifecycleAction("shadow", candidate.model, candidate)}>Set shadow</button>
-            <button className="button secondary" disabled={busy || lifecycle.shadow !== candidate.model ||
+            <button className="button secondary small" type="button" disabled={busy || lifecycle.shadow !== candidate.model ||
               !candidate.report || !Object.values(candidate.report.gates).every(Boolean)}
               onClick={() => lifecycleAction("promote", candidate.model, candidate)}>Approve activation</button>
           </div>
         </div>)}
-        {lifecycle?.active && <button className="button secondary" disabled={busy}
-          onClick={() => lifecycleAction("rollback", lifecycle.active!)}>Rollback activation</button>}
-        <p className="quiet">Training requires at least 30 mature findings in each of three chronological splits.</p>
-      </Card>
-      <Card title="Analyst tools" subtitle="Deterministic evidence and explanations">
+        {lifecycle?.active && <button className="button secondary small" type="button" style={{ marginTop: 12 }} disabled={busy}
+          onClick={() => lifecycleAction("rollback", lifecycle.active!)}>Roll back activation</button>}
+      </Panel>
+      <Panel title="Analyst tools" meta="Deterministic explanations with receipt and evidence links">
         <div className="actions">
-          <button className="button secondary" disabled={busy || !current} onClick={() => void execute(async () => {
+          <button className="button secondary" type="button" disabled={busy || !current} onClick={() => void execute(async () => {
             setAssistant(await localRequest<AssistantReply>("/v1/analyst/tool?role=analyst", { tool: "risk", case_id: selected }));
           })}>Explain selected score</button>
-          <button className="button secondary" disabled={busy} onClick={() => void execute(async () => {
+          <button className="button secondary" type="button" disabled={busy} onClick={() => void execute(async () => {
             setAssistant(await localRequest<AssistantReply>("/v1/analyst/tool?role=analyst", { tool: "report" }));
           })}>Get research brief</button>
         </div>
-        {assistant && <div className="job-state" aria-live="polite">
-          <Status value={assistant.status} />
-          {assistant.data?.risk !== undefined && <p>Calibrated risk {percent(assistant.data.risk, 2)}.</p>}
-          {assistant.data?.eligible_groups !== undefined && <p>{number(assistant.data.eligible_groups)} eligible historical claim groups.</p>}
-          {assistant.evidence?.model && <p>Model {assistant.evidence.model}</p>}
+        {assistant ? <div className="stack" aria-live="polite" style={{ marginTop: 16 }}>
+          <p><Status value={assistant.status} /></p>
+          {assistant.data?.risk !== undefined && <p className="prose">Calibrated risk {percent(assistant.data.risk, 2)}.</p>}
+          {assistant.data?.eligible_groups !== undefined && <p className="prose">{number(assistant.data.eligible_groups)} eligible historical claim groups.</p>}
+          {assistant.evidence?.model && <p className="quiet">Model <span className="digest">{assistant.evidence.model}</span></p>}
           <p className="digest">{assistant.evidence?.receipt ?? assistant.evidence?.aggregate_sha256}</p>
-        </div>}
-      </Card>
+        </div> : <p className="quiet" style={{ marginTop: 14 }}>Select a case, then ask for an explanation of its score.</p>}
+      </Panel>
     </div>
-    <Card title="Operations trace" subtitle="Accepted synthetic events for the selected run">
-      {overview?.alert && <Note>Check feature coverage. The unknown-category rate is {percent(overview.unknown_category_rate ?? 0, 1)}.</Note>}
-      {overview?.recent_dme_share_delta != null && <p className="quiet">DME share change across the latest two batches
-        {` ${number(overview.recent_dme_share_delta * 100, 1)} percentage points.`}</p>}
-      {trace?.events.length ? <Table caption="Operations trace" headings={["Sequence", "Event", "Tick", "Receipt chain"]}
-        rows={trace.events.map((item) => [item.seq, item.kind, item.tick, <code title={item.digest}>{item.digest.slice(0, 16)}</code>])} />
-        : <Empty text="Trace events will appear after intake." />}
-    </Card>
-    {!!overview?.recent_rejections.length && <Card title="Recent rejected events" subtitle="Local redacted quarantine">
+    <Section title="Operations trace" meta="Accepted synthetic events for the selected run">
+      {overview?.alert && <div style={{ marginBottom: 14 }}><Note tone="caution">Check feature coverage. The unknown-category rate
+        is {percent(overview.unknown_category_rate ?? 0, 1)}.</Note></div>}
+      {overview?.recent_dme_share_delta != null && <p className="quiet" style={{ marginBottom: 12 }}>DME share changed by
+        {` ${number(overview.recent_dme_share_delta * 100, 1)} percentage points across the latest two batches.`}</p>}
+      {trace?.events.length ? <Table caption="Operations trace" headings={["Sequence", "Event", "Tick", "Receipt chain"]} numeric={[2]}
+        rows={trace.events.map((item) => [item.seq, item.kind, item.tick, <code className="digest" key={item.seq} title={item.digest}>{item.digest.slice(0, 16)}</code>])} />
+        : <Empty text="Trace events appear after intake." />}
+    </Section>
+    {!!overview?.recent_rejections.length && <Section title="Rejected events" meta="Local redacted quarantine">
       <Table caption="Redacted quarantined event metadata" headings={["Action", "Reason", "Tick", "Retry"]}
-        rows={overview.recent_rejections.map((item) => [item.kind, item.code, item.tick, item.retryable ? "Eligible" : "Review input"])} />
-    </Card>}
+        rows={overview.recent_rejections.map((item) => [item.kind, item.code.replaceAll("_", " "), item.tick, item.retryable ? "Eligible" : "Review input"])} />
+    </Section>}
   </>;
 }

@@ -19,7 +19,7 @@ The workspace follows the system color scheme until you set a preference in the 
 ## Two-minute walkthrough
 
 1. Start in **Overview**. Compare what each review strategy finds with how precisely it estimates disagreement in the released cohort.
-2. Open **Audit planner**. Switch review capacity from 5% to 10%, then vary hybrid exploration. Compare each strategy at the same capacity and reset the scenario.
+2. Open **Audit planner**. Switch review capacity from 5% to 10%, then vary the exploration share. Compare each strategy at the same capacity and reset the scenario.
 3. In **Policy replay**, inspect 95% interval coverage and the uniform reference. The selected-only and design-aware columns use different estimators.
 4. Open **Review simulation**. Assign a fictional case, submit a finding, advance the simulated clock and record a correction. Inspect the receipt’s original inclusion probability.
 5. Finish in **Validation** and **Risk models**. Check the active lookup, the challenger’s paired intervals and the frozen criteria it missed. [Walkthrough and local operations](docs/DEMO.md) · [Planner screenshot](docs/images/planner.png)
@@ -52,7 +52,7 @@ $env:PYTHONPATH = 'src'
 npm --prefix web run dev
 ```
 
-Open the operations workspace to intake a fictional batch, assign a review, advance the simulated clock and verify the finding history. The scoring and historical replay controls remain available under Local workflows. [Operations](http://127.0.0.1:5173/#/operations) · [Local workflows](http://127.0.0.1:5173/#/local) · [API reference](http://127.0.0.1:8000/docs)
+Open the operations workspace to intake a fictional batch, assign a review, advance the simulated clock and verify the finding history. The scoring and historical replay controls are under Scoring and replay. [Operations](http://127.0.0.1:5173/#/operations) · [Scoring and replay](http://127.0.0.1:5173/#/local) · [API reference](http://127.0.0.1:8000/docs)
 
 ## How it works
 

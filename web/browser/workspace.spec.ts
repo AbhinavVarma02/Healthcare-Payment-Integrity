@@ -1,7 +1,12 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 const staticUrl = "http://127.0.0.1:4173";
 const localUrl = "http://127.0.0.1:5173";
+const option = (page: Page, group: string, name: string) =>
+  page.getByRole("radiogroup", { name: group }).getByRole("radio", { name, exact: true });
+const navigate = (page: Page, name: string) =>
+  page.getByRole("navigation", { name: "Workspace" }).getByRole("link", { name, exact: true }).click();
 
 test("static study renders, charts and controls reconcile, and no backend receives requests", async ({ page }) => {
   const requests: string[] = [];
@@ -17,27 +22,27 @@ test("static study renders, charts and controls reconcile, and no backend receiv
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();
   await page.screenshot({ path: "test-results/overview-desktop.png", fullPage: true });
-  await page.getByRole("link", { name: "Data explorer" }).click();
-  await page.getByLabel("Claim part").selectOption("DME");
+  await navigate(page, "Data explorer");
+  await option(page, "Claim part", "DME").check();
   await expect(page.getByRole("row", { name: /2025.*19,346.*8,650/ })).toBeVisible();
-  await page.getByRole("link", { name: "Risk models" }).click();
+  await navigate(page, "Risk models");
   await expect(page.getByRole("img", { name: "Precision–recall comparison for 2025" })).toBeVisible();
-  await page.getByLabel("Reporting year").selectOption("2024");
+  await option(page, "Reporting year", "2024").check();
   await expect(page.getByRole("img", { name: "Precision–recall comparison for 2024" })).toBeVisible();
-  await page.getByRole("link", { name: "Audit planner" }).click();
-  await page.getByLabel("Review capacity").selectOption("10");
+  await navigate(page, "Audit planner");
+  await option(page, "Review capacity", "10%").check();
   await expect(page.getByRole("row", { name: /Risk only.*2,018/ })).toBeVisible();
-  await page.getByRole("link", { name: "Policy replay" }).click();
-  await page.getByLabel("Strategy details").selectOption("greedy");
-  await page.getByLabel("Learning weights").selectOption("ipw");
+  await navigate(page, "Policy replay");
+  await page.getByLabel("Highlighted strategy").selectOption("greedy");
+  await option(page, "Learning weights", "Inverse propensity").check();
   await expect(page.getByText("This weighting and strategy combination has no measured result.")).toBeVisible();
-  await page.getByRole("link", { name: "Financial analysis" }).click();
+  await navigate(page, "Financial scenarios");
   await expect(page.locator("output")).toHaveText("-$3.75");
   await page.getByLabel("Review cost (cents)").fill("1000");
   await expect(page.locator("output")).toHaveText("$16.25");
-  await page.getByRole("link", { name: "Validation" }).click();
-  await expect(page.getByText("research-only", { exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "Methodology", exact: true }).click();
+  await navigate(page, "Validation");
+  await expect(page.getByText("Research-only", { exact: true })).toBeVisible();
+  await navigate(page, "Methods");
   await expect(page.getByRole("row", { name: /H3-sequential/ })).toBeVisible();
   expect(requests.every((url) => url.startsWith(staticUrl) || url.startsWith("data:"))).toBeTruthy();
   expect(errors).toEqual([]);
@@ -56,14 +61,14 @@ test("mobile navigation and loading error work", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Study overview" })).toBeVisible();
   await page.screenshot({ path: "test-results/overview-mobile.png", fullPage: true });
   await page.getByRole("button", { name: "Open navigation" }).click();
-  await page.getByRole("link", { name: "Policy replay" }).click();
+  await navigate(page, "Policy replay");
   await expect(page.getByRole("heading", { name: "Exploration and cohort estimation" })).toBeVisible();
   expect(await page.evaluate(() => document.body.scrollWidth)).toBe(390);
 });
 
 test("local workspace scores, plans, and completes one real replay seed", async ({ page }) => {
   await page.goto(`${localUrl}/#/local`);
-  await expect(page.getByText(/Local API status is research-only/)).toBeVisible();
+  await expect(page.getByRole("status", { name: "Local API status" })).toContainText("Research-only");
   await page.getByRole("button", { name: "Score claim" }).click();
   await expect(page.getByText("Calibrated disagreement risk")).toBeVisible();
   await page.getByRole("button", { name: "Build plan" }).click();

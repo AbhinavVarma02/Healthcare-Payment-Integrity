@@ -112,6 +112,7 @@ web/package.json
 web/playwright.config.ts
 web/public/study.json
 web/src/analyst.tsx
+web/src/charts.tsx
 web/src/components.tsx
 web/src/contracts.test.ts
 web/src/contracts.ts

@@ -16,7 +16,7 @@ export type Study = {
       components: {
         hybrid_vs_greedy: { rmse_improvement: number; yield_ratio: number; supported: boolean };
         stratified_vs_uniform: { rmse_improvement: number; coverage: number; supported: boolean };
-        ipw_vs_unweighted: { mc_interval: [number, number]; brier_improvement: Simulation };
+        ipw_vs_unweighted: { mc_interval: [number, number]; brier_improvement: Simulation; supported: boolean };
       };
     };
   };

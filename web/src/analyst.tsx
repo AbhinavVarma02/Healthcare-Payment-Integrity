@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Card, Empty, Note, PageHeading, Select, Table } from "./components";
+import { ArrowRight } from "lucide-react";
+import { Empty, Note, PageHeading, Panel, Section, Table } from "./components";
 import { localRequest } from "./contracts";
 import type { Study } from "./contracts";
 import { cents, label, number, percent, points, scenarioNet } from "./numbers";
 
 const examples = [
-  { tool: "policies", question: "Compare review policies" },
-  { tool: "validation", question: "Retrieve model validation" },
-  { tool: "budget", question: "Simulate a fictional budget" },
-  { tool: "report", question: "Generate the research report" },
+  { tool: "policies", question: "Compare review policies", detail: "2025 replay at 5% capacity, with estimator type" },
+  { tool: "validation", question: "Retrieve model validation", detail: "Active research scorecard and promotion status" },
+  { tool: "budget", question: "Simulate a fictional budget", detail: "Scenario net for one DME review" },
+  { tool: "report", question: "Generate the research report", detail: "Study coverage across all releases" },
 ] as const;
 type Tool = typeof examples[number]["tool"];
 type Policy = { strategy: string; reviews: number; yield: number | null; cohort_rmse: number | null; selected_only_rmse: number | null };
@@ -36,12 +37,13 @@ function browserAnswer(tool: Tool, study: Study): Answer {
       evidence: { run: "Governance" } };
   }
   return { status: "ok", data: { eligible_groups: study.cohorts.reduce((total, row) => total + row.claims, 0),
-    cohorts: study.cohorts.length } };
+    cohorts: study.cohorts.length }, evidence: { run: "Coverage" } };
 }
 
 export function Analyst({ study }: { study: Study }) {
   const [tool, setTool] = useState<Tool>("policies");
   const [answer, setAnswer] = useState<Answer>();
+  const [asked, setAsked] = useState<Tool>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   async function run(event: React.FormEvent) {
@@ -49,6 +51,7 @@ export function Analyst({ study }: { study: Study }) {
     setError("");
     setBusy(true);
     setAnswer(undefined);
+    setAsked(tool);
     try {
       if (import.meta.env.DEV) {
         const question = examples.find((item) => item.tool === tool)!.question;
@@ -59,30 +62,39 @@ export function Analyst({ study }: { study: Study }) {
         setAnswer(browserAnswer(tool, study));
       }
     } catch (failure) {
-      setError(failure instanceof TypeError ? "Start the local API and retry." : "The requested evidence could not be loaded.");
+      setError(failure instanceof TypeError ? "The local API did not respond. Start it and run the query again."
+        : "The requested evidence could not be loaded.");
     } finally {
       setBusy(false);
     }
   }
   const data = answer?.data;
+  const question = examples.find((item) => item.tool === asked);
   return <>
-    <PageHeading eyebrow="Evidence tools" title="Research analyst"
-      description="Run a structured query over reviewed evidence or calculate a fictional budget scenario." />
-    <div className="control-grid">
-      <Card title="Evidence query" subtitle={import.meta.env.DEV ? "Deterministic · Local API" : "Deterministic · Reviewed aggregates"}>
-        <form onSubmit={(event) => void run(event)} className="query-form">
-          <Select label="Query" value={tool} items={examples.map((item) => ({ value: item.tool, text: item.question }))}
-            onChange={(value) => { setTool(value as Tool); setAnswer(undefined); setError(""); }} />
-          <button className="button" disabled={busy}>Run query</button>
+    <PageHeading title="Research analyst"
+      description="Structured questions answered by deterministic tools over the reviewed evidence. Answers cite their source run and never estimate savings." />
+    <div className="columns wide-right">
+      <Panel title="Query" action={<span className="tag">Deterministic</span>}
+        meta={`${import.meta.env.DEV ? "Answered by the local API" : "Answered in your browser from the reviewed aggregate"}. Language model disabled.`}>
+        <form onSubmit={(event) => void run(event)} className="stack">
+          <fieldset className="choices">
+            <legend>Question</legend>
+            {examples.map((item) => <label className="choice" key={item.tool}>
+              <input type="radio" name="analyst-query" value={item.tool} checked={tool === item.tool}
+                onChange={() => { setTool(item.tool); setError(""); }} />
+              <span className="choice-body"><strong>{item.question}</strong><small>{item.detail}</small></span>
+            </label>)}
+          </fieldset>
+          {tool === "budget" && <p className="quiet">Assumes 30% predicted disagreement, $250 exposure, 35% relevant fraction and a $30 review cost.</p>}
+          <button className="button" type="submit" disabled={busy}>Run query<ArrowRight size={14} aria-hidden="true" /></button>
         </form>
-        {tool === "budget" && <p className="quiet">Example assumptions are 30% predicted disagreement, $250 exposure, 35% relevant fraction and $30 review cost.</p>}
-      </Card>
-      <Card title="Query result" subtitle="Metrics and source evidence for the selected query">
+      </Panel>
+      <Section title="Answer" meta={question ? question.question : "Choose a question and run it"}>
         <div aria-live="polite">
-          {busy && <p className="quiet">Retrieving evidence…</p>}
+          {busy && <p className="quiet">Retrieving evidence</p>}
           {error && <p className="error" role="alert">{error}</p>}
-          {!busy && !error && !answer && <Empty text="Run a query to retrieve its evidence." />}
-          {answer?.status !== "ok" && answer && <Empty text="No verified answer is available for this query." />}
+          {!busy && !error && !answer && <Empty text="Run a query to see the answer and its source." />}
+          {answer?.status !== "ok" && answer && <Empty text="No verified answer is available for this question." />}
           {data?.policies && <Table caption="Frozen 2025 replay at 5% capacity" numeric={[1, 2, 3]}
             headings={["Strategy", "Reviews", "Mean yield", "Rate RMSE", "Estimator"]}
             rows={data.policies.filter((row) => policyNames.includes(row.strategy)).map((row) => [
@@ -90,21 +102,23 @@ export function Analyst({ study }: { study: Study }) {
               row.cohort_rmse == null ? "Selected-only" : "Design-aware",
             ])} />}
           {data?.active && <dl className="details">
-            <div><dt>Active research model</dt><dd>{data.active}</dd></div>
+            <div><dt>Active research model</dt><dd className="digest">{data.active}</dd></div>
             <div><dt>Operational promotion</dt><dd>{data.promotion}</dd></div>
           </dl>}
-          {data?.net_cents !== undefined && <div className="result-block">
+          {data?.net_cents !== undefined && <div className="result" style={{ marginTop: 0, paddingTop: 0, borderTop: 0 }}>
             <span>Fictional expected net per review</span><strong>{cents(data.net_cents)}</strong>
+            <small>Risk × exposure × relevant fraction, less review cost</small>
           </div>}
-          {data?.eligible_groups !== undefined && <p>{number(data.eligible_groups)} eligible claim groups across {data.cohorts} reporting years.</p>}
-          {answer?.status === "ok" && <p className="quiet">
-            {answer.evidence?.formula ? `Formula ${answer.evidence.formula}` :
-              <a href="#/methods">{answer.evidence?.run ? `Source · ${answer.evidence.run}` : "Study evidence ledger"}</a>}
+          {data?.eligible_groups !== undefined && <p className="prose">{number(data.eligible_groups)} eligible claim groups across {data.cohorts} CERT
+            reporting years, each with reconciled source counts.</p>}
+          {answer?.status === "ok" && <p className="quiet" style={{ marginTop: 14 }}>
+            {answer.evidence?.formula ? `Calculated with formula ${answer.evidence.formula}` :
+              <>Source <a href="#/methods">{answer.evidence?.run ?? "study evidence ledger"}</a></>}
           </p>}
         </div>
-      </Card>
+      </Section>
     </div>
-    <Note>Replay estimates apply to eligible published claims. Financial queries use fictional assumptions. The optional language model missed its reliability gate.</Note>
-    <a className="text-action" href="#/methods">See the protocol and run fingerprints</a>
+    <Note>Replay figures apply to eligible published claims. Budget answers use fictional assumptions. The optional local language model
+      failed its reliability gate, so it is not used.</Note>
   </>;
 }

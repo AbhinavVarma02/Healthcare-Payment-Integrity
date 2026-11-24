@@ -12,10 +12,10 @@ test("aggregate release exposes the policy lab and a self-contained synthetic re
   await page.goto(`${staticUrl}/#/evidence`);
   await expect(page.getByRole("heading", { name: "Review policy and model updates" })).toBeVisible();
   await expect(page.getByRole("row", { name: /Matched fixed.*1,009/ })).toBeVisible();
-  await page.getByLabel("Reporting year").selectOption("2024");
+  await page.getByRole("radiogroup", { name: "Reporting year" }).getByRole("radio", { name: "2024", exact: true }).check();
   await expect(page.getByRole("img", { name: "Estimation error and review yield by policy" })).toBeVisible();
   await page.screenshot({ path: "test-results/research-lab.png", fullPage: true });
-  await page.getByRole("link", { name: "Review simulation" }).click();
+  await page.getByRole("navigation", { name: "Workspace" }).getByRole("link", { name: "Review simulation" }).click();
   await page.getByRole("button", { name: "Assign a review" }).click();
   await page.getByRole("button", { name: "Submit finding" }).click();
   await expect(page.getByRole("table", { name: "Revealed illustrative findings" })).toHaveCount(0);

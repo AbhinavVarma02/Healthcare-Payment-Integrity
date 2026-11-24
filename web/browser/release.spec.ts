@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import axe from "axe-core";
 
 const staticRoot = "http://127.0.0.1:4173";
@@ -58,7 +59,7 @@ for (const mode of ["static", "local"] as const) {
             header.getBoundingClientRect().top - document.querySelector(".sidebar")!.getBoundingClientRect().bottom),
           route).toBeLessThanOrEqual(width <= 850 ? 1 : 0);
           if (route === "operations") await expect(page.getByRole("button", { name: "Intake sample batch" })).toBeEnabled();
-          if (route === "local") await expect(page.getByText(/Local API status is research-only/)).toBeVisible();
+          if (route === "local") await expect(page.getByRole("status", { name: "Local API status" })).toContainText("Research-only");
           expect(await page.evaluate(() => document.documentElement.scrollWidth), route).toBe(width);
           await page.screenshot({ path: `test-results/porcelain/${info.project.name}/${mode}/${theme}/${name}/${route}.png` });
           if (name === "desktop") {
@@ -80,32 +81,38 @@ for (const mode of ["static", "local"] as const) {
   }
 }
 
+const option = (page: Page, group: string, name: string) =>
+  page.getByRole("radiogroup", { name: group }).getByRole("radio", { name, exact: true });
+const navigate = (page: Page, name: string) =>
+  page.getByRole("navigation", { name: "Workspace" }).getByRole("link", { name, exact: true }).click();
+
 test("guided planner and analyst report matched evidence in each mode", async ({ page }, info) => {
   for (const root of [staticRoot, localRoot]) {
     await page.goto(`${root}/#/overview`);
     await page.getByRole("link", { name: "Plan an audit" }).click();
     await expect(page.locator("main")).toBeFocused();
-    await page.getByLabel("Review capacity").selectOption("10");
-    await page.getByLabel("Hybrid exploration").selectOption("hybrid-20");
+    await option(page, "Review capacity", "10%").check();
+    await option(page, "Exploration share", "20%").check();
     const tradeOff = page.getByRole("list", { name: "Equal-budget review outcomes" });
     await expect(tradeOff.getByText("20% exploration")).toBeVisible();
     await page.getByRole("button", { name: "Reset scenario" }).click();
+    await expect(option(page, "Review capacity", "5%")).toBeChecked();
     await expect(tradeOff.getByText("10% exploration")).toBeVisible();
     await expect(tradeOff.getByText("3.89 pp")).toBeVisible();
     await page.getByText("Fictional financial assumptions", { exact: true }).click();
-    await page.getByLabel("Cost per review").selectOption("6000");
+    await option(page, "Cost per review", "$60").check();
     await expect(page.getByText(/\$60\.00 per review/)).toBeVisible();
     await page.getByRole("button", { name: "Reset scenario" }).click();
-    await expect(page.getByLabel("Cost per review")).toHaveValue("3000");
+    await expect(option(page, "Cost per review", "$30")).toBeChecked();
     await page.getByText("Fictional financial assumptions", { exact: true }).click();
     if (root === staticRoot) {
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.screenshot({ path: `test-results/release/${info.project.name}/static/desktop/planner-workflow.png` });
     }
-    await page.getByRole("link", { name: "Analyst", exact: true }).click();
+    await navigate(page, "Analyst");
     await page.getByRole("button", { name: "Run query" }).click();
     await expect(page.getByRole("row", { name: /Uniform random.*1,009.*1.23 pp.*Design-aware/ })).toBeVisible();
-    await page.getByLabel("Query").selectOption("budget");
+    await page.getByRole("radio", { name: /Simulate a fictional budget/ }).check();
     await page.getByRole("button", { name: "Run query" }).click();
     await expect(page.getByText("-$3.75", { exact: true })).toBeVisible();
   }
@@ -159,7 +166,7 @@ test("theme follows the system before an explicit override and persists through 
   await toggle.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
-  await page.getByRole("link", { name: "Risk models" }).click();
+  await navigate(page, "Risk models");
   await page.reload();
   await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
 });
@@ -169,13 +176,13 @@ test("chart values, financial sensitivity and review transitions are keyboard ac
   const disclosure = page.getByText("Chart values", { exact: true });
   await disclosure.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("row", { name: /Greedy · selected-only.*16.87 pp.*36.77%/ })).toBeVisible();
-  await page.getByRole("link", { name: "Financial analysis" }).click();
+  await expect(page.getByRole("row", { name: /Greedy \(selected-only rate\).*16.87 pp.*36.77%/ })).toBeVisible();
+  await navigate(page, "Financial scenarios");
   const slider = page.getByRole("slider", { name: /Adjust predicted disagreement/ });
   await slider.focus();
   await page.keyboard.press("ArrowRight");
   await expect(page.locator("output")).toHaveText("-$2.88");
-  await page.getByRole("link", { name: "Review simulation" }).click();
+  await navigate(page, "Review simulation");
   await page.getByRole("button", { name: "Assign a review" }).focus();
   for (const next of ["Submit finding", "Advance clock", "Record correction", "Reset example", "Assign a review"]) {
     await page.keyboard.press("Enter");

@@ -6,6 +6,7 @@ CLAUDE.md
 .codex/
 .claude/
 .aws/
+.wrangler/
 .env
 .env.*
 !.env.example

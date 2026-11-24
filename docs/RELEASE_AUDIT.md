@@ -1,4 +1,10 @@
-# Healthcare Payment Integrity v1.0.0 release audit
+# Healthcare Payment Integrity release audit
+
+## v1.0.1 public release
+
+The refined workspace uses the same frozen study aggregate and research protocol as v1.0.0. The publication gate verifies the source and Git history against the explicit allowlist and scans for credentials in history and static assets. Two locked source archives reproduce the export. The deployment serves only that seven-file export through Cloudflare Pages. [Release notes](RELEASE_NOTES.md) · [Static deployment](DEPLOYMENT.md)
+
+## v1.0.0 local release
 
 The release is a local research prototype with a static, aggregate-only preview. It preserves the audited `d5bfc82` baseline and extends the closed-loop candidate at `e81e2c6`. The frozen protocol is pinned at `aab39fdc790597c2c476e0f4d79aaf8543e74b09`. The release manifest records exact tree, commit and static output fingerprints. [Requirements traceability](RELEASE_TRACEABILITY.md)
 
@@ -18,8 +24,8 @@ The release is a local research prototype with a static, aggregate-only preview.
 
 Build the static preview from the reviewed aggregates, then validate two independent source archives with the locked dependency caches. The clean build gate concerns static packaging and fixture verification. The separate frozen-audit and experiment runs assess scientific reproducibility. [Reproduction commands](REPRODUCIBILITY.md)
 
-The local benchmark, fixture inputs and reviewed cohort analyses support engineering and retrospective research claims. Real payer deployment would require representative operational data, prospective and external validation, a privacy and security assessment, and operational testing. The static export has no metered service dependency. External hosting awaits target authorization. [Limitations](LIMITATIONS.md) · [Deployment](DEPLOYMENT.md)
+The local benchmark, fixture inputs and reviewed cohort analyses support engineering and retrospective research claims. Real payer deployment would require representative operational data, prospective and external validation, a privacy and security assessment, and operational testing. The static export has no metered service dependency. [Limitations](LIMITATIONS.md) · [Deployment](DEPLOYMENT.md)
 
 ## Local release disposition
 
-The local v1.0.0 candidate met the release gates for the declared research and static demo scope. Two independent locked source archives produced identical SHA-256 fingerprints for all seven export files. The release manifest records the exact integrated source tree, clean-archive proofs, browser report and experimental evidence. The historical baseline export remains independently fingerprinted. External publication is pending target authorization.
+The local v1.0.0 candidate met the release gates for the declared research and static demo scope. Two independent locked source archives produced identical SHA-256 fingerprints for all seven export files. The release manifest records the exact integrated source tree, clean-archive proofs, browser report and experimental evidence. The historical baseline export remains independently fingerprinted.

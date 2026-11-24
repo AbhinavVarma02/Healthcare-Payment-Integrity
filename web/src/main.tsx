@@ -7,6 +7,7 @@ import {
 import { Empty, PageHeading } from "./components";
 import { studyData } from "./contracts";
 import type { Study } from "./contracts";
+import { version } from "../package.json";
 import { Explorer, Finance, Methods, Models, Overview, Planner, Replay, Validation } from "./pages";
 import { ResearchExtensions } from "./research";
 import { ReviewPreview } from "./review-preview";
@@ -148,7 +149,7 @@ function Workspace() {
         </div>}
       </nav>
       <div className="release">
-        <span><strong>Release v1.0.0</strong></span>
+        <span><strong>Release v{version}</strong></span>
         <span>{study ? `Protocol ${study.protocol} · ${study.cohorts.length} CERT releases` : "CMS CERT research study"}</span>
       </div>
     </div></aside>

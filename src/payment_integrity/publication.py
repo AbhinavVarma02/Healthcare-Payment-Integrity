@@ -236,8 +236,9 @@ def main():
         write_json(Path("artifacts/release-audit.json"), audit)
         extensions = Path("web/src/research-evidence.json")
         if extensions.is_file():
+            version = read_json(Path("web/package.json"))["version"]
             write_json(Path("release/static-build-manifest.json"), {
-                "schema_version": 1, "release_target": "v1.0.0", "files": audit,
+                "schema_version": 1, "release_target": f"v{version}", "files": audit,
                 "frozen_study_sha256": audit["study.json"],
                 "research_extensions_sha256": sha256(extensions),
             })

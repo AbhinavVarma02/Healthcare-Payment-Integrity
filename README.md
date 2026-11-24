@@ -4,6 +4,8 @@
 
 A local research platform for prioritizing Medicare Fee-for-Service reviews under an audit budget. It uses 199,052 claim groups from eight CMS CERT public releases, covering Part B and durable medical equipment (DME). Its central experiment replays selective review and delayed feedback using historical outcomes. The local workspace adds a persisted synthetic review queue, decision receipts, shadow scoring and controlled candidate updates. The static workspace presents reviewed research and a browser-based fictional review exercise.
 
+[Open the live static workspace](https://healthcare-payment-integrity.pages.dev/)
+
 | Frozen 2025 comparison | Result |
 | --- | --- |
 | H1 · Boosted trees vs hierarchical lookup | The practical improvement criteria were **not supported**. Average precision changed by −0.00497, with a paired 97.5% interval of [−0.00930, 0.00005]. Precision at 5% changed by +0.10 percentage points, interval [−1.69, +2.28]. |
@@ -65,6 +67,6 @@ CMS CSVs are acquired with SHA-256 sidecars. DuckDB builds Parquet feature snaps
 | Extended experiments | [Registered protocol](docs/RESEARCH_PROTOCOL_EXTENSIONS.md), [Experiment report](docs/EXPERIMENT_REPORT.md) |
 | Model risk | [Validation and model card](docs/MODEL_VALIDATION.md), [Limitations](docs/LIMITATIONS.md) |
 | Operations | [Architecture and API](docs/ARCHITECTURE.md), [Operations runbook](docs/OPERATIONS_RUNBOOK.md), [Model lifecycle](docs/MODEL_LIFECYCLE.md), [Threat model](docs/THREAT_MODEL.md), [Performance](docs/PERFORMANCE.md) |
-| Release | [v1.0.0 release notes](docs/RELEASE_NOTES.md), [Release audit](docs/RELEASE_AUDIT.md), [Traceability](docs/RELEASE_TRACEABILITY.md), [Tests](docs/TEST_EVIDENCE.md), [Workspace design](docs/UI_DESIGN.md), [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md) |
+| Release | [Release notes](docs/RELEASE_NOTES.md), [Release audit](docs/RELEASE_AUDIT.md), [Traceability](docs/RELEASE_TRACEABILITY.md), [Tests](docs/TEST_EVIDENCE.md), [Workspace design](docs/UI_DESIGN.md), [Publication policy](docs/PUBLICATION_POLICY.md), [Static deployment](docs/DEPLOYMENT.md) |
 
-The original implementation is MIT-licensed. CMS material and third-party components retain their own rights. The local export is in `release/static` after building. External hosting requires separate authorization.
+The original implementation is MIT-licensed. CMS material and third-party components retain their own rights. The local export is in `release/static` after building.

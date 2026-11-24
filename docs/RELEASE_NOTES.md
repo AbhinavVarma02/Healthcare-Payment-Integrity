@@ -1,4 +1,15 @@
-# Healthcare Payment Integrity v1.0.0 release notes
+# Healthcare Payment Integrity release notes
+
+## v1.0.1
+
+The public static workspace brings the reviewed CMS CERT results, audit planner and fictional review simulation into a refined interface. [Live demo](https://healthcare-payment-integrity.pages.dev/)
+
+- Explore eleven study routes on desktop, tablet or mobile, with light and dark themes.
+- Compare equal-budget strategies, inspect chart values and vary the review capacity, exploration share and fictional cost assumptions.
+- Step through a fictional review and inspect its decision receipt. The hosted demo runs entirely in the browser.
+- Reproduce the seven-file static export from locked dependencies and the frozen aggregate. The published findings retain the original research scope and limitations. [Release audit](RELEASE_AUDIT.md) · [Test evidence](TEST_EVIDENCE.md)
+
+## v1.0.0
 
 The first complete release candidate combines the audited CERT study with a local synthetic payment integrity workflow and an aggregate-only static preview.
 
